@@ -121,6 +121,24 @@ export interface InvitationData {
         /** Full shipping address */
         address: string;
     };
+    /** Cover Image URL (Optional) */
+    coverImage?: string;
+    /** Theme Configuration */
+    themeConfig?: ThemeConfig;
+}
+
+/**
+ * Theme Customization Configuration
+ */
+export interface ThemeConfig {
+    /** Primary color hex code */
+    primaryColor: string;
+    /** Secondary color hex code */
+    secondaryColor: string;
+    /** Font family for headings */
+    fontHeading: string;
+    /** Font family for body text */
+    fontBody: string;
 }
 
 /**

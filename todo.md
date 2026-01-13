@@ -194,7 +194,16 @@ Build a user-facing dashboard where users can input their wedding data through f
 **Rollback Point:** Validation is additive, can be disabled
 
 
-### 📊 Status: 🔄 **IN PROGRESS** (20%)
+#### **Phase 3.6: Appearance & Theme Settings**
+- [x] **T3.6.1** - Update `InvitationData` types for `themeConfig`
+- [x] **T3.6.2** - Create `ThemeSettingsForm` component (Color & Font picker)
+- [x] **T3.6.3** - Implement dynamic theme variable injection in `BasicTheme`
+- [x] **T3.6.4** - Add dynamic Google Fonts loading in theme
+- [x] **T3.6.5** - Test: Visual changes apply in real-time in preview
+
+**Rollback Point:** Theme config is optional, can revert to hardcoded values
+
+### 📊 Status: 🔄 **IN PROGRESS** (25%)
 
 **Current State:**
 - ✅ Phase 3.1: Dashboard Layout - **COMPLETED**
@@ -202,12 +211,15 @@ Build a user-facing dashboard where users can input their wedding data through f
 - ⏳ Phase 3.3: State Management - **PENDING**
 - [x] Phase 3.4: Live Preview - **COMPLETED**
 - [x] Phase 3.5: Form Validation - **COMPLETED**
+- [x] Phase 3.6: Appearance & Theme Settings - **COMPLETED**
 
 **Completed:**
 - ✅ Dashboard page created with split-screen layout
 - ✅ Form sidebar with responsive design
 - ✅ Live preview with mobile/desktop modes
-- ✅ Mobile-optimized with collapsible sidebar
+- ✅ Form validation with Zod (Error messages & styling)
+- ✅ Custom Theme Config (Primary/Secondary Colors, Heading/Body Fonts)
+- ✅ Adaptive Hero Cover Image
 - ✅ Premium UI styling with glassmorphism effects
 
 

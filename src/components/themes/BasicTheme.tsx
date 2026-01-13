@@ -22,6 +22,8 @@ import { BottomNavigation } from "@/components/ui/BottomNavigation";
 import { MusicToggle } from "@/components/ui/MusicToggle";
 
 // Types
+import { ThemeConfig } from "@/types/invitation";
+
 export interface BasicThemeProps {
     data: {
         slug: string;
@@ -68,6 +70,8 @@ export interface BasicThemeProps {
             recipient: string;
             address: string;
         };
+        themeConfig?: ThemeConfig;
+        coverImage?: string;
     };
     guestName?: string;
     isPreview?: boolean; // Flag to disable container styling for dashboard preview
@@ -182,13 +186,15 @@ function CountdownTimer({ weddingDate }: { weddingDate: string }) {
 
 // Hero Section
 function HeroSection({ onOpen, guestName, data }: { onOpen: () => void; guestName?: string; data: BasicThemeProps['data'] }) {
+    const coverImage = data.coverImage || "/images/couple/hero-couple.png";
+
     return (
         <motion.section
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-6 py-12"
             style={{
-                background: "linear-gradient(135deg, #fdfbf7 0%, #f8f4ed 50%, #fef9f3 100%)",
+                background: "linear-gradient(135deg, var(--color-bg-1) 0%, var(--color-bg-2) 50%, var(--color-bg-3) 100%)",
             }}
         >
             {/* Decorative Background Elements */}
@@ -203,7 +209,7 @@ function HeroSection({ onOpen, guestName, data }: { onOpen: () => void; guestNam
                     />
                 </div>
                 <div className="absolute top-0 left-0 w-96 h-96 bg-[var(--color-primary-light)] rounded-full blur-3xl opacity-20 -translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-[var(--color-rose-light)] rounded-full blur-3xl opacity-20 translate-x-1/2 translate-y-1/2" />
+                <div className="absolute bottom-0 right-0 w-96 h-96 bg-[var(--color-secondary)] rounded-full blur-3xl opacity-20 translate-x-1/2 translate-y-1/2" />
             </div>
 
             {/* Main Content */}
@@ -234,7 +240,7 @@ function HeroSection({ onOpen, guestName, data }: { onOpen: () => void; guestNam
                     </p>
 
                     {/* Couple Names */}
-                    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-[var(--color-primary-dark)] mb-3 leading-tight">
+                    <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-[var(--color-primary-dark)] mb-3 leading-tight font-heading">
                         {data.groom.name} <span className="text-[var(--color-primary)]">&</span> {data.bride.name}
                     </h1>
                 </motion.div>
@@ -252,7 +258,7 @@ function HeroSection({ onOpen, guestName, data }: { onOpen: () => void; guestNam
                         </div>
                         <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl">
                             <Image
-                                src="/images/couple/hero-couple.png"
+                                src={coverImage}
                                 alt={`${data.groom.name} & ${data.bride.name}`}
                                 fill
                                 className="object-cover"
@@ -1141,107 +1147,92 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
     }, []);
 
     return (
-        <div className={`min-h-screen ${isPreview ? "preview-wrapper" : ""}`} style={{ background: "linear-gradient(to bottom, #faf8f5, #f5e6e6)" }}>
-            {isPreview && (
-                <style>{`
-                    /* Base Preview Styles (Positioning) - Applies to both Mobile & Desktop Preview */
-                    .preview-wrapper { position: relative !important; overflow-x: hidden !important; min-height: 100% !important; }
+        <div
+            className={`min-h-screen ${isPreview ? "preview-wrapper" : ""} ${isMobile ? "mobile-force" : ""}`}
+            style={{
+                background: "linear-gradient(to bottom, #faf8f5, #f5e6e6)",
+                // Apply theme colors as CSS variables
+                '--color-primary': data.themeConfig?.primaryColor || '#D4AF37',
+                '--color-primary-dark': data.themeConfig?.primaryColor ? `${data.themeConfig.primaryColor}ee` : '#b28f1f',
+                '--color-primary-light': data.themeConfig?.primaryColor ? `${data.themeConfig.primaryColor}33` : '#f4e4c1',
+                '--color-secondary': data.themeConfig?.secondaryColor || '#F3E5AB',
+                fontFamily: data.themeConfig?.fontBody ? `'${data.themeConfig.fontBody}', sans-serif` : 'inherit',
+            } as React.CSSProperties}
+        >
+            {/* Dynamic Font Injection */}
+            {data.themeConfig && (
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    @import url('https://fonts.googleapis.com/css2?family=${data.themeConfig.fontHeading.replace(/ /g, '+')}:wght@400;700&family=${data.themeConfig.fontBody.replace(/ /g, '+')}:wght@300;400;600&display=swap');
                     
-                    /* 1. Generic Fixed Elements Override (Safety Net) */
-                    .preview-wrapper .fixed { position: absolute !important; }
-
-                    /* 2. Welcome Modal - Sticky Full Screen */
-                    .preview-wrapper .fixed.inset-0.z-40 { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
-                    
-                    /* 3. Music Toggle (Button) - Absolute Top (Scrolls away) / Fixes "Sticky Love Overlap" */
-                    .preview-wrapper button.fixed { position: absolute !important; top: 1.5rem !important; right: 1.5rem !important; z-index: 30 !important; }
-
-                    /* 4. Bottom Navigation (Nav) - Restore for BOTH Mobile & Desktop */
-                    /* Sticky Bottom: Mimics app-bar behavior inside the scrollable container */
-                    .preview-wrapper nav.fixed { position: sticky !important; bottom: 0 !important; z-index: 40 !important; width: 100% !important; }
-
-                    /* 5. Mobile Layout Enforcer (CRITICAL) */
-                    /* Force hide desktop-only elements that Tailwind exposes because the browser window is wide */
-                    ${isMobile ? `
-                        /* Hide the "Heart Connector" (lg:flex) and Timeline Line (md:block) which are overlapping text in mobile view */
-                        .preview-wrapper .lg\\:flex { display: none !important; }
-                        .preview-wrapper .md\\:block { display: none !important; }
-                        
-                        /* Force single column layout */
-                        .preview-wrapper .md\\:flex-row { flex-direction: column !important; }
-                        .preview-wrapper .md\\:flex-row-reverse { flex-direction: column !important; }
-                        .preview-wrapper .md\\:text-right { text-align: left !important; }
-                        .preview-wrapper .md\\:text-left { text-align: left !important; }
-                    ` : ''}
-                    
-                    /* Welcome Modal Sizing for Preview */
-                    .preview-wrapper .fixed.inset-0.z-40 .glass {
-                         width: 90% !important;
-                         max-width: ${isMobile ? "none" : "32rem"} !important; /* Limit width on desktop preview */
-                         padding: 1.5rem !important;
-                         margin: 0 !important;
+                    .font-heading, h1, h2, h3, .font-serif {
+                        font-family: '${data.themeConfig.fontHeading}', serif !important;
                     }
-                    .preview-wrapper .fixed.inset-0.z-40 .glass h2 { font-size: 1.5rem !important; }
+                `}} />
+            )}
 
-                    /* Mobile Layout Forces - ONLY applies if isMobile is true */
-                    /* GENERAL GRID & SPACING */
+            {/* Preview & Mobile Force Styles */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
+                /* 1. Generic Preview Handlers */
+                .preview-wrapper { position: relative !important; overflow-x: hidden !important; min-height: 100% !important; }
+                .preview-wrapper .fixed { position: absolute !important; }
+                .preview-wrapper .fixed.inset-0.z-40 { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
+                .preview-wrapper button.fixed { position: absolute !important; top: 1.5rem !important; right: 1.5rem !important; z-index: 30 !important; }
+                .preview-wrapper nav.fixed { position: sticky !important; bottom: 0 !important; z-index: 40 !important; width: 100% !important; }
+                .preview-wrapper .fixed.inset-0.z-40 .glass { 
+                    width: 90% !important; 
+                    max-width: ${isMobile ? "none" : "32rem"} !important; 
+                    padding: 1.5rem !important;
+                }
+
+                /* 2. Mobile Layout "Force" (For Dashboard Mobile Preview) */
+                ${isMobile ? `
                     .mobile-force .grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-                    .mobile-force h1 { font-size: 2.5rem !important; line-height: 1.2 !important; margin-bottom: 0.5rem !important; }
-                    .mobile-force h3 { font-size: 1.75rem !important; line-height: 1.2 !important; }
-                    .mobile-force .section { padding: 2rem 1rem !important; }
+                    .mobile-force h1 { font-size: 2.5rem !important; line-height: 1.2 !important; }
+                    .mobile-force h2 { font-size: 2rem !important; }
+                    .mobile-force .section { padding: 3rem 1.5rem !important; }
                     .mobile-force .glass { padding: 1.5rem !important; }
-                    .mobile-force .w-56, .mobile-force .h-56, .mobile-force .md\\:w-64, .mobile-force .md\\:h-64 { width: 10rem !important; height: 10rem !important; margin: 0 auto 1.5rem auto !important; }
                     
-                    /* LOVE STORY TIMELINE FIXES */
-                    /* Force flex direction to row (default) instead of reverse stuff from desktop */
-                    .mobile-force .md\\:flex-row { flex-direction: row !important; }
-                    .mobile-force .md\\:flex-row-reverse { flex-direction: row !important; }
-                    
-                    /* Reset text alignment to left */
+                    /* Timeline Fixes */
+                    .mobile-force .md\\:flex-row { flex-direction: column !important; }
+                    .mobile-force .md\\:flex-row-reverse { flex-direction: column !important; }
                     .mobile-force .md\\:text-right { text-align: left !important; }
                     .mobile-force .md\\:text-left { text-align: left !important; }
-                    
-                    /* Reset justify content */
                     .mobile-force .md\\:justify-end { justify-content: flex-start !important; }
                     .mobile-force .md\\:justify-start { justify-content: flex-start !important; }
-
-                    /* Hide desktop-only elements (Timeline center line & dots, Spacers) */
-                    /* Targeting the center line */
-                    .mobile-force .absolute.left-1\\/2.hidden.md\\:block { display: none !important; }
-                    /* Targeting the dots */
-                    .mobile-force .hidden.md\\:flex.absolute { display: none !important; }
-                    /* Targeting the spacers */
-                    .mobile-force .hidden.md\\:block.flex-1 { display: none !important; }
                     
-                    /* Show mobile-only elements (Icons) */
+                    /* Hide Overlaps */
+                    .mobile-force .lg\\:flex { display: none !important; }
+                    .mobile-force .md\\:block { display: none !important; }
+                    .mobile-force .hidden.md\\:flex { display: none !important; }
                     .mobile-force .md\\:hidden { display: flex !important; }
-                `}</style>
-            )}
-            <div className={`${isPreview ? "preview-mode" : "invitation-container"} ${isMobile ? "mobile-force" : ""}`}>
-                <AnimatePresence mode="wait">
-                    {!isOpen ? (
-                        <HeroSection key="hero" onOpen={handleOpen} guestName={guestName} data={data} />
-                    ) : (
-                        <motion.div
-                            key="content"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5 }}
-                            className="content-with-nav"
-                        >
-                            <QuoteSection quotes={data.quotes} />
-                            <CoupleSection groom={data.groom} bride={data.bride} />
-                            <EventSection events={data.events} />
-                            <LoveStorySection loveStory={data.loveStory} />
-                            <GallerySection gallery={data.gallery} />
-                            <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />
-                            <RSVPSection />
-                            <GuestBookSection />
-                            <FooterSection data={data} />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
+                ` : ''}
+            `}} />
+
+            <AnimatePresence mode="wait">
+                {!isOpen ? (
+                    <HeroSection key="hero" onOpen={handleOpen} guestName={guestName} data={data} />
+                ) : (
+                    <motion.div
+                        key="content"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        className="content-with-nav"
+                    >
+                        <QuoteSection quotes={data.quotes} />
+                        <CoupleSection groom={data.groom} bride={data.bride} />
+                        <EventSection events={data.events} />
+                        <LoveStorySection loveStory={data.loveStory} />
+                        <GallerySection gallery={data.gallery} />
+                        <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />
+                        <RSVPSection />
+                        <GuestBookSection />
+                        <FooterSection data={data} />
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {isOpen && (
                 <>
@@ -1279,7 +1270,6 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
                                 className="font-serif text-2xl md:text-3xl text-[var(--color-primary-dark)] mb-2"
-                                style={{ fontFamily: "'Playfair Display', serif" }}
                             >
                                 Selamat Datang!
                             </motion.h2>

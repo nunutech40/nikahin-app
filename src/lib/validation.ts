@@ -46,6 +46,14 @@ const shippingAddressSchema = z.object({
     address: z.string().optional(),
 }).optional();
 
+// Theme Config Schema
+const themeConfigSchema = z.object({
+    primaryColor: z.string().regex(/^#([0-9A-F]{3}){1,2}$/i, "Kode warna harus berupa Hex valid (contoh: #FFFFFF)"),
+    secondaryColor: z.string().regex(/^#([0-9A-F]{3}){1,2}$/i, "Kode warna harus berupa Hex valid"),
+    fontHeading: z.string().min(1, "Font heading wajib dipilih"),
+    fontBody: z.string().min(1, "Font body wajib dipilih"),
+});
+
 // Main Invitation Schema
 export const invitationSchema = z.object({
     slug: z.string().regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip").min(3, "Slug minimal 3 karakter"),
@@ -59,6 +67,8 @@ export const invitationSchema = z.object({
     giftOptions: z.array(bankAccountSchema).optional(),
     shippingAddress: shippingAddressSchema,
     gallery: z.array(z.string().url("URL galeri tidak valid")).optional(),
+    themeConfig: themeConfigSchema.optional(),
+    coverImage: z.string().url("Format URL cover tidak valid").optional().or(z.literal("")),
 });
 
 // Helper for single field validation (if needed for instant feedback)

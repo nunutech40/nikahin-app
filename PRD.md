@@ -143,3 +143,43 @@ Gatot's Advice:
 Jangan suruh AI-nya bikin semuanya sekaligus. Suruh dia selesaikan Iterasi 1 dulu. Begitu koneksi DB sukses, baru lanjut ke UI.
 
 Mau gue buatin **System Prompt** spesifik yang bisa lo *copy-paste* ke AI Agent lo supaya dia nggak melenceng dari TRD ini?
+
+---
+
+## 7. Additional Features & Future Roadmap
+
+### 7.1. Theme & Appearance Settings (Phase 3 Extension)
+- **Goal:** Memberikan kontrol visual dasar kepada user.
+- **Components:** Tab baru di Dashboard "Tampilan".
+- **Fields:**
+    - **Palette:** Pilihan warna (Primary, Secondary, Accent).
+    - **Typography:** Pilihan Font Pair (Heading Font, Body Font).
+    - **Cover:** Khusus untuk halaman depan (sampul), opsional upload foto sampul khusus jika berbeda dari galeri.
+
+### 7.2. Theme System Architecture (Designer Ecosystem)
+- **Concept:** Sistem tema berbasis *constraint* agar desainer bisa berkontribusi.
+- **Mechanism:**
+    - Menyediakan **Base Theme Props Types** yang ketat.
+    - Desainer membuat komponen React yang menerima props tersebut.
+    - Tema didaftarkan ke `ThemeRegistry`.
+- **User Flow:** User memilih tema dari "Theme Marketplace" di dashboard -> Preview instan dengan data mereka -> Apply.
+
+### 7.3. Business Logic (SaaS B2C)
+- **Flow:**
+    1. **Landing Page:** Marketing & Pricing.
+    2. **Checkout:** User memilih paket -> Payment.
+    3. **Validation:** Verifikasi pembayaran (Manual/Gateway).
+    4. **Onboarding:** Sistem mengirim email berisi Username/Password (atau Magic Link).
+    5. **Access:** User login ke dashboard untuk mengelola undangan.
+
+### 7.4. Affiliate System (Marketing)
+- **Concept:** Memberikan komisi kepada user/marketer yang mengajak user baru.
+- **Requirement:** Generate kode referral unik, tracking pendaftar via kode, dashboard komisi.
+
+### 7.5. B2B / Agency Mode (White Label)
+- **Goal:** Model bisnis Reseller/Agency. Vendor undangan fisik bisa bundle undangan digital.
+- **Hierarchy:**
+    - **Super Admin:** Owner System (Monetisasi & Infra).
+    - **Agency Admin:** Membeli slot/kredit dalam jumlah banyak. Punya dashboard sendiri untuk memanage banyak klien (couple).
+    - **End User (Couple):** (Opsional) Bisa diberi akses terbatas atau dikelola penuh oleh Agency.
+- **Note:** Tidak menjual source code, tapi menjual akses platform (SaaS Multi-tenancy).

@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { InvitationData, Person, Event, LoveStoryItem, Quotes } from "@/types/invitation";
+import { InvitationData, Person, Event, LoveStoryItem, Quotes, ThemeConfig } from "@/types/invitation";
 import { MOCK_DATA } from "@/data/mockData";
 import { BasicTheme } from "@/components/themes/BasicTheme";
 import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
-    Users, Calendar, Heart, Image as ImageIcon, Gift, Music
+    Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette
 } from "lucide-react";
 
 // Form Components
@@ -18,6 +18,7 @@ import GalleryForm from "@/components/dashboard/forms/GalleryForm";
 import GiftForm from "@/components/dashboard/forms/GiftForm";
 import QuotesForm from "@/components/dashboard/forms/QuotesForm";
 import MusicForm from "@/components/dashboard/forms/MusicForm";
+import ThemeSettingsForm from "@/components/dashboard/forms/ThemeSettingsForm";
 
 export default function DashboardPage() {
     // State
@@ -103,6 +104,20 @@ export default function DashboardPage() {
         setInvitationData(prev => ({ ...prev, musicUrl: value }));
     };
 
+    const handleThemeConfigChange = (field: keyof ThemeConfig, value: string) => {
+        setInvitationData(prev => ({
+            ...prev,
+            themeConfig: {
+                ...(prev.themeConfig || MOCK_DATA.themeConfig!),
+                [field]: value
+            }
+        }));
+    };
+
+    const handleCoverChange = (value: string) => {
+        setInvitationData(prev => ({ ...prev, coverImage: value }));
+    };
+
     const handleSave = () => {
         const result = invitationSchema.safeParse(invitationData);
         if (!result.success) {
@@ -124,6 +139,7 @@ export default function DashboardPage() {
         { id: "cerita", label: "Cerita", icon: Heart },
         { id: "galeri", label: "Galeri", icon: ImageIcon },
         { id: "hadiah", label: "Hadiah", icon: Gift },
+        { id: "tampilan", label: "Tampilan", icon: Palette },
         { id: "lainnya", label: "Lainnya", icon: Music },
     ];
 
@@ -243,6 +259,15 @@ export default function DashboardPage() {
                                 shippingAddress={invitationData.shippingAddress}
                                 onGiftOptionsChange={handleGiftOptionsChange}
                                 onAddressChange={handleAddressChange}
+                                errors={errors}
+                            />
+                        )}
+                        {activeTab === "tampilan" && (
+                            <ThemeSettingsForm
+                                themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
+                                coverImage={invitationData.coverImage || ""}
+                                onConfigChange={handleThemeConfigChange}
+                                onCoverChange={handleCoverChange}
                                 errors={errors}
                             />
                         )}

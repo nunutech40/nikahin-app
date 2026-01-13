@@ -116,4 +116,11 @@ export const MOCK_DATA: InvitationData = {
         recipient: "Robert Downey & Dakot Johnson",
         address: "Jl. Merdeka No. 123, RT 05/RW 03, Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12345",
     },
+    coverImage: "/images/couple/hero-couple.png",
+    themeConfig: {
+        primaryColor: "#D4AF37", // Gold
+        secondaryColor: "#F3E5AB", // Light Gold
+        fontHeading: "Playfair Display",
+        fontBody: "Inter",
+    },
 };
