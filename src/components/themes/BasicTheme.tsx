@@ -686,11 +686,20 @@ function GallerySection({ gallery }: { gallery: string[] }) {
     );
 }
 
-// Gift Section
+// GiftSection
 function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicThemeProps['data']['giftOptions']; shippingAddress: BasicThemeProps['data']['shippingAddress'] }) {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [direction, setDirection] = useState(0);
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const [copiedAddress, setCopiedAddress] = useState(false);
+
+    // Auto-swipe functionality
+    useEffect(() => {
+        const timer = setInterval(() => {
+            paginate(1);
+        }, 5000);
+        return () => clearInterval(timer);
+    }, [currentSlide]);
 
     const handleCopy = (accountNumber: string, index: number) => {
         navigator.clipboard.writeText(accountNumber);
@@ -704,14 +713,39 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
         setTimeout(() => setCopiedAddress(false), 2000);
     };
 
-    const nextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % giftOptions.length);
+    const paginate = (newDirection: number) => {
+        setDirection(newDirection);
+        setCurrentSlide((prev) => {
+            let next = prev + newDirection;
+            if (next < 0) next = giftOptions.length - 1;
+            if (next >= giftOptions.length) next = 0;
+            return next;
+        });
     };
 
-    const prevSlide = () => {
-        setCurrentSlide((prev) =>
-            prev === 0 ? giftOptions.length - 1 : prev - 1
-        );
+    const slideVariants = {
+        enter: (direction: number) => ({
+            x: direction > 0 ? 200 : -200,
+            opacity: 0,
+            scale: 0.9
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1,
+            scale: 1
+        },
+        exit: (direction: number) => ({
+            zIndex: 0,
+            x: direction < 0 ? 200 : -200,
+            opacity: 0,
+            scale: 0.9
+        })
+    };
+
+    const swipeConfidenceThreshold = 10000;
+    const swipePower = (offset: number, velocity: number) => {
+        return Math.abs(offset) * velocity;
     };
 
     return (
@@ -737,15 +771,32 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
 
             {/* Bank Account Carousel */}
             <div className="max-w-md mx-auto mb-12">
-                <div className="relative">
-                    <AnimatePresence mode="wait">
+                <div className="relative h-[340px] md:h-[320px]">
+                    <AnimatePresence initial={false} custom={direction} mode="wait">
                         <motion.div
                             key={currentSlide}
-                            initial={{ opacity: 0, x: 100 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -100 }}
-                            transition={{ duration: 0.3 }}
-                            className="glass rounded-2xl p-6 shadow-lg"
+                            custom={direction}
+                            variants={slideVariants}
+                            initial="enter"
+                            animate="center"
+                            exit="exit"
+                            transition={{
+                                x: { type: "spring", stiffness: 300, damping: 30 },
+                                opacity: { duration: 0.2 }
+                            }}
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            dragElastic={1}
+                            onDragEnd={(e, { offset, velocity }) => {
+                                const swipe = swipePower(offset.x, velocity.x);
+
+                                if (swipe < -swipeConfidenceThreshold) {
+                                    paginate(1);
+                                } else if (swipe > swipeConfidenceThreshold) {
+                                    paginate(-1);
+                                }
+                            }}
+                            className="absolute top-0 left-0 w-full glass rounded-2xl p-6 shadow-lg cursor-grab active:cursor-grabbing touch-pan-y"
                         >
                             <div className="text-center mb-4">
                                 <span className="text-4xl mb-2 block">{giftOptions[currentSlide].logo}</span>
@@ -758,7 +809,7 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
                                 <p className="text-xs md:text-sm text-[var(--color-text-light)] mb-1">
                                     Nomor Rekening
                                 </p>
-                                <p className="text-lg md:text-xl font-mono font-bold text-[var(--color-primary-dark)]">
+                                <p className="text-lg md:text-xl font-mono font-bold text-[var(--color-primary-dark)] select-all">
                                     {giftOptions[currentSlide].accountNumber}
                                 </p>
                                 <p className="text-sm md:text-base text-[var(--color-text)] mt-1">
@@ -768,7 +819,7 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
 
                             <button
                                 onClick={() => handleCopy(giftOptions[currentSlide].accountNumber, currentSlide)}
-                                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--color-primary)] text-white text-sm md:text-base font-medium hover:bg-[var(--color-primary-dark)] transition-all"
+                                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[var(--color-primary)] text-white text-sm md:text-base font-medium hover:bg-[var(--color-primary-dark)] transition-all active:scale-95"
                             >
                                 {copiedIndex === currentSlide ? (
                                     <>
@@ -784,20 +835,25 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
                             </button>
                         </motion.div>
                     </AnimatePresence>
+                </div>
 
-                    {/* Navigation Dots */}
-                    <div className="flex justify-center gap-2 mt-4">
-                        {giftOptions.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrentSlide(index)}
-                                className={`w-2 h-2 rounded-full transition-all ${index === currentSlide
-                                    ? "bg-[var(--color-primary)] w-6"
-                                    : "bg-[var(--color-primary)]/30"
-                                    }`}
-                            />
-                        ))}
-                    </div>
+                {/* Bank Selector Tabs */}
+                <div className="flex justify-center flex-wrap gap-3 mt-6 z-10 relative">
+                    {giftOptions.map((option, index) => (
+                        <button
+                            key={index}
+                            onClick={() => {
+                                setDirection(index > currentSlide ? 1 : -1);
+                                setCurrentSlide(index);
+                            }}
+                            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 border ${index === currentSlide
+                                ? "bg-[var(--color-primary)] text-white border-[var(--color-primary)] shadow-md transform scale-105"
+                                : "bg-white/50 text-[var(--color-text)] border-[var(--color-primary-light)]/30 hover:bg-white hover:border-[var(--color-primary)]"
+                                }`}
+                        >
+                            {option.bankName}
+                        </button>
+                    ))}
                 </div>
             </div>
 
@@ -830,7 +886,7 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
 
                     <button
                         onClick={handleCopyAddress}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--color-primary)] text-[var(--color-primary)] text-sm md:text-base font-medium hover:bg-[var(--color-primary)] hover:text-white transition-all"
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-[var(--color-primary)] text-[var(--color-primary)] text-sm md:text-base font-medium hover:bg-[var(--color-primary)] hover:text-white transition-all active:scale-95"
                     >
                         {copiedAddress ? (
                             <>
