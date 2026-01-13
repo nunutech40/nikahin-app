@@ -1,63 +1,71 @@
-# Rekap Stack
+# 🛠️ Technical Stack Recap: Nikahin App
+
+Dokumen ini merangkum seluruh teknologi dan konfigurasi yang digunakan dalam pengembangan platform Nikahin. Perancangan ini didasarkan pada efisiensi performa, keamanan, serta optimalisasi sumber daya (disk space & RAM).
 
 ---
 
-## Technical Stack Recap [Project: Undangan Online]
+## 1. Core Development Stack
 
-### 1. Core Development Stack
-
-- **Language:** TypeScript (Strict Mode). Satu bahasa untuk Frontend dan Backend. Type-safe, cocok dengan mindset lo sebagai iOS/Android dev.
-- **Framework:** **Next.js 14+ (App Router)**.
-    - *Frontend:* React components dengan Server Component (RSC) untuk SEO dan speed.
-    - *Backend:* Server Actions (meniadakan kebutuhan API routes manual untuk internal logic).
-- **Styling:** **Tailwind CSS**. Standar industri untuk kustomisasi UI cepat tanpa *bloated* CSS files.
-- **Database Interface:** **Drizzle ORM**. Lightweight, TypeScript-first, dan jauh lebih hemat SSD daripada Prisma.
-
-### 2. Local Environment & SSD Optimization
-
-Untuk menjaga SSD laptop lo tetap "bernafas" di tengah gempuran Xcode/Android Studio:
-
-- **Node Manager:** `fnm` (Fast Node Manager) via Rust.
-- **Package Manager:** `pnpm`. Wajib, untuk fitur *content-addressable store* yang menghemat *disk space* secara masif.
-- **Runtime:** Node.js 20 (LTS).
-
-### 3. Data & Security Architecture
-
-- **Database:** PostgreSQL (Existing di server IDCloudHost).
-- **Connection Strategy (Dev):** **SSH Tunneling**.
-    - Port Local `5433` -> Port Remote `5432`.
-    - Database Target: `undangan_dev` (Bikin DB baru khusus development).
-- **Connection Strategy (Prod):** Localhost connection (Internal network di dalam server).
-- **Secrets Management:** File `.env.local` (Local) dan Environment Variables (Server). **Dilarang keras push `.env` ke GitHub.**
-
-### 4. Infrastructure & Deployment (The "Elite" Path)
-
-Strategi untuk menjaga server tetap stabil (mengingat lo ada project Vapor di situ):
-
-- **CI/CD:** **GitHub Actions**. Proses build (CPU/RAM intensive) dilakukan di server GitHub, bukan di server lo.
-- **Containerization:** **Docker**. Aplikasi lo dibungkus jadi image. Menjamin "Jalan di local, jalan di server".
-- **Orchestration:** **Docker Compose**. Untuk running Next.js app dan menghubungkannya dengan Postgres.
-- **Process Manager:** **PM2**. Untuk monitoring logs dan auto-restart jika app crash di dalam container atau bare-metal.
-- **Reverse Proxy:** **Nginx** (Existing). Untuk handle SSL (Certbot) dan routing domain ke port Next.js.
-
-### 5. Application Structure (Monolith)
-
-Satu repo untuk mempermudah manajemen:
-
-- `src/app/`: Routing dan UI (Frontend).
-- `src/db/`: Schema Drizzle dan konfigurasi database.
-- `src/components/`: Reusable UI (Undangan templates, Admin dashboard).
-- `src/lib/`: Utility functions dan Server Actions (Backend logic).
+*   **Language:** **TypeScript** (Strict Mode). Digunakan di seluruh ekosistem (Frontend & Backend) untuk menjamin *Type-Safety*.
+*   **Framework:** **Next.js 14+ (App Router)**.
+    *   **Frontend:** React Components dengan optimalisasi Server Components (RSC) untuk SEO.
+    *   **Backend:** Server Actions sebagai pengganti API Routes manual untuk efisiensi logic internal.
+*   **Styling:** **Tailwind CSS**. Digunakan untuk kustomisasi UI yang cepat dan ringan.
+*   **Database Interface:** **Drizzle ORM**. Driver *TypeScript-first* yang ringan, performa tinggi, dan hemat ruang disk.
+*   **Animations:** **Framer Motion**. Untuk memberikan pengalaman pengguna yang premium melalui animasi transisi.
 
 ---
 
-## Project Roadmap (Immediate Actions)
+## 2. Local Environment & Optimization
 
-1. **Phase 1 (Setup):** Install `fnm` & `pnpm` -> Init Next.js -> Setup SSH Tunnel ke IDCloudHost.
-2. **Phase 2 (Data):** Design DB Schema (Drizzle) -> Push schema ke `undangan_dev`.
-3. **Phase 3 (MVP):** Bikin satu Page Template (`app/[slug]/page.tsx`) & Form RSVP.
-4. **Phase 4 (Deploy):** Setup Dockerfile & GitHub Actions -> Live.
+Konfigurasi ini dioptimalkan untuk menjaga performa mesin pengembang (SSD & RAM):
 
-**Logic holds?** Ini sudah standar industri untuk *fullstack engineering* yang efisien. Lo nggak bakal buang waktu di infrastruktur yang nggak perlu.
+*   **Node Manager:** `fnm` (Fast Node Manager) – Berbasis Rust, memberikan manajemen versi Node yang sangat cepat.
+*   **Package Manager:** `pnpm`. Wajib digunakan karena fitur *content-addressable store* yang menghemat penggunaan SSD secara masif.
+*   **Runtime:** Node.js 20 (LTS).
 
-Mau gue buatin **Drizzle Schema** pertama lo yang mencakup tabel `Invitations`, `Events`, dan `Guests` supaya lo tinggal *copy-paste* ke project?
+---
+
+## 3. Data & Security Architecture
+
+*   **Database:** PostgreSQL (Housed on IDCloudHost).
+*   **Connection Strategy (Development):** **SSH Tunneling**.
+    *   Local Port: `5433` → Remote Port: `5432`.
+    *   Target DB: `undangan_dev` (Lingkungan isolasi untuk pengembangan).
+*   **Connection Strategy (Production):** Koneksi Localhost (Internal network di dalam server).
+*   **Secrets Management:** 
+    *   Local: `.env.local` (Dilarang keras masuk ke version control).
+    *   Production: Environment Variables pada dashboard deployment.
+
+---
+
+## 4. Infrastructure & Deployment (CI/CD)
+
+Strategi untuk menjaga stabilitas server (Vapor/Next.js coexistence):
+
+*   **CI/CD Pipeline:** **GitHub Actions**. Proses build dilakukan di cloud (GitHub Runner) untuk menghemat sumber daya CPU/RAM server produksi.
+*   **Containerization:** **Docker**. Menjamin konsistensi lingkungan jalannya aplikasi antara lokal dan server.
+*   **Orchestration:** **Docker Compose**. Mengelola kontainer Next.js dan integrasi dengan database.
+*   **Process Manager:** **PM2**. Digunakan di dalam kontainer atau bare-metal untuk monitoring log dan mekanisme *auto-restart*.
+*   **Reverse Proxy:** **Nginx**. Menangani terminasi SSL (Certbot) dan routing trafik ke port aplikasi.
+
+---
+
+## 5. Application Structure (Monolith)
+
+Struktur folder terpusat untuk mempermudah manajemen kode:
+
+*   `src/app/`: Routing, UI Pages, dan Server Components.
+*   `src/db/`: Definisi Schema Drizzle, konfigurasi koneksi, dan migrasi.
+*   `src/components/`: Kumpulan komponen UI (Themes, Dashboard, Shared UI).
+*   `src/lib/`: Logic backend, Server Actions, validasi schemas, dan helper functions.
+*   `src/types/`: Definisi TypeScript Interface global.
+
+---
+
+## 6. Implementation Roadmap
+
+1.  **Phase 1 (Setup):** Inisialisasi Project (pnpm/fnm) → Konfigurasi SSH Tunnel → integrasi Drizzle.
+2.  **Phase 2 (Data):** Perancangan Schema Database → Push Schema ke `undangan_dev`.
+3.  **Phase 3 (MVP):** Implementasi Controller Page (`app/[slug]`) → Integrasi Theme Engine → Form RSVP.
+4.  **Phase 4 (Deployment):** Dockerization → Setup GitHub Actions → Live Production.

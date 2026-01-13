@@ -110,25 +110,6 @@ Refactor the codebase to separate data from presentation, enabling users to swit
 
 ### 📊 Status: ✅ **COMPLETED** (100%)
 
-**Current State:**
-- ✅ Phase 2.1: Extract Theme Component - **COMPLETED**
-- ✅ Phase 2.2: Refactor Page Controller - **COMPLETED**
-- ✅ Phase 2.3: Create Theme Registry - **COMPLETED**
-- ✅ Phase 2.4: Cleanup & Documentation - **COMPLETED**
-
-**Completed:**
-- ✅ Mock data extracted to `/src/data/mockData.ts`
-- ✅ Type definitions created in `/src/types/invitation.ts`
-- ✅ Bottom Navigation extracted to component
-- ✅ Music Toggle extracted to component
-- ✅ BasicTheme component created with all UI sections
-- ✅ Page controller refactored to thin controller pattern
-- ✅ Data flow verified and working correctly
-- ✅ Theme registry created with metadata and component mapping
-- ✅ Theme loading integrated into page controller
-- ✅ JSDoc comments added to all theme interfaces
-- ✅ THEME_DEVELOPMENT.md guide created
-
 ---
 
 ## 📝 Iterasi 3: User Dashboard (Data Entry)
@@ -539,20 +520,19 @@ Each phase has a **Rollback Point** that explains how to undo changes if issues 
 
 ## 📊 Overall Project Status
 
-**Current Phase:** Iterasi 2 - Theme Engine (Decoupling)
+**Current Phase:** Iterasi 3 - User Dashboard (Data Entry)
 
-**Overall Progress:** ~25% Complete
+**Overall Progress:** ~40% Complete (approx based on T1, T2 completion)
 
-**Next Milestone:** Complete theme extraction and refactoring
+**Next Milestone:** Complete state management and form validation integration
 
 **Estimated Completion:** 
-- Iterasi 2: 2-3 days
 - Iterasi 3: 3-4 days
 - Iterasi 4: 4-5 days
 - Iterasi 5: 3-4 days
 - Iterasi 6: 2-3 days
 
-**Total Estimated Time:** 14-19 days (assuming 4-6 hours/day)
+**Total Estimated Time:** 12-16 days (assuming 4-6 hours/day)
 
 ---
 
