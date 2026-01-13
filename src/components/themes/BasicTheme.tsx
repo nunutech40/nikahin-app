@@ -247,10 +247,10 @@ function HeroSection({ onOpen, guestName, data }: { onOpen: () => void; guestNam
                     className="mb-8"
                 >
                     <div className="relative w-64 h-64 md:w-80 md:h-80 mx-auto">
-                        <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] p-3 animate-pulse-slow">
-                            <div className="absolute inset-0 rounded-full border border-[var(--color-primary-light)] m-2" />
+                        <div className="absolute inset-0 rounded-[3rem] border-2 border-[var(--color-primary)] p-3 animate-pulse-slow rotate-3">
+                            <div className="absolute inset-0 rounded-[2.5rem] border border-[var(--color-primary-light)] m-2 -rotate-3" />
                         </div>
-                        <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-2xl">
+                        <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border-4 border-white shadow-2xl">
                             <Image
                                 src="/images/couple/hero-couple.png"
                                 alt={`${data.groom.name} & ${data.bride.name}`}
@@ -391,9 +391,9 @@ function CoupleSection({ groom, bride }: { groom: BasicThemeProps['data']['groom
 
                         <div className="relative glass rounded-3xl p-8 md:p-10 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
                             <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-6">
-                                <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] animate-pulse-slow" />
-                                <div className="absolute inset-2 rounded-full border border-[var(--color-primary-light)] opacity-50" />
-                                <div className="absolute inset-4 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                <div className="absolute inset-0 rounded-[2.5rem] border-2 border-[var(--color-primary)] animate-pulse-slow rotate-6" />
+                                <div className="absolute inset-2 rounded-[2.2rem] border border-[var(--color-primary-light)] opacity-50 -rotate-3" />
+                                <div className="absolute inset-4 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl">
                                     <Image
                                         src={groom.photo}
                                         alt={groom.name}
@@ -437,9 +437,9 @@ function CoupleSection({ groom, bride }: { groom: BasicThemeProps['data']['groom
 
                         <div className="relative glass rounded-3xl p-8 md:p-10 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
                             <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-6">
-                                <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] animate-pulse-slow" />
-                                <div className="absolute inset-2 rounded-full border border-[var(--color-primary-light)] opacity-50" />
-                                <div className="absolute inset-4 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                <div className="absolute inset-0 rounded-[2.5rem] border-2 border-[var(--color-primary)] animate-pulse-slow -rotate-6" />
+                                <div className="absolute inset-2 rounded-[2.2rem] border border-[var(--color-primary-light)] opacity-50 rotate-3" />
+                                <div className="absolute inset-4 rounded-[2rem] overflow-hidden border-4 border-white shadow-xl">
                                     <Image
                                         src={bride.photo}
                                         alt={bride.name}
