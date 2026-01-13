@@ -1,76 +1,70 @@
-## 1. Project Goal & Value Proposition
+# 💍 PRD: Nikahin - Digital Wedding Invitation SaaS
 
-Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan pernikahan digital berbasis tema.
+## 1. Project Overview & Value Proposition
 
-- **Core Value:** User bisa kustomisasi data sekali, lalu ganti tema berkali-kali tanpa kehilangan data (*Separation of Data and Presentation*).
-- **Efficiency:** Skalabilitas tinggi dengan satu *Core Engine* untuk ribuan undangan.
+Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan pernikahan digital berbasis tema yang elegan dan modern.
+
+*   **Core Value:** Pemisahan antara **Data** dan **Presentasi**. Pengguna dapat menginput data satu kali, namun bebas mengganti tema kapan saja tanpa kehilangan informasi (*Data persistence across themes*).
+*   **Efficiency:** Skalabilitas tinggi menggunakan satu *Core Engine* untuk menangani ribuan undangan secara dinamis.
+
+---
 
 ## 2. User Personas & Flows
 
 ### A. Super Admin (System Owner)
+*   **Goal:** Monetisasi, manajemen infrastruktur, dan kurasi desain.
+*   **Flow:** Login → Dashboard Admin → List & Aktivasi User (Manual/Auto Payment Validation) → Manajemen Tema (CRUD Template).
 
-- **Goal:** Monetisasi dan manajemen infrastruktur.
-- **Flow:** Login -> Lihat list user -> Aktivasi user (Manual payment validation) -> Manage themes (CRUD template).
-
-### B. User (Customer/Bride-Groom)
-
-- **Goal:** Membuat dan mengelola undangan sendiri.
-- **Flow:** Register -> Login -> Input Data (Groom, Bride, Event, Maps, Gallery) -> Pilih Tema -> Publish -> Share Link.
+### B. User (The Couple / Customer)
+*   **Goal:** Membuat, merancang, dan mengelola undangan sendiri dengan mudah.
+*   **Flow:** Register/Login → Input Data (Groom, Bride, Event, Maps, Gallery) → Pilih Tema → Preview → Publish → Bagikan Link.
 
 ### C. Guest (Public End-user)
-
-- **Goal:** Mendapatkan informasi acara dan melakukan RSVP.
-- **Flow:** Akses URL (`/slug`) -> Lihat konten -> Kirim RSVP & Ucapan.
+*   **Goal:** Mendapatkan informasi detil acara dan memberikan respons.
+*   **Flow:** Akses URL (`nikahin.app/slug`) → Animasi Pembuka → Lihat Konten (Timeline, Galeri, Lokasi) → Kirim RSVP & Ucapan.
 
 ---
 
-## 3. Functional Requirements (Agentic Specs)
+## 3. Functional Requirements
 
 ### 3.1. Dynamic Theme Engine (The Core)
+*   **Constraint:** Aplikasi menggunakan sistem *Theme Registry*.
+*   **Controller Logic:** `app/[slug]/page.tsx` mengambil data dari database berdasarkan slug, lalu memanggil komponen tema yang sesuai dari `@/components/themes/`.
+*   **Prop Pass:** Data dikirim ke komponen tema melalui satu prop tunggal bernama `data` untuk konsistensi antar tema.
 
-- **Spec:** Aplikasi harus memisahkan logic pengambilan data dari database dengan logic UI Rendering.
-- **Implementation:** `app/[slug]/page.tsx` bertindak sebagai *Controller*. Ia akan mengambil data berdasarkan `slug`, lalu memanggil komponen tema yang tersimpan di `@/components/themes/[theme_slug].tsx`.
-- **Constraint:** Konten undangan harus dikirim ke komponen tema melalui satu *prop* tunggal: `data`.
+### 3.2. Data Architecture (JSONB Content)
+*   **Logic:** Menggunakan satu kolom **JSONB** bernama `content` pada tabel `invitations` untuk fleksibilitas field antar tema (Misal: Tema A butuh 10 foto, Tema B hanya 3).
+*   **Wajib Field:**
+    *   Info Mempelai (Nama, Orang Tua, Foto).
+    *   Events (Nama Acara, Waktu, Lokasi, Link Google Maps).
+    *   Gallery (Array of Image URLs).
+    *   Quotes (Ayat/Kutipan).
+    *   Theme Config (Colors & Fonts).
 
-### 3.2. Data Structure (JSONB Content)
-
-- **Logic:** Karena tiap tema memiliki kebutuhan field yang berbeda (misal: Tema A butuh 5 foto, Tema B butuh video), gunakan kolom **JSONB** bernama `content` di tabel `invitations`.
-- **Field Wajib di JSONB:**
-    - `groom_name`, `groom_parent_name`.
-    - `bride_name`, `bride_parent_name`.
-    - `events`: Array of objects (nama acara, jam, alamat, link maps).
-    - `gallery`: Array of strings (URL gambar).
-    - `quotes`: Teks ayat atau kutipan.
-
-### 3.3. Invitation Management (User Dashboard)
-
-- **Feature:** Form CRUD untuk isi tabel `invitations`.
-- **Media:** Integrasi dengan Storage (Supabase Storage/Cloudinary) untuk upload foto. Agent harus menghandle *state* upload dan menyimpan URL-nya ke dalam JSONB.
+### 3.3. Management Dashboard
+*   **Editor:** Interface CRUD untuk mengisi dan mengubah `invitations`.
+*   **Media:** Integrasi dengan Storage (Supabase/Cloudinary) untuk manajemen aset gambar.
+*   **Preview:** Live preview mode (Split screen) saat melakukan pengeditan data atau tema.
 
 ### 3.4. RSVP & Guestbook
-
-- **Feature:** Form publik di sisi Guest.
-- **Logic:** Menggunakan **Next.js Server Actions**. Input: `invitation_id`, `name`, `status` (Hadir/Tidak), `message`.
-- **Real-time:** User bisa melihat update RSVP di dashboard mereka secara instan.
+*   **Guest Input:** Menggunakan Next.js Server Actions untuk performa optimal.
+*   **Data:** Menyimpan `invitation_id`, `name`, `attendance_status`, dan `message`.
+*   **Real-time Feedback:** Notifikasi atau update instan di sisi dashboard user saat ada RSVP baru.
 
 ---
 
-## 4. Technical Architecture (TRD)
+## 4. Technical Stack & Architecture
 
 ### 4.1. System Stack
+*   **Framework:** Next.js 14+ (App Router).
+*   **ORM:** Drizzle ORM.
+*   **Database:** PostgreSQL.
+*   **Styling:** Tailwind CSS + Framer Motion (untuk animasi transisi premium).
 
-- **Framework:** Next.js 14+ (App Router).
-- **ORM:** Drizzle ORM (Lightweight, Type-safe).
-- **DB:** PostgreSQL (Baremetal on IDCloudHost, accessed via SSH Tunnel port 5433).
-- **Styling:** Tailwind CSS + Framer Motion (untuk animasi transisi tema).
+### 4.2. Database Schema
+```typescript
+// Core Schema (Drizzle-like syntax)
 
-### 4.2. Database Schema (For Agent Implementation)
-
-TypeScript
-
-# 
-
-`// Refined Schema for Agent
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).unique().notNull(),
@@ -80,7 +74,7 @@ export const users = pgTable("users", {
 
 export const themes = pgTable("themes", {
   id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 50 }).unique().notNull(), // e.g., 'vintage-rose'
+  slug: varchar("slug", { length: 50 }).unique().notNull(),
   name: varchar("name", { length: 100 }).notNull(),
   isFree: boolean("is_free").default(true),
 });
@@ -89,8 +83,8 @@ export const invitations = pgTable("invitations", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
   themeId: integer("theme_id").references(() => themes.id),
-  slug: varchar("slug", { length: 100 }).unique().notNull(), // The URL
-  content: jsonb("content").notNull(), // The meat: names, dates, maps
+  slug: varchar("slug", { length: 100 }).unique().notNull(),
+  content: jsonb("content").notNull(), // Data: Mempelai, Acara, Gallery, dsb.
   isPublished: boolean("is_published").default(false),
   musicUrl: text("music_url"),
 });
@@ -102,84 +96,48 @@ export const guests = pgTable("guests", {
   attendance: varchar("attendance", { length: 20 }), // 'hadir' | 'tidak'
   message: text("message"),
   createdAt: timestamp("created_at").defaultNow(),
-});`
+});
+```
 
 ---
 
-## 5. Implementation Roadmap for Agentic AI
+## 5. Implementation Roadmap
 
-### Iterasi 1: Database & Core Rendering
+### Phase 1: Core Rendering & DB
+1. Setup Drizzle & Database Schema.
+2. Implementasi `app/[slug]/page.tsx` controller.
+3. Integrasi Mock Data untuk testing rendering.
 
-1. Setup Drizzle dan push schema ke Postgres.
-2. Bikin Mock Data di database untuk satu `slug`.
-3. Bikin Route `app/[slug]/page.tsx` yang bisa fetch data dan tampilkan JSON sederhana.
+### Phase 2: Theme Engine v1
+1. Pembuatan `BasicTheme.tsx` (Mobile First).
+2. Implementasi animasi pembuka menggunakan Framer Motion.
+3. Sistem Registry Tema.
 
-### Iterasi 2: Theme Component v1
-
-1. Bikin `components/themes/BasicTheme.tsx`.
-2. Styling menggunakan Tailwind (Mobile First).
-3. Implementasi animasi masuk (fade-in) menggunakan Framer Motion.
-
-### Iterasi 3: User Dashboard & Auth
-
-1. Setup NextAuth atau library auth sederhana.
-2. Bikin Form untuk edit `content` JSONB.
-3. Implementasi preview undangan (Split screen: Editor di kiri, Preview Mobile di kanan).
+### Phase 3: Dashboard & Appearance
+1. Setup Autentikasi User.
+2. Form CRUD untuk data undangan.
+3. Pengaturan Tampilan (Warna & Font Picker).
+1. Live Preview integrasi.
 
 ---
 
-## 6. Security & Performance (Non-Functional)
+## 6. Non-Functional Requirements
 
-- **Security:** Whitelist IP untuk SSH Tunnel (Jalur Local dev).
-- **Performance:** Gunakan `next/image` untuk optimasi foto undangan yang diupload user.
-- **SEO:** Server Side Rendering (SSR) untuk page `[slug]` agar *metadata* (OpenGraph) muncul saat link di-share di WhatsApp.
-
----
-
-**Logic holds.** Ini dokumentasi yang cukup "bergizi" buat lo kasih ke Agentic AI (kayak Cursor, Windsurf, atau GPT-Engineer). Dia bakal tau relasi tabelnya, cara kerjanya, dan batasan teknisnya.
-
-Gatot's Advice:
-
-Jangan suruh AI-nya bikin semuanya sekaligus. Suruh dia selesaikan Iterasi 1 dulu. Begitu koneksi DB sukses, baru lanjut ke UI.
-
-Mau gue buatin **System Prompt** spesifik yang bisa lo *copy-paste* ke AI Agent lo supaya dia nggak melenceng dari TRD ini?
+*   **Performance:** Optimalisasi gambar menggunakan `next/image` dan Lazy Loading.
+*   **SEO:** Implementasi Server Side Rendering (SSR) untuk mendukung OpenGraph Metadata (Thumbnail saat link di-share di WhatsApp/Media Sosial).
+*   **Security:** Proteksi API Routes dan validasi input menggunakan Zod.
 
 ---
 
-## 7. Additional Features & Future Roadmap
+## 7. SaaS Features & Future Roadmap
 
-### 7.1. Theme & Appearance Settings (Phase 3 Extension)
-- **Goal:** Memberikan kontrol visual dasar kepada user.
-- **Components:** Tab baru di Dashboard "Tampilan".
-- **Fields:**
-    - **Palette:** Pilihan warna (Primary, Secondary, Accent).
-    - **Typography:** Pilihan Font Pair (Heading Font, Body Font).
-    - **Cover:** Khusus untuk halaman depan (sampul), opsional upload foto sampul khusus jika berbeda dari galeri.
+### 7.1. Appearance Customization
+*   User dapat menyesuaikan palet warna (Primary/Secondary) dan pilihan font (Google Fonts integration) yang diaplikasikan ke tema secara dinamis.
 
-### 7.2. Theme System Architecture (Designer Ecosystem)
-- **Concept:** Sistem tema berbasis *constraint* agar desainer bisa berkontribusi.
-- **Mechanism:**
-    - Menyediakan **Base Theme Props Types** yang ketat.
-    - Desainer membuat komponen React yang menerima props tersebut.
-    - Tema didaftarkan ke `ThemeRegistry`.
-- **User Flow:** User memilih tema dari "Theme Marketplace" di dashboard -> Preview instan dengan data mereka -> Apply.
+### 7.2. Business Logic & Monetization
+*   **Checkout & Pricing:** Tiered pricing (Free/Premium).
+*   **Onboarding:** Otomatisasi pengiriman akses setelah pembayaran diverifikasi.
 
-### 7.3. Business Logic (SaaS B2C)
-- **Flow:**
-    1. **Landing Page:** Marketing & Pricing.
-    2. **Checkout:** User memilih paket -> Payment.
-    3. **Validation:** Verifikasi pembayaran (Manual/Gateway).
-    4. **Onboarding:** Sistem mengirim email berisi Username/Password (atau Magic Link).
-    5. **Access:** User login ke dashboard untuk mengelola undangan.
-
-### 7.4. Affiliate System (Marketing)
-- **Concept:** Memberikan komisi kepada user/marketer yang mengajak user baru.
-- **Requirement:** Generate kode referral unik, tracking pendaftar via kode, dashboard komisi.
-
-### 7.5. B2B / Agency Mode (White Label)
-- **Goal:** Model bisnis Reseller/Agency. Vendor undangan fisik bisa bundle undangan digital.
-- **Hierarchy:**
-    - **Super Admin:** Owner System (Monetisasi & Infra).
-    - **Agency Admin:** Membeli slot/kredit dalam jumlah banyak. Punya dashboard sendiri untuk memanage banyak klien (couple).
-    - **End User (Couple):** (Opsional) Bisa diberi akses terbatas atau dikelola penuh oleh Agency.
-- **Note:** Tidak menjual source code, tapi menjual akses platform (SaaS Multi-tenancy).
+### 7.3. Agency & Affiliate
+*   **Agency Mode:** Dashboard khusus untuk vendor undangan (reseller) untuk mengelola banyak klien dalam satu akun.
+*   **Affiliate:** Sistem referral berbasis kode unik untuk strategi marketing organik.
