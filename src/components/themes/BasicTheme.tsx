@@ -1090,8 +1090,12 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                 <style>{`
                     /* Base Preview Styles (Positioning) - Applies to both Mobile & Desktop Preview */
                     .preview-wrapper { position: relative !important; overflow-x: hidden !important; min-height: 100% !important; }
+                    
+                    /* Trap typical fixed elements (Music, Nav) inside the preview frame */
+                    .preview-wrapper .fixed { position: absolute !important; }
+                    
                     /* FIX: Use sticky instead of absolute for modal so it stays in viewport during scroll */
-                    .preview-wrapper .fixed { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
+                    .preview-wrapper .fixed.inset-0.z-40 { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
                     
                     /* Welcome Modal Sizing for Preview */
                     .preview-wrapper .fixed.inset-0.z-40 .glass {
