@@ -2,14 +2,17 @@
 
 import { Image as ImageIcon, Plus, X, Link as LinkIcon } from 'lucide-react';
 import Image from 'next/image';
+import { z } from 'zod';
+import { getZodErrorByPath } from '@/lib/validation';
+import FormInput from '../FormInput';
 
 interface GalleryFormProps {
     gallery: string[];
     onChange: (newGallery: string[]) => void;
-    errors?: Record<string, string[] | undefined>;
+    errorSource: z.ZodError | null;
 }
 
-export default function GalleryForm({ gallery, onChange, errors }: GalleryFormProps) {
+export default function GalleryForm({ gallery, onChange, errorSource }: GalleryFormProps) {
     const handleAdd = () => {
         onChange([...gallery, '']);
     };
@@ -27,65 +30,62 @@ export default function GalleryForm({ gallery, onChange, errors }: GalleryFormPr
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
-                <ImageIcon className="w-5 h-5" />
-                <h3 className="font-serif text-lg font-semibold">Galeri Foto</h3>
+            <div className="flex items-center gap-3 text-slate-800 border-b border-slate-100 pb-3">
+                <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-500">
+                    <ImageIcon className="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-lg">Galeri Foto</h3>
+                    <p className="text-xs text-slate-400">Unggah momen bahagia Anda (Maksimal 10 foto)</p>
+                </div>
             </div>
 
-            <div className="grid gap-4">
+            <div className="grid gap-6">
                 {gallery.map((url, index) => (
-                    <div key={index} className="flex gap-3">
-                        <div className="flex-1 space-y-2">
-                            <div className="flex items-center gap-2">
-                                <div className="relative flex-1">
-                                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        value={url}
-                                        onChange={(e) => handleChange(index, e.target.value)}
-                                        placeholder="https://example.com/image.jpg"
-                                        className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm ${errors?.[`gallery.${index}`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                            }`}
-                                    />
-                                </div>
-                                <button
-                                    onClick={() => handleRemove(index)}
-                                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100"
-                                    title="Hapus Foto"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                    <div key={index} className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <div className="flex items-start gap-3">
+                            <div className="flex-1">
+                                <FormInput
+                                    label={`Link Foto ${index + 1}`}
+                                    value={url}
+                                    onChange={(e) => handleChange(index, e.target.value)}
+                                    placeholder="https://example.com/image.jpg"
+                                    error={getZodErrorByPath(errorSource, `gallery.${index}`)}
+                                    icon={<LinkIcon className="w-3.5 h-3.5" />}
+                                />
                             </div>
-                            {errors?.[`gallery.${index}`] && (
-                                <p className="text-xs text-red-500">{errors[`gallery.${index}`]?.[0]}</p>
-                            )}
-
-                            {/* Image Preview */}
-                            {url && (
-                                <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-                                    <Image
-                                        src={url}
-                                        alt={`Gallery ${index + 1}`}
-                                        fill
-                                        className="object-cover"
-                                        onError={(e) => {
-                                            // Fallback or error handling could be improved
-                                            (e.target as any).src = "https://placehold.co/600x400?text=Invalid+Image+URL";
-                                        }}
-                                    />
-                                </div>
-                            )}
+                            <button
+                                onClick={() => handleRemove(index)}
+                                className="mt-8 p-2.5 text-red-500 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100 shadow-sm"
+                                title="Hapus Foto"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
+
+                        {/* Image Preview Card */}
+                        {url && !getZodErrorByPath(errorSource, `gallery.${index}`) && (
+                            <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-slate-100 border-2 border-white shadow-md group">
+                                <Image
+                                    src={url}
+                                    alt={`Gallery ${index + 1}`}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    unoptimized // Useful for external URLs without config
+                                />
+                                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors" />
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
 
             <button
                 onClick={handleAdd}
-                className="w-full py-3 rounded-xl border-2 border-dashed border-[var(--color-primary-light)] text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary)]/5 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl border-2 border-dashed border-slate-200 text-slate-500 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 group"
             >
-                <Plus className="w-5 h-5" />
-                Tambah Foto
+                <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                Tambah Foto Galeri
             </button>
         </div>
     );

@@ -1,75 +1,152 @@
 import { z } from 'zod';
 
-// Person Schema (for Groom & Bride)
+/**
+ * ============================================
+ * DESCRIPTIVE VALIDATION SCHEMAS
+ * ============================================
+ * 
+ * Using Zod to enforce strict data integrity with 
+ * user-friendly, descriptive error messages.
+ */
+
+// 1. Person Schema (for Groom & Bride)
 const personSchema = z.object({
-    name: z.string().min(1, "Nama panggilan wajib diisi"),
-    fullName: z.string().min(1, "Nama lengkap wajib diisi"),
-    parentName: z.string().optional(), // Boleh kosong dulu
-    photo: z.string().url("Format URL foto tidak valid").optional().or(z.literal("")),
+    name: z.string()
+        .min(2, "Nama panggilan terlalu pendek (minimal 2 karakter)")
+        .max(50, "Nama panggilan terlalu panjang (maksimal 50 karakter)"),
+    fullName: z.string()
+        .min(3, "Nama lengkap sesuai identitas wajib diisi (minimal 3 karakter)")
+        .max(150, "Nama lengkap tidak boleh lebih dari 150 karakter"),
+    parentName: z.string()
+        .min(3, "Nama orang tua wajib diisi (minimal 3 karakter)")
+        .max(200, "Nama orang tua terlalu panjang"),
+    photo: z.string()
+        .url("Mohon masukkan format link foto yang valid (http/https)")
+        .optional()
+        .or(z.literal("")),
 });
 
-// Event Schema
+// 2. Event Schema
 const eventSchema = z.object({
-    name: z.string().min(1, "Nama acara wajib diisi"),
-    date: z.string().min(1, "Tanggal wajib diisi"),
-    time: z.string().min(1, "Waktu wajib diisi"),
-    location: z.string().min(1, "Lokasi wajib diisi"),
-    address: z.string().optional(),
-    mapsLink: z.string().url("Format link Google Maps tidak valid").optional().or(z.literal("")),
+    name: z.string()
+        .min(3, "Berikan nama acara yang jelas (contoh: Akad Nikah, Resepsi)")
+        .max(100, "Nama acara terlalu panjang"),
+    date: z.string()
+        .min(1, "Tanggal pelaksanaan acara harus ditentukan"),
+    time: z.string()
+        .min(1, "Waktu/Jam acara wajib diisi (contoh: 08:00 - Selesai)"),
+    location: z.string()
+        .min(3, "Nama tempat/gedung wajib diisi (minimal 3 karakter)"),
+    address: z.string()
+        .min(10, "Alamat lengkap wajib diisi agar tamu mudah menemukan lokasi")
+        .max(500, "Alamat terlalu panjang"),
+    mapsLink: z.string()
+        .url("Link Google Maps tidak valid. Pastikan link diawali dengan http/https")
+        .optional()
+        .or(z.literal("")),
 });
 
-// Love Story Schema
+// 3. Love Story Schema
 const loveStoryItemSchema = z.object({
-    title: z.string().min(1, "Judul momen wajib diisi"),
-    date: z.string().min(1, "Tanggal momen wajib diisi"),
-    story: z.string().min(1, "Cerita wajib diisi"),
-    icon: z.string().emoji("Harus berupa emoji").optional().or(z.literal("")),
+    title: z.string()
+        .min(3, "Judul momen wajib diisi (contoh: Pertama Ketemu)")
+        .max(100, "Judul momen terlalu panjang"),
+    date: z.string()
+        .min(1, "Beri tahu kapan momen ini terjadi (contoh: Tahun 2020)"),
+    story: z.string()
+        .min(10, "Ceritakan sedikit lebih detail tentang momen ini (minimal 10 karakter)")
+        .max(1000, "Cerita terlalu panjang (maksimal 1000 karakter)"),
+    icon: z.string()
+        .optional()
+        .or(z.literal("")),
 });
 
-// Quotes Schema
+// 4. Quotes Schema
 const quotesSchema = z.object({
-    verse: z.string().min(1, "Kutipan/Ayat wajib diisi"),
-    source: z.string().min(1, "Sumber kutipan wajib diisi"),
+    verse: z.string()
+        .min(10, "Kutipan atau ayat terlalu pendek (minimal 10 karakter)")
+        .max(2000, "Kutipan terlalu panjang"),
+    source: z.string()
+        .min(2, "Sebutkan sumber kutipan (contoh: Ar-Rum: 21)")
+        .max(100, "Sumber kutipan terlalu panjang"),
 });
 
-// Bank Account Schema
+// 5. Gift/Transfer Options Schema
 const bankAccountSchema = z.object({
-    bankName: z.string().min(1, "Nama bank wajib diisi"),
-    accountNumber: z.string().min(1, "Nomor rekening wajib diisi"),
-    accountHolder: z.string().min(1, "Nama pemilik rekening wajib diisi"),
+    bankName: z.string()
+        .min(2, "Nama Bank/Dompet Digital wajib diisi (contoh: BCA, GoPay)")
+        .max(50, "Nama bank terlalu panjang"),
+    accountNumber: z.string()
+        .min(5, "Nomor rekening/HP tidak valid (minimal 5 digit)")
+        .max(50, "Nomor rekening terlalu panjang")
+        .regex(/^[0-9-]+$/, "Format nomor rekening hanya boleh angka dan tanda hubung (-)"),
+    accountHolder: z.string()
+        .min(3, "Nama pemilik rekening wajib diisi sesuai buku tabungan")
+        .max(150, "Nama pemilik terlalu panjang"),
     logo: z.string().optional(),
 });
 
-// Shipping Address Schema
+// 6. Shipping Address Schema
 const shippingAddressSchema = z.object({
-    recipient: z.string().optional(),
-    address: z.string().optional(),
+    recipient: z.string()
+        .min(3, "Nama penerima paket wajib diisi")
+        .optional()
+        .or(z.literal("")),
+    address: z.string()
+        .min(10, "Alamat pengiriman kado fisik harus lengkap")
+        .optional()
+        .or(z.literal("")),
 }).optional();
 
-// Theme Config Schema
+// 7. Theme Config Schema
 const themeConfigSchema = z.object({
-    primaryColor: z.string().regex(/^#([0-9A-F]{3}){1,2}$/i, "Kode warna harus berupa Hex valid (contoh: #FFFFFF)"),
-    secondaryColor: z.string().regex(/^#([0-9A-F]{3}){1,2}$/i, "Kode warna harus berupa Hex valid"),
-    fontHeading: z.string().min(1, "Font heading wajib dipilih"),
-    fontBody: z.string().min(1, "Font body wajib dipilih"),
+    primaryColor: z.string()
+        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid. Gunakan format HEX (contoh: #D4AF37)"),
+    secondaryColor: z.string()
+        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid. Gunakan format HEX (contoh: #D4AF37)"),
+    fontHeading: z.string()
+        .min(1, "Mohon pilih salah satu font untuk judul"),
+    fontBody: z.string()
+        .min(1, "Mohon pilih salah satu font untuk teks isi"),
 });
 
-// Main Invitation Schema
+// 8. Main Invitation Schema
 export const invitationSchema = z.object({
-    slug: z.string().regex(/^[a-z0-9-]+$/, "Slug hanya boleh huruf kecil, angka, dan strip").min(3, "Slug minimal 3 karakter"),
-    weddingDate: z.string().optional(), // ISO String verification handled later
+    slug: z.string()
+        .min(3, "Link undangan (slug) minimal 3 karakter")
+        .max(100, "Link undangan terlalu panjang (maksimal 100 karakter)")
+        .regex(/^[a-z0-9-]+$/, "Link hanya boleh berisi huruf kecil, angka, dan tanda hubung (-) tanpa spasi"),
+    weddingDate: z.string()
+        .min(1, "Tanggal utama pernikahan wajib diisi untuk sistem CountDown"),
     groom: personSchema,
     bride: personSchema,
-    events: z.array(eventSchema).min(1, "Minimal harus ada 1 acara"),
+    events: z.array(eventSchema)
+        .min(1, "Wajib ada minimal 1 acara (misal: Akad Nikah)"),
     loveStory: z.array(loveStoryItemSchema).optional(),
     quotes: quotesSchema,
-    musicUrl: z.string().url("Format URL musik tidak valid").optional().or(z.literal("")),
+    musicUrl: z.string()
+        .url("Link musik tidak valid. Gunakan link MP3 atau URL yang didukung")
+        .optional()
+        .or(z.literal("")),
     giftOptions: z.array(bankAccountSchema).optional(),
     shippingAddress: shippingAddressSchema,
-    gallery: z.array(z.string().url("URL galeri tidak valid")).optional(),
+    gallery: z.array(z.string().url("Salah satu link foto galeri tidak valid"))
+        .optional(),
     themeConfig: themeConfigSchema.optional(),
-    coverImage: z.string().url("Format URL cover tidak valid").optional().or(z.literal("")),
+    coverImage: z.string()
+        .url("Link foto sampul tidak valid")
+        .optional()
+        .or(z.literal("")),
 });
 
-// Helper for single field validation (if needed for instant feedback)
 export type InvitationSchemaType = z.infer<typeof invitationSchema>;
+
+/**
+ * Helper to get error message from ZodError using path string
+ * Example path: "groom.name" or "events.0.name"
+ */
+export function getZodErrorByPath(error: z.ZodError | null, path: string): string | undefined {
+    if (!error) return undefined;
+    const issue = error.issues.find((i) => i.path.join('.') === path);
+    return issue?.message;
+}

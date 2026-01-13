@@ -1,15 +1,18 @@
 'use client';
 
 import { LoveStoryItem } from '@/types/invitation';
-import { Heart, Calendar, FileText, Plus, Trash2, Smile } from 'lucide-react';
+import { Heart, Plus, Trash2, Smile, Clock } from 'lucide-react';
+import { z } from 'zod';
+import { getZodErrorByPath } from '@/lib/validation';
+import FormInput from '../FormInput';
 
 interface LoveStoryFormProps {
     loveStory: LoveStoryItem[];
     onChange: (newLoveStory: LoveStoryItem[]) => void;
-    errors?: Record<string, string[] | undefined>;
+    errorSource: z.ZodError | null;
 }
 
-export default function LoveStoryForm({ loveStory, onChange, errors }: LoveStoryFormProps) {
+export default function LoveStoryForm({ loveStory, onChange, errorSource }: LoveStoryFormProps) {
     const handleAdd = () => {
         onChange([
             ...loveStory,
@@ -30,14 +33,19 @@ export default function LoveStoryForm({ loveStory, onChange, errors }: LoveStory
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
-                <Heart className="w-5 h-5" />
-                <h3 className="font-serif text-lg font-semibold">Kisah Cinta</h3>
+            <div className="flex items-center gap-3 text-slate-800 border-b border-slate-100 pb-3">
+                <div className="w-10 h-10 bg-amber-50 rounded-xl flex items-center justify-center text-amber-500">
+                    <Heart className="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-lg">Cerita Cinta</h3>
+                    <p className="text-xs text-slate-400">Bagikan momen perjalanan cinta Anda</p>
+                </div>
             </div>
 
             <div className="space-y-6">
                 {loveStory.map((item, index) => (
-                    <div key={index} className="p-4 rounded-xl bg-white border border-gray-200 shadow-sm relative group">
+                    <div key={index} className="p-4 rounded-xl bg-white border border-gray-100 shadow-sm relative group animate-in zoom-in-95 duration-200">
                         <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button
                                 onClick={() => handleRemove(index)}
@@ -48,80 +56,54 @@ export default function LoveStoryForm({ loveStory, onChange, errors }: LoveStory
                             </button>
                         </div>
 
-                        <div className="flex items-center gap-2 text-[var(--color-primary-dark)] mb-4">
-                            <span className="text-xl bg-[var(--color-primary-light)]/20 w-8 h-8 flex items-center justify-center rounded-full">
+                        <div className="flex items-center gap-2 mb-4">
+                            <span className="text-xl bg-slate-50 w-10 h-10 flex items-center justify-center rounded-lg border border-slate-100">
                                 {item.icon}
                             </span>
-                            <h4 className="font-medium">Cerita {index + 1}</h4>
+                            <h4 className="font-semibold text-slate-700 text-sm">Momen #{index + 1}</h4>
                         </div>
 
                         <div className="space-y-4">
-                            <div className="grid grid-cols-[1fr_auto] gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Judul Momen</label>
-                                    <input
-                                        type="text"
-                                        value={item.title}
-                                        onChange={(e) => handleChange(index, 'title', e.target.value)}
-                                        placeholder="Pertemuan Pertama"
-                                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`loveStory.${index}.title`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                            }`}
-                                    />
-                                    {errors?.[`loveStory.${index}.title`] && (
-                                        <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.title`]?.[0]}</p>
-                                    )}
-                                </div>
-                                <div className="w-24">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Emoji</label>
-                                    <div className="relative">
-                                        <Smile className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                        <input
-                                            type="text"
-                                            value={item.icon}
-                                            onChange={(e) => handleChange(index, 'icon', e.target.value)}
-                                            placeholder="❤️"
-                                            className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-center ${errors?.[`loveStory.${index}.icon`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                                }`}
-                                        />
-                                    </div>
-                                    {errors?.[`loveStory.${index}.icon`] && (
-                                        <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.icon`]?.[0]}</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Tanggal / Periode</label>
-                                <div className="relative">
-                                    <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        value={item.date}
-                                        onChange={(e) => handleChange(index, 'date', e.target.value)}
-                                        placeholder="Januari 2020"
-                                        className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`loveStory.${index}.date`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                            }`}
-                                    />
-                                </div>
-                                {errors?.[`loveStory.${index}.date`] && (
-                                    <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.date`]?.[0]}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Cerita Singkat</label>
-                                <textarea
-                                    value={item.story}
-                                    onChange={(e) => handleChange(index, 'story', e.target.value)}
-                                    placeholder="Kami bertemu di sebuah kedai kopi..."
-                                    rows={3}
-                                    className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.[`loveStory.${index}.story`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                                        }`}
+                            <div className="grid grid-cols-[1fr_100px] gap-4">
+                                <FormInput
+                                    label="Judul Momen"
+                                    value={item.title}
+                                    onChange={(e) => handleChange(index, 'title', e.target.value)}
+                                    placeholder="Contoh: Pertama Ketemu"
+                                    error={getZodErrorByPath(errorSource, `loveStory.${index}.title`)}
+                                    required
                                 />
-                                {errors?.[`loveStory.${index}.story`] && (
-                                    <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.story`]?.[0]}</p>
-                                )}
+                                <FormInput
+                                    label="Emoji"
+                                    value={item.icon}
+                                    onChange={(e) => handleChange(index, 'icon', e.target.value)}
+                                    placeholder="❤️"
+                                    error={getZodErrorByPath(errorSource, `loveStory.${index}.icon`)}
+                                    icon={<Smile className="w-3.5 h-3.5" />}
+                                    className="text-center"
+                                />
                             </div>
+
+                            <FormInput
+                                label="Waktu / Tahun"
+                                value={item.date}
+                                onChange={(e) => handleChange(index, 'date', e.target.value)}
+                                placeholder="Contoh: Januari 2020"
+                                error={getZodErrorByPath(errorSource, `loveStory.${index}.date`)}
+                                icon={<Clock className="w-3.5 h-3.5" />}
+                                required
+                            />
+
+                            <FormInput
+                                label="Cerita Singkat"
+                                value={item.story}
+                                onChange={(e) => handleChange(index, 'story', e.target.value)}
+                                placeholder="Ceritakan bagaimana momen ini terjadi..."
+                                error={getZodErrorByPath(errorSource, `loveStory.${index}.story`)}
+                                isTextArea
+                                rows={3}
+                                required
+                            />
                         </div>
                     </div>
                 ))}
@@ -129,12 +111,11 @@ export default function LoveStoryForm({ loveStory, onChange, errors }: LoveStory
 
             <button
                 onClick={handleAdd}
-                className="w-full py-3 rounded-xl border-2 border-dashed border-[var(--color-primary-light)] text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary)]/5 transition-colors flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-xl border-2 border-dashed border-slate-200 text-slate-500 font-medium hover:bg-slate-50 hover:border-slate-300 transition-all flex items-center justify-center gap-2 group"
             >
-                <Plus className="w-5 h-5" />
-                Tambah Cerita
+                <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                Tambah Momen Cerita
             </button>
         </div>
     );
 }
-

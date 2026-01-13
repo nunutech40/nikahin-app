@@ -2,51 +2,49 @@
 
 import { Quotes } from '@/types/invitation';
 import { Quote } from 'lucide-react';
+import { z } from 'zod';
+import { getZodErrorByPath } from '@/lib/validation';
+import FormInput from '../FormInput';
 
 interface QuotesFormProps {
     quotes: Quotes;
     onChange: (field: keyof Quotes, value: string) => void;
-    errors?: Record<string, string[] | undefined>;
+    errorSource: z.ZodError | null;
 }
 
-export default function QuotesForm({ quotes, onChange, errors }: QuotesFormProps) {
+export default function QuotesForm({ quotes, onChange, errorSource }: QuotesFormProps) {
     return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
-                <Quote className="w-5 h-5" />
-                <h3 className="font-serif text-lg font-semibold">Kutipan & Doa</h3>
+        <div className="space-y-6">
+            <div className="flex items-center gap-3 text-slate-800 border-b border-slate-100 pb-3">
+                <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-500">
+                    <Quote className="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-lg">Kutipan & Doa</h3>
+                    <p className="text-xs text-slate-400">Ayat suci atau doa restu untuk pernikahan Anda</p>
+                </div>
             </div>
 
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Isi Kutipan / Ayat</label>
-                    <textarea
-                        value={quotes.verse}
-                        onChange={(e) => onChange('verse', e.target.value)}
-                        placeholder="Dan di antara tanda-tanda kekuasaan-Nya..."
-                        rows={4}
-                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.['quotes.verse'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                            }`}
-                    />
-                    {errors?.['quotes.verse'] && (
-                        <p className="text-xs text-red-500 mt-1">{errors['quotes.verse'][0]}</p>
-                    )}
-                </div>
+            <div className="space-y-5">
+                <FormInput
+                    label="Isi Kutipan / Ayat"
+                    value={quotes.verse}
+                    onChange={(e) => onChange('verse', e.target.value)}
+                    placeholder="Contoh: Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu pasangan-pasangan..."
+                    error={getZodErrorByPath(errorSource, 'quotes.verse')}
+                    isTextArea
+                    rows={5}
+                    required
+                />
 
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Sumber</label>
-                    <input
-                        type="text"
-                        value={quotes.source}
-                        onChange={(e) => onChange('source', e.target.value)}
-                        placeholder="QS. Ar-Rum: 21"
-                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.['quotes.source'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                            }`}
-                    />
-                    {errors?.['quotes.source'] && (
-                        <p className="text-xs text-red-500 mt-1">{errors['quotes.source'][0]}</p>
-                    )}
-                </div>
+                <FormInput
+                    label="Sumber Kutipan (Opsional)"
+                    value={quotes.source}
+                    onChange={(e) => onChange('source', e.target.value)}
+                    placeholder="Contoh: QS. Ar-Rum: 21"
+                    error={getZodErrorByPath(errorSource, 'quotes.source')}
+                    required
+                />
             </div>
         </div>
     );

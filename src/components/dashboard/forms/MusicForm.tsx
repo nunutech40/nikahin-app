@@ -1,50 +1,59 @@
 'use client';
 
-import { Music, AlertCircle } from 'lucide-react';
+import { Music, AlertCircle, Headphones } from 'lucide-react';
+import { z } from 'zod';
+import { getZodErrorByPath } from '@/lib/validation';
+import FormInput from '../FormInput';
 
 interface MusicFormProps {
     musicUrl: string;
     onChange: (value: string) => void;
-    errors?: Record<string, string[] | undefined>;
+    errorSource: z.ZodError | null;
 }
 
-export default function MusicForm({ musicUrl, onChange, errors }: MusicFormProps) {
+export default function MusicForm({ musicUrl, onChange, errorSource }: MusicFormProps) {
     return (
-        <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
-                <Music className="w-5 h-5" />
-                <h3 className="font-serif text-lg font-semibold">Musik Latar</h3>
+        <div className="space-y-6">
+            <div className="flex items-center gap-3 text-slate-800 border-b border-slate-100 pb-3">
+                <div className="w-10 h-10 bg-sky-50 rounded-xl flex items-center justify-center text-sky-500">
+                    <Music className="w-5 h-5" />
+                </div>
+                <div>
+                    <h3 className="font-bold text-lg">Musik Latar</h3>
+                    <p className="text-xs text-slate-400">Musik yang akan diputar otomatis saat undangan dibuka</p>
+                </div>
             </div>
 
-            <div className="space-y-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">URL Musik (MP3)</label>
-                    <input
-                        type="text"
-                        value={musicUrl}
-                        onChange={(e) => onChange(e.target.value)}
-                        placeholder="https://example.com/song.mp3"
-                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.['musicUrl'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                            }`}
-                    />
-                    {errors?.['musicUrl'] && (
-                        <p className="text-xs text-red-500 mt-1">{errors['musicUrl'][0]}</p>
-                    )}
+            <div className="space-y-6">
+                <FormInput
+                    label="URL File Musik (MP3)"
+                    value={musicUrl}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="https://example.com/audio/wedding-song.mp3"
+                    error={getZodErrorByPath(errorSource, 'musicUrl')}
+                    icon={<Headphones className="w-3.5 h-3.5" />}
+                    helperText="Pastikan file berakhiran .mp3 untuk kompatibilitas terbaik"
+                />
+
+                <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-4 text-xs text-amber-800 leading-relaxed shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                        <AlertCircle className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <div className="space-y-1">
+                        <p className="font-bold">Tips Musik Latar:</p>
+                        <ul className="list-disc list-inside space-y-0.5 opacity-80">
+                            <li>Gunakan link langsung ke file (direct link)</li>
+                            <li>Link dari YouTube, Spotify, atau Google Drive tidak didukung</li>
+                            <li>Maksimal ukuran file disarankan di bawah 5MB agar load cepat</li>
+                        </ul>
+                    </div>
                 </div>
 
-                <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-3 text-sm text-blue-700">
-                    <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                    <p>
-                        Gunakan direct link file MP3 agar musik dapat diputar otomatis.
-                        Link dari YouTube atau Spotify tidak akan berjalan.
-                    </p>
-                </div>
-
-                {musicUrl && (
-                    <div className="pt-2">
-                        <p className="text-sm font-medium text-gray-700 mb-2">Preview Audio:</p>
-                        <audio controls src={musicUrl} className="w-full rounded-lg">
-                            Browser Anda tidak mendukung elemen audio.
+                {musicUrl && !getZodErrorByPath(errorSource, 'musicUrl') && (
+                    <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 animate-in fade-in zoom-in-95">
+                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-3">Preview Audio</p>
+                        <audio controls src={musicUrl} className="w-full h-10">
+                            Browser Anda tidak mendukung preview audio.
                         </audio>
                     </div>
                 )}

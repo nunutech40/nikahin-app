@@ -8,8 +8,9 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock
+    Lock, AlertCircle
 } from "lucide-react";
+import { z } from "zod";
 
 // Feature Gating
 import { canUseFeature } from "@/lib/features";
@@ -31,7 +32,7 @@ export default function DashboardPage() {
     const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("mempelai");
-    const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
+    const [zodError, setZodError] = useState<z.ZodError | null>(null);
 
     // Handlers
     const handleCoupleChange = (section: 'groom' | 'bride', field: keyof Person, value: string) => {
@@ -126,14 +127,25 @@ export default function DashboardPage() {
     const handleSave = () => {
         const result = invitationSchema.safeParse(invitationData);
         if (!result.success) {
-            const fieldErrors = result.error.flatten().fieldErrors;
-            setErrors(fieldErrors);
-            alert("Terjadi kesalahan validasi. Mohon periksa kembali inputan Anda (Kotak merah).");
-            console.error("Validation Errors:", fieldErrors);
+            setZodError(result.error);
+
+            // Find first error tab to redirect user
+            const firstErrorPath = result.error.issues[0].path[0] as string;
+            const tabMapping: Record<string, string> = {
+                'groom': 'mempelai', 'bride': 'mempelai',
+                'events': 'acara', 'loveStory': 'cerita',
+                'gallery': 'galeri', 'giftOptions': 'hadiah',
+                'quotes': 'lainnya', 'musicUrl': 'lainnya'
+            };
+
+            if (tabMapping[firstErrorPath]) {
+                setActiveTab(tabMapping[firstErrorPath]);
+            }
+
+            alert(`Ada ${result.error.issues.length} data yang belum lengkap atau salah. Silakan cek bagian yang berwarna merah.`);
         } else {
-            setErrors({});
-            alert("Undangan Valid! Perubahan siap disimpan (Simulasi).");
-            // Here we will call the Server Action later
+            setZodError(null);
+            alert("Sempurna! Semua data valid dan siap disimpan.");
         }
     };
 
@@ -232,7 +244,7 @@ export default function DashboardPage() {
                                 groom={invitationData.groom}
                                 bride={invitationData.bride}
                                 onChange={handleCoupleChange}
-                                errors={errors}
+                                errorSource={zodError}
                             />
                         )}
                         {activeTab === "acara" && (
@@ -241,7 +253,7 @@ export default function DashboardPage() {
                                 onChange={handleEventChange}
                                 onAdd={handleEventAdd}
                                 onRemove={handleEventRemove}
-                                errors={errors}
+                                errorSource={zodError}
                                 canAddMore={invitationData.events.length < 1 || canUseFeature(invitationData, 'multi-event')}
                             />
                         )}
@@ -250,7 +262,7 @@ export default function DashboardPage() {
                                 <LoveStoryForm
                                     loveStory={invitationData.loveStory}
                                     onChange={handleLoveStoryChange}
-                                    errors={errors}
+                                    errorSource={zodError}
                                 />
                             </FeatureGate>
                         )}
@@ -259,7 +271,7 @@ export default function DashboardPage() {
                                 <GalleryForm
                                     gallery={invitationData.gallery}
                                     onChange={handleGalleryChange}
-                                    errors={errors}
+                                    errorSource={zodError}
                                 />
                             </FeatureGate>
                         )}
@@ -270,7 +282,7 @@ export default function DashboardPage() {
                                     shippingAddress={invitationData.shippingAddress}
                                     onGiftOptionsChange={handleGiftOptionsChange}
                                     onAddressChange={handleAddressChange}
-                                    errors={errors}
+                                    errorSource={zodError}
                                 />
                             </FeatureGate>
                         )}
@@ -281,7 +293,7 @@ export default function DashboardPage() {
                                     coverImage={invitationData.coverImage || ""}
                                     onConfigChange={handleThemeConfigChange}
                                     onCoverChange={handleCoverChange}
-                                    errors={errors}
+                                    errorSource={zodError}
                                 />
                             </FeatureGate>
                         )}
@@ -291,7 +303,7 @@ export default function DashboardPage() {
                                     <QuotesForm
                                         quotes={invitationData.quotes}
                                         onChange={handleQuotesChange}
-                                        errors={errors}
+                                        errorSource={zodError}
                                     />
                                 </FeatureGate>
 
@@ -299,7 +311,7 @@ export default function DashboardPage() {
                                     <MusicForm
                                         musicUrl={invitationData.musicUrl}
                                         onChange={handleMusicChange}
-                                        errors={errors}
+                                        errorSource={zodError}
                                     />
                                 </FeatureGate>
                             </div>
