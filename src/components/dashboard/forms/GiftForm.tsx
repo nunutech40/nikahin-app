@@ -8,9 +8,10 @@ interface GiftFormProps {
     shippingAddress: InvitationData['shippingAddress'];
     onGiftOptionsChange: (newOptions: InvitationData['giftOptions']) => void;
     onAddressChange: (field: keyof InvitationData['shippingAddress'], value: string) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsChange, onAddressChange }: GiftFormProps) {
+export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsChange, onAddressChange, errors }: GiftFormProps) {
     const handleAddBank = () => {
         onGiftOptionsChange([
             ...giftOptions,
@@ -60,8 +61,12 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                                             value={option.bankName}
                                             onChange={(e) => handleBankChange(index, 'bankName', e.target.value)}
                                             placeholder="BCA"
-                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                            className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`giftOptions.${index}.bankName`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                                }`}
                                         />
+                                        {errors?.[`giftOptions.${index}.bankName`] && (
+                                            <p className="text-xs text-red-500 mt-1">{errors[`giftOptions.${index}.bankName`]?.[0]}</p>
+                                        )}
                                     </div>
                                     <div className="w-24">
                                         <label className="block text-sm font-medium text-gray-700 mb-1">Logo/Emoji</label>
@@ -70,7 +75,8 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                                             value={option.logo}
                                             onChange={(e) => handleBankChange(index, 'logo', e.target.value)}
                                             placeholder="🏦"
-                                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-center"
+                                            className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-center ${errors?.[`giftOptions.${index}.logo`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                                }`}
                                         />
                                     </div>
                                 </div>
@@ -82,8 +88,12 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                                         value={option.accountNumber}
                                         onChange={(e) => handleBankChange(index, 'accountNumber', e.target.value)}
                                         placeholder="1234567890"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all font-mono"
+                                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all font-mono ${errors?.[`giftOptions.${index}.accountNumber`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
+                                    {errors?.[`giftOptions.${index}.accountNumber`] && (
+                                        <p className="text-xs text-red-500 mt-1">{errors[`giftOptions.${index}.accountNumber`]?.[0]}</p>
+                                    )}
                                 </div>
 
                                 <div>
@@ -93,8 +103,12 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                                         value={option.accountHolder}
                                         onChange={(e) => handleBankChange(index, 'accountHolder', e.target.value)}
                                         placeholder="Amanda Manopo"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`giftOptions.${index}.accountHolder`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
+                                    {errors?.[`giftOptions.${index}.accountHolder`] && (
+                                        <p className="text-xs text-red-500 mt-1">{errors[`giftOptions.${index}.accountHolder`]?.[0]}</p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -125,8 +139,12 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                             value={shippingAddress.recipient}
                             onChange={(e) => onAddressChange('recipient', e.target.value)}
                             placeholder="Contoh: Bapak Ahmad"
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                            className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.['shippingAddress.recipient'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                }`}
                         />
+                        {errors?.['shippingAddress.recipient'] && (
+                            <p className="text-xs text-red-500 mt-1">{errors['shippingAddress.recipient']?.[0]}</p>
+                        )}
                     </div>
 
                     <div>
@@ -136,8 +154,12 @@ export default function GiftForm({ giftOptions, shippingAddress, onGiftOptionsCh
                             onChange={(e) => onAddressChange('address', e.target.value)}
                             placeholder="Jl. Mawar No. 123..."
                             rows={3}
-                            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none"
+                            className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.['shippingAddress.address'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                }`}
                         />
+                        {errors?.['shippingAddress.address'] && (
+                            <p className="text-xs text-red-500 mt-1">{errors['shippingAddress.address']?.[0]}</p>
+                        )}
                     </div>
                 </div>
             </div>

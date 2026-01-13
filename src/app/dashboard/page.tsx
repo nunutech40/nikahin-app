@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { InvitationData, Person, Event, LoveStoryItem, Quotes } from "@/types/invitation";
 import { MOCK_DATA } from "@/data/mockData";
 import { BasicTheme } from "@/components/themes/BasicTheme";
+import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music
@@ -24,6 +25,7 @@ export default function DashboardPage() {
     const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("mempelai");
+    const [errors, setErrors] = useState<Record<string, string[] | undefined>>({});
 
     // Handlers
     const handleCoupleChange = (section: 'groom' | 'bride', field: keyof Person, value: string) => {
@@ -101,6 +103,20 @@ export default function DashboardPage() {
         setInvitationData(prev => ({ ...prev, musicUrl: value }));
     };
 
+    const handleSave = () => {
+        const result = invitationSchema.safeParse(invitationData);
+        if (!result.success) {
+            const fieldErrors = result.error.flatten().fieldErrors;
+            setErrors(fieldErrors);
+            alert("Terjadi kesalahan validasi. Mohon periksa kembali inputan Anda (Kotak merah).");
+            console.error("Validation Errors:", fieldErrors);
+        } else {
+            setErrors({});
+            alert("Undangan Valid! Perubahan siap disimpan (Simulasi).");
+            // Here we will call the Server Action later
+        }
+    };
+
     // Tabs Configuration
     const tabs = [
         { id: "mempelai", label: "Mempelai", icon: Users },
@@ -147,7 +163,10 @@ export default function DashboardPage() {
                         </button>
                     </div>
 
-                    <button className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-all shadow-sm">
+                    <button
+                        onClick={handleSave}
+                        className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-all shadow-sm"
+                    >
                         Simpan Perubahan
                     </button>
                 </div>
@@ -192,6 +211,7 @@ export default function DashboardPage() {
                                 groom={invitationData.groom}
                                 bride={invitationData.bride}
                                 onChange={handleCoupleChange}
+                                errors={errors}
                             />
                         )}
                         {activeTab === "acara" && (
@@ -200,18 +220,21 @@ export default function DashboardPage() {
                                 onChange={handleEventChange}
                                 onAdd={handleEventAdd}
                                 onRemove={handleEventRemove}
+                                errors={errors}
                             />
                         )}
                         {activeTab === "cerita" && (
                             <LoveStoryForm
                                 loveStory={invitationData.loveStory}
                                 onChange={handleLoveStoryChange}
+                                errors={errors}
                             />
                         )}
                         {activeTab === "galeri" && (
                             <GalleryForm
                                 gallery={invitationData.gallery}
                                 onChange={handleGalleryChange}
+                                errors={errors}
                             />
                         )}
                         {activeTab === "hadiah" && (
@@ -220,6 +243,7 @@ export default function DashboardPage() {
                                 shippingAddress={invitationData.shippingAddress}
                                 onGiftOptionsChange={handleGiftOptionsChange}
                                 onAddressChange={handleAddressChange}
+                                errors={errors}
                             />
                         )}
                         {activeTab === "lainnya" && (
@@ -227,10 +251,12 @@ export default function DashboardPage() {
                                 <QuotesForm
                                     quotes={invitationData.quotes}
                                     onChange={handleQuotesChange}
+                                    errors={errors}
                                 />
                                 <MusicForm
                                     musicUrl={invitationData.musicUrl}
                                     onChange={handleMusicChange}
+                                    errors={errors}
                                 />
                             </div>
                         )}

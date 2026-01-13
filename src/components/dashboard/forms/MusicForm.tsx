@@ -5,9 +5,10 @@ import { Music, AlertCircle } from 'lucide-react';
 interface MusicFormProps {
     musicUrl: string;
     onChange: (value: string) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function MusicForm({ musicUrl, onChange }: MusicFormProps) {
+export default function MusicForm({ musicUrl, onChange, errors }: MusicFormProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
@@ -23,8 +24,12 @@ export default function MusicForm({ musicUrl, onChange }: MusicFormProps) {
                         value={musicUrl}
                         onChange={(e) => onChange(e.target.value)}
                         placeholder="https://example.com/song.mp3"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.['musicUrl'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            }`}
                     />
+                    {errors?.['musicUrl'] && (
+                        <p className="text-xs text-red-500 mt-1">{errors['musicUrl'][0]}</p>
+                    )}
                 </div>
 
                 <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-3 text-sm text-blue-700">

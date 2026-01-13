@@ -6,9 +6,10 @@ import { Quote } from 'lucide-react';
 interface QuotesFormProps {
     quotes: Quotes;
     onChange: (field: keyof Quotes, value: string) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function QuotesForm({ quotes, onChange }: QuotesFormProps) {
+export default function QuotesForm({ quotes, onChange, errors }: QuotesFormProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2 text-[var(--color-primary-dark)] border-b pb-2">
@@ -24,8 +25,12 @@ export default function QuotesForm({ quotes, onChange }: QuotesFormProps) {
                         onChange={(e) => onChange('verse', e.target.value)}
                         placeholder="Dan di antara tanda-tanda kekuasaan-Nya..."
                         rows={4}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none"
+                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.['quotes.verse'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            }`}
                     />
+                    {errors?.['quotes.verse'] && (
+                        <p className="text-xs text-red-500 mt-1">{errors['quotes.verse'][0]}</p>
+                    )}
                 </div>
 
                 <div>
@@ -35,8 +40,12 @@ export default function QuotesForm({ quotes, onChange }: QuotesFormProps) {
                         value={quotes.source}
                         onChange={(e) => onChange('source', e.target.value)}
                         placeholder="QS. Ar-Rum: 21"
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.['quotes.source'] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            }`}
                     />
+                    {errors?.['quotes.source'] && (
+                        <p className="text-xs text-red-500 mt-1">{errors['quotes.source'][0]}</p>
+                    )}
                 </div>
             </div>
         </div>

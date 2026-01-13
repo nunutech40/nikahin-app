@@ -176,20 +176,20 @@ Build a user-facing dashboard where users can input their wedding data through f
 **Rollback Point:** Context is isolated, can revert to local state
 
 #### **Phase 3.4: Live Preview**
-- [ ] **T3.4.1** - Create preview container component
-- [ ] **T3.4.2** - Connect preview to form state
-- [ ] **T3.4.3** - Add mobile device frame for preview
-- [ ] **T3.4.4** - Implement preview refresh on state change
-- [ ] **T3.4.5** - Test: Preview updates in real-time
+- [x] **T3.4.1** - Create preview container component
+- [x] **T3.4.2** - Connect preview to form state
+- [x] **T3.4.3** - Add mobile device frame for preview
+- [x] **T3.4.4** - Implement preview refresh on state change
+- [x] **T3.4.5** - Test: Preview updates in real-time
 
 **Rollback Point:** Preview is read-only, safe to modify
 
 #### **Phase 3.5: Form Validation**
-- [ ] **T3.5.1** - Install validation library (Zod)
-- [ ] **T3.5.2** - Create validation schemas for each form
-- [ ] **T3.5.3** - Add error message display
-- [ ] **T3.5.4** - Implement field-level validation
-- [ ] **T3.5.5** - Test: All validations work correctly
+- [x] **T3.5.1** - Install validation library (Zod)
+- [x] **T3.5.2** - Create validation schemas for each form
+- [x] **T3.5.3** - Add error message display
+- [x] **T3.5.4** - Implement field-level validation
+- [x] **T3.5.5** - Test: All validations work correctly
 
 **Rollback Point:** Validation is additive, can be disabled
 
@@ -200,8 +200,8 @@ Build a user-facing dashboard where users can input their wedding data through f
 - ✅ Phase 3.1: Dashboard Layout - **COMPLETED**
 - [x] Phase 3.2: Form Components - **COMPLETED**
 - ⏳ Phase 3.3: State Management - **PENDING**
-- ⏳ Phase 3.4: Live Preview - **PENDING**
-- ⏳ Phase 3.5: Form Validation - **PENDING**
+- [x] Phase 3.4: Live Preview - **COMPLETED**
+- [x] Phase 3.5: Form Validation - **COMPLETED**
 
 **Completed:**
 - ✅ Dashboard page created with split-screen layout

@@ -8,9 +8,10 @@ interface EventFormProps {
     onChange: (index: number, field: keyof Event, value: string) => void;
     onAdd: () => void;
     onRemove: (index: number) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function EventForm({ events, onChange, onAdd, onRemove }: EventFormProps) {
+export default function EventForm({ events, onChange, onAdd, onRemove, errors }: EventFormProps) {
     return (
         <div className="space-y-6">
             {events.map((event, index) => (
@@ -38,8 +39,12 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                 value={event.name}
                                 onChange={(e) => onChange(index, 'name', e.target.value)}
                                 placeholder="Contoh: Akad Nikah"
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`events.${index}.name`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
                             />
+                            {errors?.[`events.${index}.name`] && (
+                                <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.name`]?.[0]}</p>
+                            )}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -50,8 +55,12 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                     value={event.date}
                                     onChange={(e) => onChange(index, 'date', e.target.value)}
                                     placeholder="Sabtu, 15 Februari 2025"
-                                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                    className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`events.${index}.date`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        }`}
                                 />
+                                {errors?.[`events.${index}.date`] && (
+                                    <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.date`]?.[0]}</p>
+                                )}
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">Waktu</label>
@@ -62,9 +71,13 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                         value={event.time}
                                         onChange={(e) => onChange(index, 'time', e.target.value)}
                                         placeholder="08:00 WIB"
-                                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                        className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`events.${index}.time`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
                                 </div>
+                                {errors?.[`events.${index}.time`] && (
+                                    <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.time`]?.[0]}</p>
+                                )}
                             </div>
                         </div>
 
@@ -77,9 +90,13 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                     value={event.location}
                                     onChange={(e) => onChange(index, 'location', e.target.value)}
                                     placeholder="Contoh: Masjid Agung Al-Azhar"
-                                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                    className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`events.${index}.location`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        }`}
                                 />
                             </div>
+                            {errors?.[`events.${index}.location`] && (
+                                <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.location`]?.[0]}</p>
+                            )}
                         </div>
 
                         <div>
@@ -89,8 +106,12 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                 onChange={(e) => onChange(index, 'address', e.target.value)}
                                 placeholder="Jl. Sisingamangaraja No.8..."
                                 rows={2}
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none"
+                                className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.[`events.${index}.address`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
                             />
+                            {errors?.[`events.${index}.address`] && (
+                                <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.address`]?.[0]}</p>
+                            )}
                         </div>
 
                         <div>
@@ -100,8 +121,12 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
                                 value={event.mapsLink}
                                 onChange={(e) => onChange(index, 'mapsLink', e.target.value)}
                                 placeholder="https://maps.google.com/..."
-                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm"
+                                className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm ${errors?.[`events.${index}.mapsLink`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                    }`}
                             />
+                            {errors?.[`events.${index}.mapsLink`] && (
+                                <p className="text-xs text-red-500 mt-1">{errors[`events.${index}.mapsLink`]?.[0]}</p>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -117,3 +142,4 @@ export default function EventForm({ events, onChange, onAdd, onRemove }: EventFo
         </div>
     );
 }
+

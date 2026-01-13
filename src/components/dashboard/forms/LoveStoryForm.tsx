@@ -6,9 +6,10 @@ import { Heart, Calendar, FileText, Plus, Trash2, Smile } from 'lucide-react';
 interface LoveStoryFormProps {
     loveStory: LoveStoryItem[];
     onChange: (newLoveStory: LoveStoryItem[]) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProps) {
+export default function LoveStoryForm({ loveStory, onChange, errors }: LoveStoryFormProps) {
     const handleAdd = () => {
         onChange([
             ...loveStory,
@@ -63,8 +64,12 @@ export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProp
                                         value={item.title}
                                         onChange={(e) => handleChange(index, 'title', e.target.value)}
                                         placeholder="Pertemuan Pertama"
-                                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                        className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`loveStory.${index}.title`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
+                                    {errors?.[`loveStory.${index}.title`] && (
+                                        <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.title`]?.[0]}</p>
+                                    )}
                                 </div>
                                 <div className="w-24">
                                     <label className="block text-sm font-medium text-gray-700 mb-1">Emoji</label>
@@ -75,9 +80,13 @@ export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProp
                                             value={item.icon}
                                             onChange={(e) => handleChange(index, 'icon', e.target.value)}
                                             placeholder="❤️"
-                                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-center"
+                                            className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-center ${errors?.[`loveStory.${index}.icon`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                                }`}
                                         />
                                     </div>
+                                    {errors?.[`loveStory.${index}.icon`] && (
+                                        <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.icon`]?.[0]}</p>
+                                    )}
                                 </div>
                             </div>
 
@@ -90,9 +99,13 @@ export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProp
                                         value={item.date}
                                         onChange={(e) => handleChange(index, 'date', e.target.value)}
                                         placeholder="Januari 2020"
-                                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all"
+                                        className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all ${errors?.[`loveStory.${index}.date`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
                                 </div>
+                                {errors?.[`loveStory.${index}.date`] && (
+                                    <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.date`]?.[0]}</p>
+                                )}
                             </div>
 
                             <div>
@@ -102,8 +115,12 @@ export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProp
                                     onChange={(e) => handleChange(index, 'story', e.target.value)}
                                     placeholder="Kami bertemu di sebuah kedai kopi..."
                                     rows={3}
-                                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none"
+                                    className={`w-full px-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all resize-none ${errors?.[`loveStory.${index}.story`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                        }`}
                                 />
+                                {errors?.[`loveStory.${index}.story`] && (
+                                    <p className="text-xs text-red-500 mt-1">{errors[`loveStory.${index}.story`]?.[0]}</p>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -120,3 +137,4 @@ export default function LoveStoryForm({ loveStory, onChange }: LoveStoryFormProp
         </div>
     );
 }
+

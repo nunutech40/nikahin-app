@@ -6,9 +6,10 @@ import Image from 'next/image';
 interface GalleryFormProps {
     gallery: string[];
     onChange: (newGallery: string[]) => void;
+    errors?: Record<string, string[] | undefined>;
 }
 
-export default function GalleryForm({ gallery, onChange }: GalleryFormProps) {
+export default function GalleryForm({ gallery, onChange, errors }: GalleryFormProps) {
     const handleAdd = () => {
         onChange([...gallery, '']);
     };
@@ -43,7 +44,8 @@ export default function GalleryForm({ gallery, onChange }: GalleryFormProps) {
                                         value={url}
                                         onChange={(e) => handleChange(index, e.target.value)}
                                         placeholder="https://example.com/image.jpg"
-                                        className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm"
+                                        className={`w-full pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent outline-none transition-all text-sm ${errors?.[`gallery.${index}`] ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                            }`}
                                     />
                                 </div>
                                 <button
@@ -54,6 +56,9 @@ export default function GalleryForm({ gallery, onChange }: GalleryFormProps) {
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
+                            {errors?.[`gallery.${index}`] && (
+                                <p className="text-xs text-red-500">{errors[`gallery.${index}`]?.[0]}</p>
+                            )}
 
                             {/* Image Preview */}
                             {url && (
