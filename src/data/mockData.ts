@@ -91,4 +91,29 @@ export const MOCK_DATA: InvitationData = {
             accountName: "Dakot Johnson",
         },
     ],
+    musicUrl: "/music/wedding-bgm.mp3",
+    giftOptions: [
+        {
+            bankName: "Bank Central Asia (BCA)",
+            accountNumber: "1234567890",
+            accountHolder: "Robert Downey",
+            logo: "🏦",
+        },
+        {
+            bankName: "Bank Mandiri",
+            accountNumber: "9876543210",
+            accountHolder: "Dakot Johnson",
+            logo: "🏦",
+        },
+        {
+            bankName: "Bank Rakyat Indonesia (BRI)",
+            accountNumber: "5555666677",
+            accountHolder: "Robert & Dakot",
+            logo: "🏦",
+        },
+    ],
+    shippingAddress: {
+        recipient: "Robert Downey & Dakot Johnson",
+        address: "Jl. Merdeka No. 123, RT 05/RW 03, Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12345",
+    },
 };

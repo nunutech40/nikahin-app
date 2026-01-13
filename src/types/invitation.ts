@@ -46,6 +46,17 @@ export interface InvitationData {
     gallery: string[];
     quotes: Quotes;
     bankAccounts: BankAccount[];
+    musicUrl: string;
+    giftOptions: Array<{
+        bankName: string;
+        accountNumber: string;
+        accountHolder: string;
+        logo: string;
+    }>;
+    shippingAddress: {
+        recipient: string;
+        address: string;
+    };
 }
 
 export interface NavItem {
