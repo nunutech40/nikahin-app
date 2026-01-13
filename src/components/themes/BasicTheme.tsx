@@ -70,6 +70,8 @@ export interface BasicThemeProps {
         };
     };
     guestName?: string;
+    isPreview?: boolean; // Flag to disable container styling for dashboard preview
+    isMobile?: boolean; // Flag to force mobile layout (single column)
 }
 
 // =====================================================
@@ -1034,7 +1036,7 @@ function FooterSection({ data }: { data: BasicThemeProps['data'] }) {
 // MAIN THEME COMPONENT
 // =====================================================
 
-export function BasicTheme({ data, guestName }: BasicThemeProps) {
+export function BasicTheme({ data, guestName, isPreview = false, isMobile = false }: BasicThemeProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isMusicPlaying, setIsMusicPlaying] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
@@ -1083,8 +1085,58 @@ export function BasicTheme({ data, guestName }: BasicThemeProps) {
     }, []);
 
     return (
-        <div className="min-h-screen" style={{ background: "linear-gradient(to bottom, #faf8f5, #f5e6e6)" }}>
-            <div className="invitation-container">
+        <div className={`min-h-screen ${isPreview ? "preview-wrapper" : ""}`} style={{ background: "linear-gradient(to bottom, #faf8f5, #f5e6e6)" }}>
+            {isPreview && (
+                <style>{`
+                    /* Base Preview Styles (Positioning) - Applies to both Mobile & Desktop Preview */
+                    .preview-wrapper { position: relative !important; overflow-x: hidden !important; min-height: 100% !important; }
+                    /* FIX: Use sticky instead of absolute for modal so it stays in viewport during scroll */
+                    .preview-wrapper .fixed { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
+                    
+                    /* Welcome Modal Sizing for Preview */
+                    .preview-wrapper .fixed.inset-0.z-40 .glass {
+                         width: 90% !important;
+                         max-width: ${isMobile ? "none" : "32rem"} !important; /* Limit width on desktop preview */
+                         padding: 1.5rem !important;
+                         margin: 0 !important;
+                    }
+                    .preview-wrapper .fixed.inset-0.z-40 .glass h2 { font-size: 1.5rem !important; }
+
+                    /* Mobile Layout Forces - ONLY applies if isMobile is true */
+                    /* GENERAL GRID & SPACING */
+                    .mobile-force .grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+                    .mobile-force h1 { font-size: 2.5rem !important; line-height: 1.2 !important; margin-bottom: 0.5rem !important; }
+                    .mobile-force h3 { font-size: 1.75rem !important; line-height: 1.2 !important; }
+                    .mobile-force .section { padding: 2rem 1rem !important; }
+                    .mobile-force .glass { padding: 1.5rem !important; }
+                    .mobile-force .w-56, .mobile-force .h-56, .mobile-force .md\\:w-64, .mobile-force .md\\:h-64 { width: 10rem !important; height: 10rem !important; margin: 0 auto 1.5rem auto !important; }
+                    
+                    /* LOVE STORY TIMELINE FIXES */
+                    /* Force flex direction to row (default) instead of reverse stuff from desktop */
+                    .mobile-force .md\\:flex-row { flex-direction: row !important; }
+                    .mobile-force .md\\:flex-row-reverse { flex-direction: row !important; }
+                    
+                    /* Reset text alignment to left */
+                    .mobile-force .md\\:text-right { text-align: left !important; }
+                    .mobile-force .md\\:text-left { text-align: left !important; }
+                    
+                    /* Reset justify content */
+                    .mobile-force .md\\:justify-end { justify-content: flex-start !important; }
+                    .mobile-force .md\\:justify-start { justify-content: flex-start !important; }
+
+                    /* Hide desktop-only elements (Timeline center line & dots, Spacers) */
+                    /* Targeting the center line */
+                    .mobile-force .absolute.left-1\\/2.hidden.md\\:block { display: none !important; }
+                    /* Targeting the dots */
+                    .mobile-force .hidden.md\\:flex.absolute { display: none !important; }
+                    /* Targeting the spacers */
+                    .mobile-force .hidden.md\\:block.flex-1 { display: none !important; }
+                    
+                    /* Show mobile-only elements (Icons) */
+                    .mobile-force .md\\:hidden { display: flex !important; }
+                `}</style>
+            )}
+            <div className={`${isPreview ? "preview-mode" : "invitation-container"} ${isMobile ? "mobile-force" : ""}`}>
                 <AnimatePresence mode="wait">
                     {!isOpen ? (
                         <HeroSection key="hero" onOpen={handleOpen} guestName={guestName} data={data} />

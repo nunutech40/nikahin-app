@@ -162,6 +162,8 @@ export default function DashboardPage() {
                                                 <BasicTheme
                                                     data={invitationData}
                                                     guestName="Preview User"
+                                                    isPreview={true}
+                                                    isMobile={true}
                                                 />
                                             </div>
                                         </div>
@@ -197,6 +199,8 @@ export default function DashboardPage() {
                                             <BasicTheme
                                                 data={invitationData}
                                                 guestName="Preview User"
+                                                isPreview={true}
+                                                isMobile={false}
                                             />
                                         </div>
                                     </div>

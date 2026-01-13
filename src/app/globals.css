@@ -269,11 +269,77 @@
 
   /* ===== Scrollbar Hide Utility ===== */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
   .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
+    /* Chrome, Safari and Opera */
+  }
+
+  /* ===== Preview Mode Overrides ===== */
+  /* Used in dashboard preview (Mobile) */
+  .preview-mode {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Force reduced padding */
+  .preview-mode .section {
+    padding: 2rem 1rem !important;
+  }
+
+  /* Force single column for grids regardless of viewport size */
+  .preview-mode .grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Override padding that might be increased by md:/lg: classes */
+  .preview-mode .p-8,
+  .preview-mode .md\:p-10,
+  .preview-mode .p-6,
+  .preview-mode .md\:p-6 {
+    padding: 1.25rem !important;
+  }
+
+  /* Target Hero Name (H1) */
+  .preview-mode h1 {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+    word-break: break-word;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Target Headers (H3 used for Couple Names) */
+  .preview-mode h3 {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Adjust spacing for inner content */
+  .preview-mode .section-title {
+    font-size: 1.5rem !important;
+  }
+
+  /* Fix photo sizes & margins in preview */
+  .preview-mode .w-56,
+  .preview-mode .h-56,
+  .preview-mode .md\:w-64,
+  .preview-mode .md\:h-64 {
+    width: 10rem !important;
+    /* 160px */
+    height: 10rem !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Ensure images/containers fit */
+  .preview-mode * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }
