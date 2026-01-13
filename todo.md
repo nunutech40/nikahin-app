@@ -156,13 +156,13 @@ Build a user-facing dashboard where users can input their wedding data through f
 **Rollback Point:** Dashboard is separate route, safe to delete
 
 #### **Phase 3.2: Form Components**
-- [ ] **T3.2.1** - Create `/src/components/dashboard/forms/` directory
-- [ ] **T3.2.2** - Build `CoupleInfoForm.tsx` (groom & bride details)
-- [ ] **T3.2.3** - Build `EventForm.tsx` (date, time, location)
-- [ ] **T3.2.4** - Build `GalleryForm.tsx` (image upload placeholder)
-- [ ] **T3.2.5** - Build `QuotesForm.tsx` (verse and source)
-- [ ] **T3.2.6** - Build `MusicForm.tsx` (music URL input)
-- [ ] **T3.2.7** - Test: Each form component independently
+- [x] **T3.2.1** - Create `/src/components/dashboard/forms/` directory
+- [x] **T3.2.2** - Build `CoupleInfoForm.tsx` (groom & bride details)
+- [x] **T3.2.3** - Build `EventForm.tsx` (date, time, location)
+- [x] **T3.2.4** - Build `GalleryForm.tsx` (image upload placeholder)
+- [x] **T3.2.5** - Build `QuotesForm.tsx` (verse and source)
+- [x] **T3.2.6** - Build `MusicForm.tsx` (music URL input)
+- [x] **T3.2.7** - Test: Each form component independently
 
 **Rollback Point:** Each form is independent, can be removed individually
 
@@ -198,7 +198,7 @@ Build a user-facing dashboard where users can input their wedding data through f
 
 **Current State:**
 - ✅ Phase 3.1: Dashboard Layout - **COMPLETED**
-- ⏳ Phase 3.2: Form Components - **PENDING**
+- [x] Phase 3.2: Form Components - **COMPLETED**
 - ⏳ Phase 3.3: State Management - **PENDING**
 - ⏳ Phase 3.4: Live Preview - **PENDING**
 - ⏳ Phase 3.5: Form Validation - **PENDING**
