@@ -17,46 +17,12 @@ Nikahin adalah platform SaaS untuk membuat undangan pernikahan digital dengan be
 - 🌐 **Personalized URL** - URL unik untuk setiap undangan
 - 👤 **Guest Personalization** - Sapaan personal untuk setiap tamu
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Theme System
 
-Nikahin menggunakan **theme-based architecture** yang memisahkan data dari presentasi:
+Nikahin menggunakan **theme-based architecture** yang memisahkan data (InvitationData) dari presentasi (UI Components). Arsitektur ini memungkinkan pembuatan tema baru secara independen tanpa mengganggu logika inti aplikasi.
 
-```
-┌─────────────────────────────────────────────────────┐
-│                   User Request                      │
-│              /rizka-ayu?to=Budi                     │
-└────────────────────┬────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────┐
-│            Page Controller (page.tsx)               │
-│  - Fetch invitation data from database              │
-│  - Extract guest name from URL                      │
-│  - Determine theme ID                               │
-└────────────────────┬────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────┐
-│           Theme Registry (themeRegistry.ts)         │
-│  - Map theme ID to component                        │
-│  - Return theme component                           │
-└────────────────────┬────────────────────────────────┘
-                     │
-                     ▼
-┌─────────────────────────────────────────────────────┐
-│         Theme Component (BasicTheme.tsx)            │
-│  - Receive InvitationData as props                  │
-│  - Render UI based on data                          │
-│  - Handle user interactions                         │
-└─────────────────────────────────────────────────────┘
-```
-
-### Key Benefits
-
-✅ **Separation of Concerns** - Data logic terpisah dari UI  
-✅ **Reusability** - Satu tema dapat digunakan oleh banyak user  
-✅ **Maintainability** - Mudah untuk update dan fix tema  
-✅ **Scalability** - Tambah tema baru tanpa modifikasi core code  
+Untuk detail teknis mengenai cara kerja sistem tema dan panduan pengembangan tema kustom, silakan baca dokumentasi kami:
+👉 **[Theme Development Guide](./docs/THEME_DEVELOPMENT.md)**
 
 ## 🛠️ Tech Stack
 
@@ -131,47 +97,6 @@ DATABASE_URL=postgresql://user:password@localhost:5432/nikahin
 # NextAuth (Coming Soon)
 NEXTAUTH_SECRET=your-secret-key
 NEXTAUTH_URL=http://localhost:3000
-```
-
-## 🎨 Creating Custom Themes
-
-Nikahin memudahkan pembuatan tema kustom. Lihat [Theme Development Guide](./docs/THEME_DEVELOPMENT.md) untuk panduan lengkap.
-
-### Quick Start
-
-1. Create theme component:
-```tsx
-// src/components/themes/YourTheme.tsx
-"use client";
-
-import { ThemeProps } from "@/lib/themeRegistry";
-
-export function YourTheme({ data, guestName }: ThemeProps) {
-    return (
-        <div className="min-h-screen">
-            {/* Your theme UI */}
-        </div>
-    );
-}
-```
-
-2. Register your theme:
-```tsx
-// src/lib/themeRegistry.ts
-import { YourTheme } from "@/components/themes/YourTheme";
-
-const THEME_REGISTRY = {
-    yourtheme: {
-        metadata: {
-            id: "yourtheme",
-            name: "Your Theme Name",
-            description: "Beautiful wedding invitation theme",
-            isFree: true,
-            category: "modern",
-        },
-        component: YourTheme,
-    },
-};
 ```
 
 ## 📋 Development Roadmap
