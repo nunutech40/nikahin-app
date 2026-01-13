@@ -68,29 +68,29 @@ Refactor the codebase to separate data from presentation, enabling users to swit
 ### 📦 Tasks Breakdown
 
 #### **Phase 2.1: Extract Theme Component**
-- [ ] **T2.1.1** - Create `/src/components/themes/` directory
-- [ ] **T2.1.2** - Create `BasicTheme.tsx` component
-- [ ] **T2.1.3** - Move all UI sections from `page.tsx` to `BasicTheme.tsx`
-  - [ ] Hero section
-  - [ ] Couple section
-  - [ ] Event section
-  - [ ] Gallery section
-  - [ ] Quotes section
-  - [ ] RSVP section
-  - [ ] Guestbook section
-- [ ] **T2.1.4** - Define TypeScript interface for theme props (`InvitationData`)
-- [ ] **T2.1.5** - Test: Verify UI still works after extraction
+- [x] **T2.1.1** - Create `/src/components/themes/` directory
+- [x] **T2.1.2** - Create `BasicTheme.tsx` component
+- [x] **T2.1.3** - Move all UI sections from `page.tsx` to `BasicTheme.tsx`
+  - [x] Hero section
+  - [x] Couple section
+  - [x] Event section
+  - [x] Gallery section
+  - [x] Quotes section
+  - [x] RSVP section
+  - [x] Guestbook section
+- [x] **T2.1.4** - Define TypeScript interface for theme props (`InvitationData`)
+- [x] **T2.1.5** - Test: Verify UI still works after extraction
 
 **Rollback Point:** If issues occur, revert `BasicTheme.tsx` and restore original `page.tsx`
 
 #### **Phase 2.2: Refactor Page Controller**
-- [ ] **T2.2.1** - Move `MOCK_DATA` to `/src/data/mockData.ts`
-- [ ] **T2.2.2** - Simplify `[slug]/page.tsx` to only:
+- [x] **T2.2.1** - Move `MOCK_DATA` to `/src/data/mockData.ts`
+- [x] **T2.2.2** - Simplify `[slug]/page.tsx` to only:
   - Fetch data based on slug
   - Determine theme to use
   - Render theme component with data
-- [ ] **T2.2.3** - Import and use `BasicTheme` in `page.tsx`
-- [ ] **T2.2.4** - Test: Verify data flows correctly to theme component
+- [x] **T2.2.3** - Import and use `BasicTheme` in `page.tsx`
+- [x] **T2.2.4** - Test: Verify data flows correctly to theme component
 
 **Rollback Point:** Keep backup of original `page.tsx` as `page.tsx.backup`
 
@@ -108,14 +108,22 @@ Refactor the codebase to separate data from presentation, enabling users to swit
 - [ ] **T2.4.3** - Create `/docs/THEME_DEVELOPMENT.md` guide
 - [ ] **T2.4.4** - Update README with new architecture
 
-### 📊 Status: 🔄 **IN PROGRESS** (20%)
+### 📊 Status: 🔄 **IN PROGRESS** (50%)
 
 **Current State:**
+- ✅ Phase 2.1: Extract Theme Component - **COMPLETED**
+- ✅ Phase 2.2: Refactor Page Controller - **COMPLETED**
+- ⏳ Phase 2.3: Create Theme Registry - **PENDING**
+- ⏳ Phase 2.4: Cleanup & Documentation - **PENDING**
+
+**Completed:**
 - ✅ Mock data extracted to `/src/data/mockData.ts`
 - ✅ Type definitions created in `/src/types/invitation.ts`
 - ✅ Bottom Navigation extracted to component
 - ✅ Music Toggle extracted to component
-- ⏳ Main theme extraction pending
+- ✅ BasicTheme component created with all UI sections
+- ✅ Page controller refactored to thin controller pattern
+- ✅ Data flow verified and working correctly
 
 ---
 

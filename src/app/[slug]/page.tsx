@@ -3,16 +3,32 @@
 import { useEffect, useState } from "react";
 import { BasicTheme } from "@/components/themes/BasicTheme";
 import { MOCK_DATA } from "@/data/mockData";
+import type { InvitationData } from "@/types/invitation";
 
 /**
- * Dynamic Invitation Page
+ * ============================================
+ * INVITATION PAGE CONTROLLER
+ * ============================================
  * 
- * This page acts as a controller that:
+ * This page acts as a thin controller layer that:
  * 1. Fetches invitation data based on slug
- * 2. Determines which theme to use
- * 3. Renders the theme component with data
+ * 2. Extracts guest name from URL query params
+ * 3. Determines which theme component to render
+ * 4. Passes data to theme component
  * 
- * Future: Will fetch from database instead of using MOCK_DATA
+ * Architecture:
+ * - Page.tsx = Controller (data fetching & routing)
+ * - Theme Component = View (presentation only)
+ * - Data = Separated in /src/data or database
+ * 
+ * @future Database Integration (Iterasi 4)
+ * - Replace MOCK_DATA with database query
+ * - Implement getInvitationBySlug(slug)
+ * - Add error handling for not found
+ * 
+ * @future Theme Registry (Phase 2.3)
+ * - Implement dynamic theme loading
+ * - Use getThemeComponent(themeId)
  */
 
 interface PageProps {
@@ -21,10 +37,12 @@ interface PageProps {
     };
 }
 
-export default function InvitationPage({ params }: PageProps) {
+/**
+ * Helper: Extract guest name from URL query parameter
+ */
+function useGuestName(): string | undefined {
     const [guestName, setGuestName] = useState<string | undefined>();
 
-    // Extract guest name from URL parameter
     useEffect(() => {
         if (typeof window !== "undefined") {
             const urlParams = new URLSearchParams(window.location.search);
@@ -35,19 +53,36 @@ export default function InvitationPage({ params }: PageProps) {
         }
     }, []);
 
-    // TODO: Fetch invitation data from database based on params.slug
-    // const invitationData = await getInvitationBySlug(params.slug);
+    return guestName;
+}
 
-    // TODO: Determine theme based on invitation data
+/**
+ * Helper: Fetch invitation data based on slug
+ * @future Replace with actual database query
+ */
+function getInvitationData(slug: string): InvitationData {
+    // TODO (Iterasi 4): Fetch from database
+    // const data = await db.query.invitations.findFirst({
+    //     where: eq(invitations.slug, slug)
+    // });
+    // if (!data) notFound();
+    // return data;
+
+    // For now, return mock data
+    return MOCK_DATA;
+}
+
+/**
+ * Main Page Component
+ */
+export default function InvitationPage({ params }: PageProps) {
+    const guestName = useGuestName();
+    const invitationData = getInvitationData(params.slug);
+
+    // TODO (Phase 2.3): Dynamic theme loading
     // const ThemeComponent = getThemeComponent(invitationData.themeId);
+    // return <ThemeComponent data={invitationData} guestName={guestName} />;
 
-    // For now, use MOCK_DATA and BasicTheme
-    const invitationData = MOCK_DATA;
-
-    return (
-        <BasicTheme
-            data={invitationData}
-            guestName={guestName}
-        />
-    );
+    // For now, use BasicTheme
+    return <BasicTheme data={invitationData} guestName={guestName} />;
 }
