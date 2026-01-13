@@ -26,14 +26,14 @@ import {
 const MOCK_DATA = {
     slug: "rizka-ayu",
     groom: {
-        name: "Muhammad Rizka",
-        fullName: "Muhammad Rizka Fajar Nugraha",
+        name: "Robert Downey",
+        fullName: "Robert Downey Junior",
         parentName: "Bapak Ahmad Nugraha & Ibu Siti Fatimah",
         photo: "/images/gallery-2.png",
     },
     bride: {
-        name: "Ayu Lestari",
-        fullName: "Ayu Lestari Putri",
+        name: "Dakot Johnson",
+        fullName: "Dakot Johnson",
         parentName: "Bapak Hendra Kusuma & Ibu Dewi Anggraeni",
         photo: "/images/gallery-2.png",
     },
