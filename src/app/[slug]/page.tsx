@@ -18,6 +18,7 @@ import {
     Users,
     Camera,
     MessageCircle,
+    Sparkles,
 } from "lucide-react";
 
 // =====================================================
@@ -128,6 +129,49 @@ const MOCK_DATA = {
 // =====================================================
 // COMPONENTS
 // =====================================================
+
+// Confetti Celebration Component
+function ConfettiCelebration() {
+    const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; duration: number; color: string }>>([]);
+
+    useEffect(() => {
+        // Generate confetti particles
+        const particles = Array.from({ length: 50 }, (_, i) => ({
+            id: i,
+            x: Math.random() * 100,
+            delay: Math.random() * 0.5,
+            duration: 2 + Math.random() * 2,
+            color: ['#c9a96e', '#d4af37', '#f4e4c1', '#e8b4b8', '#ffd700'][Math.floor(Math.random() * 5)],
+        }));
+        setConfetti(particles);
+    }, []);
+
+    return (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+            {confetti.map((particle) => (
+                <motion.div
+                    key={particle.id}
+                    initial={{ y: -20, x: `${particle.x}vw`, opacity: 1, rotate: 0 }}
+                    animate={{
+                        y: '110vh',
+                        rotate: 360 * 3,
+                        opacity: 0,
+                    }}
+                    transition={{
+                        duration: particle.duration,
+                        delay: particle.delay,
+                        ease: 'easeIn',
+                    }}
+                    className="absolute w-2 h-2 md:w-3 md:h-3"
+                    style={{
+                        backgroundColor: particle.color,
+                        borderRadius: Math.random() > 0.5 ? '50%' : '0%',
+                    }}
+                />
+            ))}
+        </div>
+    );
+}
 
 // Countdown Timer Component - Compact & Elegant
 function CountdownTimer() {
@@ -380,10 +424,10 @@ function QuoteSection() {
     );
 }
 
-// Couple Profile Section
+// Couple Profile Section - REDESIGNED FOR WOW FACTOR
 function CoupleSection() {
     return (
-        <section id="couple" className="section scroll-mt-20">
+        <section id="couple" className="section scroll-mt-20 bg-gradient-to-b from-white via-[var(--color-cream)] to-white">
             <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -394,79 +438,131 @@ function CoupleSection() {
                 <div className="ornament" />
             </motion.div>
 
-            <div className="space-y-12 mt-8 max-w-xl mx-auto">
-                {/* Groom */}
-                <motion.div
-                    initial={{ opacity: 0, x: -30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center"
-                >
-                    <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-6">
-                        <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] p-2">
-                            <div className="relative w-full h-full rounded-full overflow-hidden">
-                                <Image
-                                    src={MOCK_DATA.groom.photo}
-                                    alt={MOCK_DATA.groom.name}
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <h3 className="font-serif text-2xl md:text-3xl text-[var(--color-primary-dark)] mb-2">
-                        {MOCK_DATA.groom.fullName}
-                    </h3>
-                    <p className="text-sm md:text-base text-[var(--color-text-light)]">
-                        Putra dari
-                    </p>
-                    <p className="text-sm md:text-base text-[var(--color-text)]">
-                        {MOCK_DATA.groom.parentName}
-                    </p>
-                </motion.div>
+            {/* Desktop: Side by Side, Mobile: Stacked */}
+            <div className="mt-12 max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                    {/* Groom - Left Side */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="relative"
+                    >
+                        {/* Decorative Background */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-primary-light)]/20 to-transparent rounded-3xl transform rotate-3 scale-105" />
 
-                {/* Heart Divider */}
-                <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    className="flex justify-center"
-                >
-                    <div className="w-12 h-12 rounded-full bg-[var(--color-primary-light)] flex items-center justify-center">
-                        <Heart className="w-6 h-6 text-[var(--color-primary)] fill-current" />
-                    </div>
-                </motion.div>
+                        <div className="relative glass rounded-3xl p-8 md:p-10 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
+                            {/* Photo with elegant frame */}
+                            <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-6">
+                                {/* Animated decorative rings */}
+                                <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] animate-pulse-slow" />
+                                <div className="absolute inset-2 rounded-full border border-[var(--color-primary-light)] opacity-50" />
 
-                {/* Bride */}
-                <motion.div
-                    initial={{ opacity: 0, x: 30 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center"
-                >
-                    <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-6">
-                        <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] p-2">
-                            <div className="relative w-full h-full rounded-full overflow-hidden">
-                                <Image
-                                    src={MOCK_DATA.bride.photo}
-                                    alt={MOCK_DATA.bride.name}
-                                    fill
-                                    className="object-cover"
-                                />
+                                {/* Photo container */}
+                                <div className="absolute inset-4 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                    <Image
+                                        src={MOCK_DATA.groom.photo}
+                                        alt={MOCK_DATA.groom.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+
+                                {/* Sparkle decoration */}
+                                <div className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-full flex items-center justify-center shadow-lg">
+                                    <Sparkles className="w-4 h-4 text-white" />
+                                </div>
                             </div>
+
+                            {/* Name with elegant typography */}
+                            <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[var(--color-primary-dark)] mb-3 text-center leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                                {MOCK_DATA.groom.fullName}
+                            </h3>
+
+                            {/* Divider */}
+                            <div className="flex items-center justify-center gap-2 mb-3">
+                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]" />
+                                <Heart className="w-4 h-4 text-[var(--color-primary)] fill-current" />
+                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]" />
+                            </div>
+
+                            <p className="text-sm md:text-base text-[var(--color-text-light)] text-center mb-2 font-light">
+                                Putra dari
+                            </p>
+                            <p className="text-sm md:text-base text-[var(--color-text)] text-center leading-relaxed">
+                                {MOCK_DATA.groom.parentName}
+                            </p>
                         </div>
+                    </motion.div>
+
+                    {/* Bride - Right Side */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.8 }}
+                        className="relative"
+                    >
+                        {/* Decorative Background */}
+                        <div className="absolute inset-0 bg-gradient-to-bl from-[var(--color-rose-light)]/20 to-transparent rounded-3xl transform -rotate-3 scale-105" />
+
+                        <div className="relative glass rounded-3xl p-8 md:p-10 shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-105">
+                            {/* Photo with elegant frame */}
+                            <div className="relative w-56 h-56 md:w-64 md:h-64 mx-auto mb-6">
+                                {/* Animated decorative rings */}
+                                <div className="absolute inset-0 rounded-full border-2 border-[var(--color-primary)] animate-pulse-slow" />
+                                <div className="absolute inset-2 rounded-full border border-[var(--color-primary-light)] opacity-50" />
+
+                                {/* Photo container */}
+                                <div className="absolute inset-4 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                                    <Image
+                                        src={MOCK_DATA.bride.photo}
+                                        alt={MOCK_DATA.bride.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                </div>
+
+                                {/* Sparkle decoration */}
+                                <div className="absolute -top-2 -left-2 w-8 h-8 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] rounded-full flex items-center justify-center shadow-lg">
+                                    <Sparkles className="w-4 h-4 text-white" />
+                                </div>
+                            </div>
+
+                            {/* Name with elegant typography */}
+                            <h3 className="font-serif text-3xl md:text-4xl lg:text-5xl text-[var(--color-primary-dark)] mb-3 text-center leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                                {MOCK_DATA.bride.fullName}
+                            </h3>
+
+                            {/* Divider */}
+                            <div className="flex items-center justify-center gap-2 mb-3">
+                                <div className="w-12 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]" />
+                                <Heart className="w-4 h-4 text-[var(--color-primary)] fill-current" />
+                                <div className="w-12 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]" />
+                            </div>
+
+                            <p className="text-sm md:text-base text-[var(--color-text-light)] text-center mb-2 font-light">
+                                Putri dari
+                            </p>
+                            <p className="text-sm md:text-base text-[var(--color-text)] text-center leading-relaxed">
+                                {MOCK_DATA.bride.parentName}
+                            </p>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Heart Connector - Only visible on desktop */}
+                <motion.div
+                    initial={{ scale: 0, rotate: -180 }}
+                    whileInView={{ scale: 1, rotate: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
+                    className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20"
+                >
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center shadow-2xl border-4 border-white">
+                        <Heart className="w-10 h-10 text-white fill-current animate-pulse" />
                     </div>
-                    <h3 className="font-serif text-2xl md:text-3xl text-[var(--color-primary-dark)] mb-2">
-                        {MOCK_DATA.bride.fullName}
-                    </h3>
-                    <p className="text-sm md:text-base text-[var(--color-text-light)]">
-                        Putri dari
-                    </p>
-                    <p className="text-sm md:text-base text-[var(--color-text)]">
-                        {MOCK_DATA.bride.parentName}
-                    </p>
                 </motion.div>
             </div>
         </section>
@@ -497,7 +593,7 @@ function EventSection() {
                         transition={{ delay: index * 0.2 }}
                         className="glass rounded-2xl p-6 shadow-lg"
                     >
-                        <h3 className="font-serif text-xl md:text-2xl text-[var(--color-primary-dark)] text-center mb-4">
+                        <h3 className="font-serif text-2xl md:text-3xl text-[var(--color-primary-dark)] text-center mb-4 font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
                             {event.name}
                         </h3>
 
@@ -1168,6 +1264,8 @@ export default function InvitationPage() {
     const [isMusicPlaying, setIsMusicPlaying] = useState(false);
     const [activeSection, setActiveSection] = useState("couple");
     const [guestName, setGuestName] = useState<string | undefined>(undefined);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const [showWelcome, setShowWelcome] = useState(false);
 
     // Extract guest name from URL parameter
     useEffect(() => {
@@ -1183,6 +1281,15 @@ export default function InvitationPage() {
     const handleOpen = () => {
         setIsOpen(true);
         setIsMusicPlaying(true);
+        setShowConfetti(true);
+        setShowWelcome(true);
+
+        // Hide confetti after animation
+        setTimeout(() => setShowConfetti(false), 4000);
+
+        // Hide welcome message after showing
+        setTimeout(() => setShowWelcome(false), 3500);
+
         // TODO: Play background music
     };
 
@@ -1252,6 +1359,64 @@ export default function InvitationPage() {
                     <BottomNavigation activeSection={activeSection} />
                 </>
             )}
+
+            {/* Confetti Celebration */}
+            {showConfetti && <ConfettiCelebration />}
+
+            {/* Welcome Message */}
+            <AnimatePresence>
+                {showWelcome && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        transition={{ duration: 0.5 }}
+                        className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none"
+                    >
+                        <motion.div
+                            initial={{ y: 20 }}
+                            animate={{ y: 0 }}
+                            className="glass rounded-3xl p-8 md:p-12 shadow-2xl max-w-md mx-4 text-center border-2 border-[var(--color-primary)]/30"
+                        >
+                            <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.2, type: "spring" }}
+                                className="mb-4"
+                            >
+                                <Heart className="w-16 h-16 mx-auto text-[var(--color-primary)] fill-current" />
+                            </motion.div>
+                            <motion.h2
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.3 }}
+                                className="font-serif text-2xl md:text-3xl text-[var(--color-primary-dark)] mb-2"
+                                style={{ fontFamily: "'Playfair Display', serif" }}
+                            >
+                                Selamat Datang!
+                            </motion.h2>
+                            {guestName && (
+                                <motion.p
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ delay: 0.4 }}
+                                    className="text-lg md:text-xl text-[var(--color-primary)] font-medium mb-3"
+                                >
+                                    {guestName}
+                                </motion.p>
+                            )}
+                            <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ delay: 0.5 }}
+                                className="text-sm md:text-base text-[var(--color-text-light)]"
+                            >
+                                Terima kasih telah menjadi bagian dari hari istimewa kami
+                            </motion.p>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }
