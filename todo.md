@@ -9,8 +9,8 @@
 ## 🎯 Progress Overview
 
 - [x] **Iterasi 1:** The Renderer (Public Page - Static) - ✅ **COMPLETED**
-- [ ] **Iterasi 2:** The Theme Engine (Decoupling) - 🔄 **IN PROGRESS**
-- [ ] **Iterasi 3:** User Dashboard (Data Entry)
+- [x] **Iterasi 2:** The Theme Engine (Decoupling) - ✅ **COMPLETED**
+- [ ] **Iterasi 3:** User Dashboard (Data Entry) - 🔄 **IN PROGRESS**
 - [ ] **Iterasi 4:** Database Integration (RSVP & Persistence)
 - [ ] **Iterasi 5:** Auth & User Management
 - [ ] **Iterasi 6:** Super Admin Panel
@@ -95,26 +95,26 @@ Refactor the codebase to separate data from presentation, enabling users to swit
 **Rollback Point:** Keep backup of original `page.tsx` as `page.tsx.backup`
 
 #### **Phase 2.3: Create Theme Registry**
-- [ ] **T2.3.1** - Create `/src/lib/themeRegistry.ts`
-- [ ] **T2.3.2** - Implement theme mapping logic (slug → component)
-- [ ] **T2.3.3** - Add theme metadata (name, description, isFree)
-- [ ] **T2.3.4** - Test: Verify theme loading works
+- [x] **T2.3.1** - Create `/src/lib/themeRegistry.ts`
+- [x] **T2.3.2** - Implement theme mapping logic (slug → component)
+- [x] **T2.3.3** - Add theme metadata (name, description, isFree)
+- [x] **T2.3.4** - Test: Verify theme loading works
 
 **Rollback Point:** Theme registry is additive, safe to remove if needed
 
 #### **Phase 2.4: Cleanup & Documentation**
-- [ ] **T2.4.1** - Remove unused code from `page.tsx`
-- [ ] **T2.4.2** - Add JSDoc comments to theme interface
-- [ ] **T2.4.3** - Create `/docs/THEME_DEVELOPMENT.md` guide
-- [ ] **T2.4.4** - Update README with new architecture
+- [x] **T2.4.1** - Remove unused code from `page.tsx`
+- [x] **T2.4.2** - Add JSDoc comments to theme interface
+- [x] **T2.4.3** - Create `/docs/THEME_DEVELOPMENT.md` guide
+- [x] **T2.4.4** - Update README with new architecture
 
-### 📊 Status: 🔄 **IN PROGRESS** (50%)
+### 📊 Status: ✅ **COMPLETED** (100%)
 
 **Current State:**
 - ✅ Phase 2.1: Extract Theme Component - **COMPLETED**
 - ✅ Phase 2.2: Refactor Page Controller - **COMPLETED**
-- ⏳ Phase 2.3: Create Theme Registry - **PENDING**
-- ⏳ Phase 2.4: Cleanup & Documentation - **PENDING**
+- ✅ Phase 2.3: Create Theme Registry - **COMPLETED**
+- ✅ Phase 2.4: Cleanup & Documentation - **COMPLETED**
 
 **Completed:**
 - ✅ Mock data extracted to `/src/data/mockData.ts`
@@ -124,6 +124,10 @@ Refactor the codebase to separate data from presentation, enabling users to swit
 - ✅ BasicTheme component created with all UI sections
 - ✅ Page controller refactored to thin controller pattern
 - ✅ Data flow verified and working correctly
+- ✅ Theme registry created with metadata and component mapping
+- ✅ Theme loading integrated into page controller
+- ✅ JSDoc comments added to all theme interfaces
+- ✅ THEME_DEVELOPMENT.md guide created
 
 ---
 
@@ -143,11 +147,11 @@ Build a user-facing dashboard where users can input their wedding data through f
 ### 📦 Tasks Breakdown
 
 #### **Phase 3.1: Dashboard Layout**
-- [ ] **T3.1.1** - Create `/src/app/dashboard/page.tsx`
-- [ ] **T3.1.2** - Create dashboard layout component
-- [ ] **T3.1.3** - Implement split-screen layout (form left, preview right)
-- [ ] **T3.1.4** - Add responsive breakpoints (stack on mobile)
-- [ ] **T3.1.5** - Test: Verify layout works on all screen sizes
+- [x] **T3.1.1** - Create `/src/app/dashboard/page.tsx`
+- [x] **T3.1.2** - Create dashboard layout component
+- [x] **T3.1.3** - Implement split-screen layout (form left, preview right)
+- [x] **T3.1.4** - Add responsive breakpoints (stack on mobile)
+- [x] **T3.1.5** - Test: Verify layout works on all screen sizes
 
 **Rollback Point:** Dashboard is separate route, safe to delete
 
@@ -189,7 +193,23 @@ Build a user-facing dashboard where users can input their wedding data through f
 
 **Rollback Point:** Validation is additive, can be disabled
 
-### 📊 Status: ⏳ **NOT STARTED** (0%)
+
+### 📊 Status: 🔄 **IN PROGRESS** (20%)
+
+**Current State:**
+- ✅ Phase 3.1: Dashboard Layout - **COMPLETED**
+- ⏳ Phase 3.2: Form Components - **PENDING**
+- ⏳ Phase 3.3: State Management - **PENDING**
+- ⏳ Phase 3.4: Live Preview - **PENDING**
+- ⏳ Phase 3.5: Form Validation - **PENDING**
+
+**Completed:**
+- ✅ Dashboard page created with split-screen layout
+- ✅ Form sidebar with responsive design
+- ✅ Live preview with mobile/desktop modes
+- ✅ Mobile-optimized with collapsible sidebar
+- ✅ Premium UI styling with glassmorphism effects
+
 
 ---
 
