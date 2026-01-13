@@ -1091,11 +1091,32 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                     /* Base Preview Styles (Positioning) - Applies to both Mobile & Desktop Preview */
                     .preview-wrapper { position: relative !important; overflow-x: hidden !important; min-height: 100% !important; }
                     
-                    /* Trap typical fixed elements (Music, Nav) inside the preview frame */
+                    /* 1. Generic Fixed Elements Override (Safety Net) */
                     .preview-wrapper .fixed { position: absolute !important; }
-                    
-                    /* FIX: Use sticky instead of absolute for modal so it stays in viewport during scroll */
+
+                    /* 2. Welcome Modal - Sticky Full Screen */
                     .preview-wrapper .fixed.inset-0.z-40 { position: sticky !important; top: 0 !important; height: 100vh !important; z-index: 50 !important; }
+                    
+                    /* 3. Music Toggle (Button) - Absolute Top (Scrolls away) / Fixes "Sticky Love Overlap" */
+                    .preview-wrapper button.fixed { position: absolute !important; top: 1.5rem !important; right: 1.5rem !important; z-index: 30 !important; }
+
+                    /* 4. Bottom Navigation (Nav) - Restore for BOTH Mobile & Desktop */
+                    /* Sticky Bottom: Mimics app-bar behavior inside the scrollable container */
+                    .preview-wrapper nav.fixed { position: sticky !important; bottom: 0 !important; z-index: 40 !important; width: 100% !important; }
+
+                    /* 5. Mobile Layout Enforcer (CRITICAL) */
+                    /* Force hide desktop-only elements that Tailwind exposes because the browser window is wide */
+                    ${isMobile ? `
+                        /* Hide the "Heart Connector" (lg:flex) and Timeline Line (md:block) which are overlapping text in mobile view */
+                        .preview-wrapper .lg\\:flex { display: none !important; }
+                        .preview-wrapper .md\\:block { display: none !important; }
+                        
+                        /* Force single column layout */
+                        .preview-wrapper .md\\:flex-row { flex-direction: column !important; }
+                        .preview-wrapper .md\\:flex-row-reverse { flex-direction: column !important; }
+                        .preview-wrapper .md\\:text-right { text-align: left !important; }
+                        .preview-wrapper .md\\:text-left { text-align: left !important; }
+                    ` : ''}
                     
                     /* Welcome Modal Sizing for Preview */
                     .preview-wrapper .fixed.inset-0.z-40 .glass {
