@@ -8,18 +8,18 @@ import {
     MapPin,
     Clock,
     Heart,
-    Music,
-    VolumeX,
     ChevronDown,
     Send,
     Gift,
     Copy,
     Check,
-    Users,
-    Camera,
-    MessageCircle,
     Sparkles,
+    MessageCircle,
 } from "lucide-react";
+
+// Components
+import { BottomNavigation } from "@/components/ui/BottomNavigation";
+import { MusicToggle } from "@/components/ui/MusicToggle";
 
 // =====================================================
 // MOCK DATA - Akan diganti dengan data dari database
@@ -1183,75 +1183,6 @@ function FooterSection() {
                 </p>
             </motion.div>
         </footer>
-    );
-}
-
-// Bottom Navigation
-function BottomNavigation({ activeSection }: { activeSection: string }) {
-    const scrollToSection = (sectionId: string) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            const offset = 80; // Account for fixed nav height
-            const elementPosition = element.getBoundingClientRect().top;
-            const offsetPosition = elementPosition + window.pageYOffset - offset;
-
-            window.scrollTo({
-                top: offsetPosition,
-                behavior: "smooth",
-            });
-        }
-    };
-
-    const navItems = [
-        { id: "couple", label: "Mempelai", icon: Users },
-        { id: "event", label: "Acara", icon: Calendar },
-        { id: "gallery", label: "Galeri", icon: Camera },
-        { id: "rsvp", label: "RSVP", icon: MessageCircle },
-    ];
-
-    return (
-        <nav className="bottom-nav">
-            <div className="bottom-nav-container">
-                {navItems.map((item) => {
-                    const Icon = item.icon;
-                    return (
-                        <button
-                            key={item.id}
-                            onClick={() => scrollToSection(item.id)}
-                            className={`nav-item ${activeSection === item.id ? "active" : ""}`}
-                        >
-                            <Icon className="nav-icon" />
-                            <span className="nav-label">{item.label}</span>
-                        </button>
-                    );
-                })}
-            </div>
-        </nav>
-    );
-}
-
-// Music Toggle Button
-function MusicToggle({
-    isPlaying,
-    onToggle,
-}: {
-    isPlaying: boolean;
-    onToggle: () => void;
-}) {
-    return (
-        <motion.button
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 1.5 }}
-            onClick={onToggle}
-            className="fixed top-6 right-6 z-50 w-12 h-12 rounded-full bg-white shadow-lg flex items-center justify-center border border-[var(--color-primary-light)] hover:bg-[var(--color-primary-light)] transition-all"
-        >
-            {isPlaying ? (
-                <Music className="w-5 h-5 text-[var(--color-primary)] animate-pulse" />
-            ) : (
-                <VolumeX className="w-5 h-5 text-[var(--color-text-muted)]" />
-            )}
-        </motion.button>
     );
 }
 
