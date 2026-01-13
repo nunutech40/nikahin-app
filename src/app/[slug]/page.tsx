@@ -31,13 +31,13 @@ const MOCK_DATA = {
         name: "Robert Downey",
         fullName: "Robert Downey Junior",
         parentName: "Bapak Ahmad Nugraha & Ibu Siti Fatimah",
-        photo: "/images/gallery-2.png",
+        photo: "/images/couple/groom-portrait.png",
     },
     bride: {
         name: "Dakot Johnson",
         fullName: "Dakot Johnson",
         parentName: "Bapak Hendra Kusuma & Ibu Dewi Anggraeni",
-        photo: "/images/gallery-2.png",
+        photo: "/images/couple/bride-portrait.png",
     },
     events: [
         {
