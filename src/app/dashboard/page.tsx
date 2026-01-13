@@ -7,8 +7,13 @@ import { BasicTheme } from "@/components/themes/BasicTheme";
 import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
-    Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette
+    Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
+    Lock
 } from "lucide-react";
+
+// Feature Gating
+import { canUseFeature } from "@/lib/features";
+import FeatureGate from "@/components/dashboard/FeatureGate";
 
 // Form Components
 import CoupleInfoForm from "@/components/dashboard/forms/CoupleInfoForm";
@@ -237,52 +242,66 @@ export default function DashboardPage() {
                                 onAdd={handleEventAdd}
                                 onRemove={handleEventRemove}
                                 errors={errors}
+                                canAddMore={invitationData.events.length < 1 || canUseFeature(invitationData, 'multi-event')}
                             />
                         )}
                         {activeTab === "cerita" && (
-                            <LoveStoryForm
-                                loveStory={invitationData.loveStory}
-                                onChange={handleLoveStoryChange}
-                                errors={errors}
-                            />
+                            <FeatureGate canUse={canUseFeature(invitationData, 'love-story')} featureCode="love-story">
+                                <LoveStoryForm
+                                    loveStory={invitationData.loveStory}
+                                    onChange={handleLoveStoryChange}
+                                    errors={errors}
+                                />
+                            </FeatureGate>
                         )}
                         {activeTab === "galeri" && (
-                            <GalleryForm
-                                gallery={invitationData.gallery}
-                                onChange={handleGalleryChange}
-                                errors={errors}
-                            />
+                            <FeatureGate canUse={canUseFeature(invitationData, 'gallery')} featureCode="gallery">
+                                <GalleryForm
+                                    gallery={invitationData.gallery}
+                                    onChange={handleGalleryChange}
+                                    errors={errors}
+                                />
+                            </FeatureGate>
                         )}
                         {activeTab === "hadiah" && (
-                            <GiftForm
-                                giftOptions={invitationData.giftOptions}
-                                shippingAddress={invitationData.shippingAddress}
-                                onGiftOptionsChange={handleGiftOptionsChange}
-                                onAddressChange={handleAddressChange}
-                                errors={errors}
-                            />
+                            <FeatureGate canUse={canUseFeature(invitationData, 'gift-registry')} featureCode="gift-registry">
+                                <GiftForm
+                                    giftOptions={invitationData.giftOptions}
+                                    shippingAddress={invitationData.shippingAddress}
+                                    onGiftOptionsChange={handleGiftOptionsChange}
+                                    onAddressChange={handleAddressChange}
+                                    errors={errors}
+                                />
+                            </FeatureGate>
                         )}
                         {activeTab === "tampilan" && (
-                            <ThemeSettingsForm
-                                themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
-                                coverImage={invitationData.coverImage || ""}
-                                onConfigChange={handleThemeConfigChange}
-                                onCoverChange={handleCoverChange}
-                                errors={errors}
-                            />
+                            <FeatureGate canUse={canUseFeature(invitationData, 'custom-theme')} featureCode="custom-theme">
+                                <ThemeSettingsForm
+                                    themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
+                                    coverImage={invitationData.coverImage || ""}
+                                    onConfigChange={handleThemeConfigChange}
+                                    onCoverChange={handleCoverChange}
+                                    errors={errors}
+                                />
+                            </FeatureGate>
                         )}
                         {activeTab === "lainnya" && (
                             <div className="space-y-8">
-                                <QuotesForm
-                                    quotes={invitationData.quotes}
-                                    onChange={handleQuotesChange}
-                                    errors={errors}
-                                />
-                                <MusicForm
-                                    musicUrl={invitationData.musicUrl}
-                                    onChange={handleMusicChange}
-                                    errors={errors}
-                                />
+                                <FeatureGate canUse={canUseFeature(invitationData, 'quotes')} featureCode="quotes">
+                                    <QuotesForm
+                                        quotes={invitationData.quotes}
+                                        onChange={handleQuotesChange}
+                                        errors={errors}
+                                    />
+                                </FeatureGate>
+
+                                <FeatureGate canUse={canUseFeature(invitationData, 'background-music')} featureCode="background-music">
+                                    <MusicForm
+                                        musicUrl={invitationData.musicUrl}
+                                        onChange={handleMusicChange}
+                                        errors={errors}
+                                    />
+                                </FeatureGate>
                             </div>
                         )}
                     </div>

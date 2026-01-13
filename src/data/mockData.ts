@@ -123,4 +123,15 @@ export const MOCK_DATA: InvitationData = {
         fontHeading: "Playfair Display",
         fontBody: "Inter",
     },
+    // Mocking a 'Professional' package with all features enabled
+    packageId: "pkg_professional",
+    features: [
+        'love-story',
+        'gallery',
+        'gift-registry',
+        'background-music',
+        'custom-theme',
+        'rsvp',
+        'quotes'
+    ],
 };

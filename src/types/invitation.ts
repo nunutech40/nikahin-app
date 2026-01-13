@@ -100,7 +100,7 @@ export interface InvitationData {
     /** Religious quote */
     quotes: Quotes;
     /** Bank accounts for gifts (legacy) */
-    bankAccounts: BankAccount[];
+    bankAccounts?: BankAccount[];
     /** Background music URL */
     musicUrl: string;
     /** Gift options with detailed info */
@@ -125,7 +125,24 @@ export interface InvitationData {
     coverImage?: string;
     /** Theme Configuration */
     themeConfig?: ThemeConfig;
+    /** Package ID (linked to Feature Gating) */
+    packageId?: string;
+    /** List of explicitly enabled feature codes for this invitation */
+    features?: string[];
 }
+
+/**
+ * Feature Gating Module
+ */
+export type FeatureCode =
+    | 'love-story'
+    | 'gallery'
+    | 'gift-registry'
+    | 'background-music'
+    | 'custom-theme'
+    | 'rsvp'
+    | 'quotes'
+    | 'multi-event';
 
 /**
  * Theme Customization Configuration

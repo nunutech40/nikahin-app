@@ -16,6 +16,7 @@ import {
     Sparkles,
     MessageCircle,
 } from "lucide-react";
+import { canUseFeature } from "@/lib/features";
 
 // Components
 import { BottomNavigation } from "@/components/ui/BottomNavigation";
@@ -1224,10 +1225,10 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                         <QuoteSection quotes={data.quotes} />
                         <CoupleSection groom={data.groom} bride={data.bride} />
                         <EventSection events={data.events} />
-                        <LoveStorySection loveStory={data.loveStory} />
-                        <GallerySection gallery={data.gallery} />
-                        <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />
-                        <RSVPSection />
+                        {canUseFeature(data, 'love-story') && <LoveStorySection loveStory={data.loveStory} />}
+                        {canUseFeature(data, 'gallery') && <GallerySection gallery={data.gallery} />}
+                        {canUseFeature(data, 'gift-registry') && <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />}
+                        {canUseFeature(data, 'rsvp') && <RSVPSection />}
                         <GuestBookSection />
                         <FooterSection data={data} />
                     </motion.div>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Event } from '@/types/invitation';
-import { Calendar, MapPin, Clock, Plus, Trash2 } from 'lucide-react';
+import { Calendar, MapPin, Clock, Plus, Trash2, Lock } from 'lucide-react';
 
 interface EventFormProps {
     events: Event[];
@@ -9,9 +9,10 @@ interface EventFormProps {
     onAdd: () => void;
     onRemove: (index: number) => void;
     errors?: Record<string, string[] | undefined>;
+    canAddMore: boolean;
 }
 
-export default function EventForm({ events, onChange, onAdd, onRemove, errors }: EventFormProps) {
+export default function EventForm({ events, onChange, onAdd, onRemove, errors, canAddMore }: EventFormProps) {
     return (
         <div className="space-y-6">
             {events.map((event, index) => (
@@ -132,13 +133,24 @@ export default function EventForm({ events, onChange, onAdd, onRemove, errors }:
                 </div>
             ))}
 
-            <button
-                onClick={onAdd}
-                className="w-full py-3 rounded-xl border-2 border-dashed border-[var(--color-primary-light)] text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary)]/5 transition-colors flex items-center justify-center gap-2"
-            >
-                <Plus className="w-5 h-5" />
-                Tambah Acara
-            </button>
+            {canAddMore && (
+                <button
+                    onClick={onAdd}
+                    className="w-full py-3 rounded-xl border-2 border-dashed border-[var(--color-primary-light)] text-[var(--color-primary)] font-medium hover:bg-[var(--color-primary)]/5 transition-colors flex items-center justify-center gap-2"
+                >
+                    <Plus className="w-5 h-5" />
+                    Tambah Acara
+                </button>
+            )}
+
+            {!canAddMore && events.length < 2 && (
+                <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs flex items-center gap-3">
+                    <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Lock className="w-4 h-4 text-amber-500" />
+                    </div>
+                    <p>Upgrade paket Anda untuk menambahkan lebih dari satu acara.</p>
+                </div>
+            )}
         </div>
     );
 }
