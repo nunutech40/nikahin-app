@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BasicTheme } from "@/components/themes/BasicTheme";
 import { MOCK_DATA } from "@/data/mockData";
 import type { InvitationData } from "@/types/invitation";
+import {
+    getThemeComponent,
+    getDefaultThemeId,
+} from "@/lib/themeRegistry";
 
 /**
  * ============================================
@@ -20,21 +24,18 @@ import type { InvitationData } from "@/types/invitation";
  * - Page.tsx = Controller (data fetching & routing)
  * - Theme Component = View (presentation only)
  * - Data = Separated in /src/data or database
+ * - Theme Registry = Dynamic theme loading system
  * 
  * @future Database Integration (Iterasi 4)
  * - Replace MOCK_DATA with database query
  * - Implement getInvitationBySlug(slug)
  * - Add error handling for not found
- * 
- * @future Theme Registry (Phase 2.3)
- * - Implement dynamic theme loading
- * - Use getThemeComponent(themeId)
  */
 
 interface PageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 /**
@@ -73,16 +74,39 @@ function getInvitationData(slug: string): InvitationData {
 }
 
 /**
+ * Helper: Get theme ID for this invitation
+ * @future Fetch from database invitation.themeId
+ */
+function getInvitationThemeId(invitationData: InvitationData): string {
+    // TODO (Iterasi 4): Get from database
+    // return invitationData.themeId;
+
+    // For now, use default theme
+    return getDefaultThemeId();
+}
+
+/**
  * Main Page Component
  */
 export default function InvitationPage({ params }: PageProps) {
+    // Unwrap params Promise (Next.js 15 requirement)
+    const { slug } = React.use(params);
+
     const guestName = useGuestName();
-    const invitationData = getInvitationData(params.slug);
+    const invitationData = getInvitationData(slug);
+    const themeId = getInvitationThemeId(invitationData);
 
-    // TODO (Phase 2.3): Dynamic theme loading
-    // const ThemeComponent = getThemeComponent(invitationData.themeId);
-    // return <ThemeComponent data={invitationData} guestName={guestName} />;
+    // Dynamic theme loading via registry
+    const ThemeComponent = getThemeComponent(themeId);
 
-    // For now, use BasicTheme
-    return <BasicTheme data={invitationData} guestName={guestName} />;
+    // Fallback to BasicTheme if theme not found
+    if (!ThemeComponent) {
+        console.warn(
+            `Theme "${themeId}" not found in registry. Falling back to BasicTheme.`
+        );
+        return <BasicTheme data={invitationData} guestName={guestName} />;
+    }
+
+    // Render the selected theme
+    return <ThemeComponent data={invitationData} guestName={guestName} />;
 }

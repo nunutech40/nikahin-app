@@ -1,66 +1,136 @@
-// =====================================================
-// TYPE DEFINITIONS
-// =====================================================
+/**
+ * ============================================
+ * TYPE DEFINITIONS FOR WEDDING INVITATION
+ * ============================================
+ * 
+ * These types define the data structure for wedding invitations.
+ * All theme components must accept InvitationData as props.
+ * 
+ * @module types/invitation
+ */
 
+/**
+ * Person information (Groom or Bride)
+ */
 export interface Person {
+    /** Display name (e.g., "Robert Downey") */
     name: string;
+    /** Full name with title (e.g., "Robert Downey Junior") */
     fullName: string;
+    /** Parent names (e.g., "Bapak Ahmad & Ibu Siti") */
     parentName: string;
+    /** Path to portrait photo */
     photo: string;
 }
 
+/**
+ * Wedding event details (Akad Nikah, Resepsi, etc.)
+ */
 export interface Event {
+    /** Event name (e.g., "Akad Nikah", "Resepsi") */
     name: string;
+    /** Date in readable format (e.g., "Sabtu, 15 Februari 2025") */
     date: string;
+    /** Time range (e.g., "08:00 - 10:00 WIB") */
     time: string;
+    /** Venue name (e.g., "Masjid Al-Ikhlas") */
     location: string;
+    /** Full address */
     address: string;
+    /** Google Maps link */
     mapsLink: string;
 }
 
+/**
+ * Love story timeline item
+ */
 export interface LoveStoryItem {
+    /** Timeline title (e.g., "Pertemuan Pertama") */
     title: string;
+    /** Date or period (e.g., "Januari 2020") */
     date: string;
+    /** Story description */
     story: string;
+    /** Emoji or icon */
     icon: string;
 }
 
+/**
+ * Religious quote or verse
+ */
 export interface Quotes {
+    /** Quote text or verse */
     verse: string;
+    /** Source reference (e.g., "QS. Ar-Rum: 21") */
     source: string;
 }
 
+/**
+ * Bank account for gifts (legacy format)
+ * @deprecated Use giftOptions instead
+ */
 export interface BankAccount {
+    /** Bank name */
     bank: string;
+    /** Account number */
     accountNumber: string;
+    /** Account holder name */
     accountName: string;
 }
 
+/**
+ * Complete invitation data structure
+ * This is the main interface that all theme components receive as props
+ */
 export interface InvitationData {
+    /** URL-friendly slug (e.g., "rizka-ayu") */
     slug: string;
+    /** Wedding date in ISO format for countdown (e.g., "2025-02-15T08:00:00") */
     weddingDate: string;
+    /** Groom information */
     groom: Person;
+    /** Bride information */
     bride: Person;
+    /** List of wedding events (Akad, Resepsi, etc.) */
     events: Event[];
+    /** Love story timeline */
     loveStory: LoveStoryItem[];
+    /** Gallery image paths */
     gallery: string[];
+    /** Religious quote */
     quotes: Quotes;
+    /** Bank accounts for gifts (legacy) */
     bankAccounts: BankAccount[];
+    /** Background music URL */
     musicUrl: string;
+    /** Gift options with detailed info */
     giftOptions: Array<{
+        /** Bank name (e.g., "Bank Central Asia (BCA)") */
         bankName: string;
+        /** Account number */
         accountNumber: string;
+        /** Account holder name */
         accountHolder: string;
+        /** Bank logo (emoji or image path) */
         logo: string;
     }>;
+    /** Physical gift shipping address */
     shippingAddress: {
+        /** Recipient name */
         recipient: string;
+        /** Full shipping address */
         address: string;
     };
 }
 
+/**
+ * Navigation item for bottom navigation
+ */
 export interface NavItem {
+    /** Unique identifier */
     id: string;
+    /** Display label */
     label: string;
+    /** Icon component */
     icon: React.ComponentType<{ className?: string }>;
 }
