@@ -1,6 +1,6 @@
 # 📊 Entity Relationship Diagram (ERD) - Nikahin App
 
-Dokumen ini mendefinisikan struktur database untuk mendukung fitur MVP dan rencana pengembangan jangka panjang (SaaS, Agency, Affiliate).
+Dokumen ini mendefinisikan struktur database untuk mendukung fitur MVP dan rencana pengembangan jangka panjang (SaaS, Agency, Affiliate, **Dynamic Feature Gating**).
 
 ---
 
@@ -8,14 +8,14 @@ Dokumen ini mendefinisikan struktur database untuk mendukung fitur MVP dan renca
 
 ```mermaid
 erDiagram
-    USERS ||--|| PROFILES : has
     USERS ||--oN INVITATIONS : owns
     USERS ||--oN TRANSACTIONS : pays
-    USERS ||--oN SUBSCRIPTIONS : subscribe
-    THEMES ||--oN INVITATIONS : applied_to
     INVITATIONS ||--oN GUESTS : receives
+    THEMES ||--oN INVITATIONS : applied_to
+    PACKAGES ||--oN INVITATIONS : assigned_to
+    PACKAGES ||--oN PACKAGE_FEATURES : defines
+    FEATURES ||--oN PACKAGE_FEATURES : included_in
     PACKAGES ||--oN TRANSACTIONS : defined_by
-    PACKAGES ||--oN SUBSCRIPTIONS : grants
 ```
 
 ---
@@ -23,78 +23,65 @@ erDiagram
 ## 2. Table Definitions
 
 ### 2.1. Tabel `users` (Core Account)
-Menyimpan data autentikasi dan peran dalam sistem.
-
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
 | `id` | SERIAL | PK | Unique ID |
-| `email` | VARCHAR | UNIQUE, NOT NULL | Alamat email user |
-| `password` | TEXT | NOT NULL | Hashed password |
-| `role` | ENUM | DEFAULT 'customer' | 'admin', 'customer', 'agency' |
-| `referral_code` | VARCHAR | UNIQUE | Kode unik untuk sistem Affiliate |
-| `referred_by` | INTEGER | FK (users.id) | ID pengajak (Affiliate) |
-| `created_at` | TIMESTAMP | DEFAULT NOW() | Waktu pendaftaran |
+| `email` | VARCHAR | UNIQUE | Alamat email user |
+| `password` | TEXT | | Hashed password |
+| `role` | ENUM | | 'admin', 'customer', 'agency' |
+| `referral_code` | VARCHAR | | Sistem Affiliate |
+| `referred_by` | INTEGER | FK (users.id) | Melacak referral |
 
-### 2.2. Tabel `invitations` (The Meat)
-Menghubungkan data konten dengan tema terpilih.
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | SERIAL | PK | Unique ID |
-| `user_id` | INTEGER | FK (users.id) | Pemilik undangan |
-| `theme_id` | INTEGER | FK (themes.id) | Tema yang aktif |
-| `slug` | VARCHAR | UNIQUE, INDEX | URL unik (e.g. 'rizka-budi') |
-| `content` | JSONB | NOT NULL | **Konten dinamis** (Groom, Bride, Events, Gallery) |
-| `is_published` | BOOLEAN | DEFAULT FALSE | Status publikasi |
-| `music_url` | TEXT | | Link background music |
-| `expired_at` | TIMESTAMP | | Batas aktif undangan (SaaS tiering) |
-
-> **Note on JSONB `content`**: Dipilih agar fleksibel. Jika di masa depan Tema X butuh field baru (misal: Live Streaming link), kita tidak perlu migrasi tabel, cukup update field di dalam JSONB.
-
-### 2.3. Tabel `themes` (Theme Catalog)
-Daftar tema yang tersedia di sistem/marketplace.
+### 2.2. Tabel `features` (Modular Modules)
+Daftar kemampuan sistem yang bisa dikunci/dibuka.
 
 | Column | Type | Constraints | Description |
 | :--- | :--- | :--- | :--- |
-| `id` | SERIAL | PK | Unique ID |
-| `slug` | VARCHAR | UNIQUE | Nama unik tema (e.g. 'basic-modern') |
-| `name` | VARCHAR | NOT NULL | Nama label tema |
-| `category` | VARCHAR | | E.g. 'floral', 'elegant' |
-| `is_free` | BOOLEAN | DEFAULT TRUE | Gratis atau Premium |
-| `preview_url` | TEXT | | URL screenshot tema |
+| `id` | SERIAL | PK | |
+| `code` | VARCHAR | UNIQUE | E.g., 'gallery_unlimited', 'background_music', 'rsvp' |
+| `name` | VARCHAR | | Label fitur |
+| `is_core` | BOOLEAN | | Jika TRUE, fitur ini wajib ada di semua paket |
 
-### 2.4. Tabel `guests` (Interactions)
-Menyimpan data RSVP dan ucapan dari tamu.
-
-| Column | Type | Constraints | Description |
-| :--- | :--- | :--- | :--- |
-| `id` | SERIAL | PK | Unique ID |
-| `invitation_id` | INTEGER | FK (invitations.id) | Link ke undangan terkait |
-| `name` | VARCHAR | NOT NULL | Nama tamu |
-| `attendance` | VARCHAR | | 'hadir', 'tidak', 'ragu' |
-| `guest_count` | INTEGER | DEFAULT 1 | Jumlah orang yang dibawa |
-| `message` | TEXT | | Ucapan/Buku tamu |
-| `created_at` | TIMESTAMP | DEFAULT NOW() | Waktu kirim |
-
-### 2.5. Tabel `transactions` & `subscriptions` (Monetization)
-Mendukung alur SaaS (Pembayaran & Aktivasi fitur).
+### 2.3. Tabel `packages` & `package_features` (Admin Control)
+Sistem untuk menyusun paket secara dinamis.
 
 | Table | Column | Description |
 | :--- | :--- | :--- |
-| **`packages`** | `name`, `price`, `limit_details` | Definisi paket harga (Bronze, Gold, Platinum) |
-| **`transactions`** | `user_id`, `amount`, `status`, `snap_token` | Log pembayaran (Pending, Paid, Failed) |
-| **`subscriptions`** | `user_id`, `package_id`, `active_until` | Record masa aktif fitur premium user |
+| **`packages`** | `id`, `slug`, `name`, `price` | E.g., Bronze, Gold, Platinum |
+| **`package_features`** | `package_id`, `feature_id` | **Pivot Table**: Admin menentukan fitur per paket |
+
+### 2.4. Tabel `invitations` (The Core)
+Menghubungkan konten dengan tema dan paket fitur yang aktif.
+
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | SERIAL | PK | |
+| `user_id` | INTEGER | FK (users.id) | |
+| `theme_id` | INTEGER | FK (themes.id) | |
+| `package_id` | INTEGER | FK (packages.id) | **Sistem Gating**: Menentukan fitur apa yang bisa diakses |
+| `slug` | VARCHAR | UNIQUE | URL unik |
+| `content` | JSONB | NOT NULL | Data dinamis undangan |
+| `is_published` | BOOLEAN | | |
+| `expired_at` | TIMESTAMP | | Masa aktif undangan |
+
+### 2.5. Tabel `guests` (Interactions)
+| Column | Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | SERIAL | PK | |
+| `invitation_id` | INTEGER | FK (invitations.id) | |
+| `name` | VARCHAR | | |
+| `attendance` | VARCHAR | | 'hadir', 'tidak', 'ragu' |
+| `message` | TEXT | | |
 
 ---
 
 ## 3. Relationship Logic & Rationale
 
-1.  **Users to Invitations (1:N)**: Seorang `User` bisa memiliki banyak undangan (misal: acara yang berbeda atau model bisnis Agency).
-2.  **Invitations to Guests (1:N)**: Satu undangan memiliki banyak data RSVP.
-3.  **Themes to Invitations (1:N)**: Satu desain tema bisa digunakan oleh ribuan undangan yang berbeda.
-4.  **Affiliate (Self-Reference)**: Tabel `users` memiliki `referred_by` yang merujuk ke `users.id` lain untuk melacak siapa yang mengajak siapa.
-5.  **Agency Mode**: `User` dengan role `agency` dapat mengelola banyak `invitations` milik klien mereka. Logika ini cukup dicover dengan relasi User -> Invitation (1:N).
+1.  **Independent Feature System**: Semua fitur baru (misal: Live Streaming Link) didaftarkan di tabel `features`. Admin cukup menghubungkan fitur itu ke Paket Gold di tabel `package_features`, dan otomatis semua pemilik Paket Gold bisa mengaksesnya.
+2.  **Core Features Logic**: Fitur dengan `is_core = TRUE` akan dilewati saat pengecekan izin fitur (selalu tersedia), sehingga User tidak akan pernah kehilangan fungsionalitas dasar.
+3.  **Admin Manual Selection**: Admin bisa menciptakan paket baru sewaktu-waktu dan memilih kombinasi fitur apa pun tanpa mengubah kode program.
+4.  **Upselling Flow**: Di Dashboard Editor, aplikasi akan membandingkan `package_id` pada undangan dengan daftar fitur di `package_features`. Jika kode fitur yang diminta tidak ada, tampilkan UI "Premium Upgrade".
 
 ---
 
-**Source of Truth: Database Architecture v1.0**
+**Source of Truth: Database Architecture v2.0 (Dynamic Feature Gating)**

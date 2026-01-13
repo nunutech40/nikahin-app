@@ -35,58 +35,47 @@ Aplikasi menggunakan pola **Theme-based Architecture** untuk memisahkan data dar
 
 ---
 
-## 3. Database Schema (Source of Truth)
+### 3. Database Schema (Source of Truth v2.0)
 
-Skema database dirancang untuk fleksibilitas maksimal menggunakan kolom JSONB untuk konten undangan.
+Skema database kini mendukung **Dynamic Feature Gating**.
 
 ```typescript
-// src/db/schema.ts
-
-// 1. Users & Auth
-export const users = pgTable("users", {
+// features: Daftar modul fitur independen
+export const features = pgTable("features", {
   id: serial("id").primaryKey(),
-  email: varchar("email", { length: 255 }).unique().notNull(),
-  password: text("password").notNull(),
-  role: varchar("role", { length: 20 }).default("customer"), // 'admin' | 'customer'
-  isActive: boolean("is_active").default(false),
+  code: varchar("code").unique().notNull(), // e.g. 'rsvp_system', 'premium_gallery'
+  name: varchar("name").notNull(),
+  isCore: boolean("is_core").default(false),
 });
 
-// 2. Themes Metadata
-export const themes = pgTable("themes", {
-  id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 50 }).unique().notNull(),
-  name: varchar("name", { length: 100 }).notNull(),
-  isFree: boolean("is_free").default(true),
-  metadata: jsonb("metadata"), // Thumbnail URL, styles, etc.
+// package_features: Relasi fitur ke paket (Admin controlled)
+export const packageFeatures = pgTable("package_features", {
+  packageId: integer("package_id").references(() => packages.id),
+  featureId: integer("feature_id").references(() => features.id),
 });
 
-// 3. Invitations (The Core)
+// invitations: Ditambahkan package_id untuk kontrol akses
 export const invitations = pgTable("invitations", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
-  themeId: integer("theme_id").references(() => themes.id),
-  slug: varchar("slug", { length: 100 }).unique().notNull(),
-  content: jsonb("content").notNull(), // Data: grooming, bride, events, gallery, quotes, themeConfig
-  isPublished: boolean("is_published").default(false),
-  musicUrl: text("music_url"),
-  coverImage: text("cover_image"),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
-// 4. Guests & RSVP
-export const guests = pgTable("guests", {
-  id: serial("id").primaryKey(),
-  invitationId: integer("invitation_id").references(() => invitations.id),
-  name: varchar("name", { length: 100 }).notNull(),
-  attendance: varchar("attendance", { length: 20 }), // 'hadir' | 'tidak'
-  message: text("message"),
-  createdAt: timestamp("created_at").defaultNow(),
+  // ... existing fields
+  packageId: integer("package_id").references(() => packages.id),
 });
 ```
 
 ---
 
-## 4. Fitur & Status Implementasi (Current State)
+## 4. Application Logic: Feature Gating
+
+Untuk menjamin modularitas seperti yang diminta di PRD:
+
+1.  **Permission Check**: Setiap komponen UI di Dashboard (misal: `RSVPSection` atau `GalleryForm`) akan memanggil fungsi helper `canUseFeature(invitationData, 'feature_code')`.
+2.  **Logic**: 
+    - Jika fitur bertanda `isCore: true`, kembalikan `true`.
+    - Jika tidak, cek apakah `feature_code` ada di dalam daftar fitur yang di-link ke `package_id` undangan tersebut.
+3.  **UI Feedback**: Jika `false`, komponen akan menampilkan *Overlay* "Upgrade to Unlock" agar Admin bisa melakukan monetisasi.
+
+---
+
+## 5. Fitur & Status Implementasi (Current State)
 
 ### ✅ Fitur yang Sudah Selesai (Source of Truth)
 1.  **Rendering Engine:** Halaman publik `[slug]` sudah bisa merender data secara dinamis mengalir ke komponen tema.

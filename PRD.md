@@ -66,9 +66,13 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 ### 5.2. Katalog & Marketplace Tema
 *   Sistem katalog tema yang dikelompokkan berdasarkan kategori (Elegant, Modern, Floral, Vintage, dll).
 
-### 5.3. Manajemen Bisnis (SaaS)
-*   **Tiering Paket:** Perbedaan fitur antara paket Gratis dan Premium (misal: jumlah foto galeri, durasi aktif, musik kustom).
-*   **Sistem Monitoring:** Admin dapat melihat statistik penggunaan platform secara keseluruhan.
+### 5.3. Manajemen Bisnis & Dynamic Feature Gating (SaaS)
+*   **Concept:** Setiap fitur dalam aplikasi bersifat independen dan dapat dikunci/dibuka berdasarkan paket yang dipilih.
+*   **Feature Categories:**
+    *   **Core Features:** Fitur wajib yang didapatkan oleh semua pengguna (misal: Data Mempelai, 1 Detail Acara Utama).
+    *   **Add-on/Modular Features:** Fitur tambahan yang bisa ditugaskan ke paket tertentu oleh Admin (misal: Galeri Foto > 5, Musik kustom, RSVP, Google Maps, Font khusus).
+*   **Admin Control:** Admin memiliki dashboard untuk menentukan secara manual fitur mana saja yang masuk ke Paket A, B, atau C.
+*   **User Experience:** User akan melihat indikator "Locked" pada fitur yang tidak tersedia di paket mereka, dengan opsi untuk melakukan Upgrade.
 
 ### 5.4. Mode Agensi (White Label)
 *   Fitur bagi vendor undangan fisik atau perencana pernikahan untuk mengelola banyak klien sekaligus di bawah satu akun agensi.
