@@ -8,10 +8,11 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, AlertCircle
+    Lock, AlertCircle, LogOut, User
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 // Feature Gating
 import { canUseFeature } from "@/lib/features";
@@ -204,7 +205,12 @@ export default function DashboardPage({ initialData, userId }: DashboardClientPr
                     >
                         Buat Undangan Pertama
                     </button>
-                    <Link href="/logout" className="block mt-6 text-sm text-gray-400 hover:text-gray-600">Atau keluar dari akun</Link>
+                    <button
+                        onClick={() => signOut({ callbackUrl: "/login" })}
+                        className="block w-full mt-6 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        Atau keluar dari akun
+                    </button>
                 </div>
             </div>
         );
@@ -246,13 +252,31 @@ export default function DashboardPage({ initialData, userId }: DashboardClientPr
                         </button>
                     </div>
 
-                    <button
-                        onClick={handleSave}
-                        disabled={isSaving}
-                        className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-all shadow-sm disabled:opacity-50"
-                    >
-                        {isSaving ? "Menyimpan..." : "Simpan Perubahan"}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <Link
+                            href="/dashboard/profile"
+                            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors hidden sm:flex"
+                            title="Profil Saya"
+                        >
+                            <User className="w-5 h-5" />
+                        </Link>
+
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
+                        >
+                            {isSaving ? "Menyimpan..." : "Simpan"}
+                        </button>
+
+                        <button
+                            onClick={() => signOut({ callbackUrl: "/login" })}
+                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            title="Keluar"
+                        >
+                            <LogOut className="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
             </header>
 
