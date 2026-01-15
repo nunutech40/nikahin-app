@@ -57,6 +57,19 @@ Schema diimplementasikan dengan fitur **Drizzle Relations** untuk query yang opt
     - Server-side user ownership validation (Phase 5.5).
 - **Session Data**: Extends base session to include `id` and `role`.
 
+---
+
+### 6. User Experience Flows
+#### 6.1. First Invitation Flow
+Untuk user baru yang belum memiliki undangan:
+1.  **Dashboard Detection**: Server component mengecek jumlah undangan user.
+2.  **Empty State**: Jika 0, tampilkan form input `slug`.
+3.  **Creation**: Menjalankan action `createInvitation` dengan:
+    -   `themeId`: Mengambil basic theme dari DB.
+    -   `packageId`: Mengambil paket basic dari DB.
+    -   `content`: Menggunakan `MOCK_DATA` sebagai template awal.
+4.  **Auto-Load**: Halaman reload dan langsung masuk ke mode editor.
+
 ```typescript
 // features: Daftar modul fitur independen
 export const features = pgTable("features", {

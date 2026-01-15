@@ -394,32 +394,28 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 ### 📦 Tasks Breakdown
 
 #### **Phase 6.1: Admin Authentication**
-- [ ] **T6.1.1** - Add `role` field to user session
-- [ ] **T6.1.2** - Create admin middleware
-- [ ] **T6.1.3** - Protect `/admin` routes
-- [ ] **T6.1.4** - Add 403 page for non-admins
-- [ ] **T6.1.5** - Test: Admin protection works
-
-**Rollback Point:** Admin routes are isolated
+- [x] **T6.1.1** - Add `role` field to user session
+- [x] **T6.1.2** - Create admin middleware protection
+- [x] **T6.1.3** - Protect `/admin` routes
+- [x] **T6.1.4** - Add redirect for non-admins
+- [x] **T6.1.5** - Test: Admin protection works
 
 #### **Phase 6.2: Admin Layout**
-- [ ] **T6.2.1** - Create `/src/app/admin/layout.tsx`
-- [ ] **T6.2.2** - Build admin sidebar navigation
-- [ ] **T6.2.3** - Add admin header with user info
-- [ ] **T6.2.4** - Style admin interface
-- [ ] **T6.2.5** - Test: Admin layout renders correctly
-
-**Rollback Point:** Layout is separate component
+- [x] **T6.2.1** - Create `/src/app/admin/layout.tsx`
+- [x] **T6.2.2** - Build admin sidebar navigation
+- [x] **T6.2.3** - Add admin header with user info
+- [x] **T6.2.4** - Style admin interface (Premium Dark Theme)
+- [x] **T6.2.5** - Test: Admin layout renders correctly
 
 #### **Phase 6.3: User Management**
-- [ ] **T6.3.1** - Create `/src/app/admin/users/page.tsx`
-- [ ] **T6.3.2** - Fetch all users from database
-- [ ] **T6.3.3** - Display users in table format
-- [ ] **T6.3.4** - Add toggle for `is_active` status
-- [ ] **T6.3.5** - Implement `toggleUserStatus()` Server Action
-- [ ] **T6.3.6** - Test: User activation works
+- [x] **T6.3.1** - Create `/src/app/admin/users/page.tsx`
+- [x] **T6.3.2** - Fetch all users from database
+- [x] **T6.3.3** - Display users in table format
+- [x] **T6.3.4** - Add toggle for `is_active` status
+- [x] **T6.3.5** - Implement `toggleUserStatus()` Server Action
+- [x] **T6.3.6** - Test: User activation works
 
-**Rollback Point:** User management is separate route
+### 📊 Status: 🔄 **IN PROGRESS** (Admin Wave 2) (85%)
 
 #### **Phase 6.4: Invitation Management**
 - [ ] **T6.4.1** - Create `/src/app/admin/invitations/page.tsx`
@@ -520,17 +516,15 @@ Each phase has a **Rollback Point** that explains how to undo changes if issues 
 
 ## 📊 Overall Project Status
 
-**Current Phase:** Iterasi 3 - User Dashboard (Data Entry)
+**Current Phase:** Iterasi 6 - Super Admin Panel
 
-**Overall Progress:** ~40% Complete (approx based on T1, T2 completion)
+**Overall Progress:** ~80% Complete
 
-**Next Milestone:** Complete state management and form validation integration
+**Next Milestone:** Admin Authentication & User Management
 
 **Estimated Completion:** 
-- Iterasi 3: 3-4 days
-- Iterasi 4: 4-5 days
-- Iterasi 5: 3-4 days
 - Iterasi 6: 2-3 days
+- Polish & Final Test: 2-3 days
 
 **Total Estimated Time:** 12-16 days (assuming 4-6 hours/day)
 
