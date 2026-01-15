@@ -27,14 +27,21 @@ import GiftForm from "@/components/dashboard/forms/GiftForm";
 import QuotesForm from "@/components/dashboard/forms/QuotesForm";
 import MusicForm from "@/components/dashboard/forms/MusicForm";
 import ThemeSettingsForm from "@/components/dashboard/forms/ThemeSettingsForm";
-import { saveInvitation } from "@/app/actions/invitation";
+import { saveInvitation, createInvitation } from "@/app/actions/invitation";
 
 interface DashboardClientProps {
     initialData: any | null;
     userId: number;
+    availableThemes: { id: number; slug: string; name: string }[];
+    availablePackages: { id: number; slug: string; name: string }[];
 }
 
-export default function DashboardPage({ initialData, userId }: DashboardClientProps) {
+export default function DashboardPage({
+    initialData,
+    userId,
+    availableThemes,
+    availablePackages
+}: DashboardClientProps) {
     // State
     const [invitationData, setInvitationData] = useState<InvitationData>(
         initialData?.content || MOCK_DATA
@@ -42,6 +49,8 @@ export default function DashboardPage({ initialData, userId }: DashboardClientPr
     const [invitationId, setInvitationId] = useState<number | null>(initialData?.id || null);
     const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
     const [isSaving, setIsSaving] = useState(false);
+    const [isCreating, setIsCreating] = useState(false);
+    const [newSlug, setNewSlug] = useState("");
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("mempelai");
     const [zodError, setZodError] = useState<z.ZodError | null>(null);
@@ -179,6 +188,45 @@ export default function DashboardPage({ initialData, userId }: DashboardClientPr
         }
     };
 
+    const handleCreateFirstInvitation = async () => {
+        if (!newSlug) {
+            alert("Harap masukkan URL undangan (misal: nunu-wedding)");
+            return;
+        }
+
+        const cleanSlug = newSlug.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+
+        setIsCreating(true);
+        try {
+            // Find default theme and package IDs
+            const defaultTheme = availableThemes.find(t => t.slug === 'basic-theme') || availableThemes[0];
+            const defaultPackage = availablePackages.find(p => p.slug === 'basic') || availablePackages[0];
+
+            if (!defaultTheme || !defaultPackage) {
+                alert("Konfigurasi tema/paket tidak ditemukan.");
+                return;
+            }
+
+            const result = await createInvitation(
+                defaultTheme.id,
+                defaultPackage.id,
+                cleanSlug,
+                MOCK_DATA
+            );
+
+            if (result.success) {
+                // Refresh window to load new data
+                window.location.reload();
+            } else {
+                alert("❌ Gagal membuat undangan: " + result.error);
+            }
+        } catch (err) {
+            alert("❌ Terjadi kesalahan saat membuat undangan.");
+        } finally {
+            setIsCreating(false);
+        }
+    };
+
     // Tabs Configuration
     const tabs = [
         { id: "mempelai", label: "Mempelai", icon: Users },
@@ -199,11 +247,27 @@ export default function DashboardPage({ initialData, userId }: DashboardClientPr
                     </div>
                     <h2 className="text-2xl font-serif font-bold text-gray-800 mb-4">Kamu Belum Punya Undangan</h2>
                     <p className="text-gray-500 mb-8">Wah, mulai buat undangan pertamamu sekarang dan rayakan hari bahagiamu!</p>
+
+                    <div className="mb-6 text-left">
+                        <label className="text-sm font-medium text-gray-700 ml-1 mb-2 block">Masukkan URL Undangan</label>
+                        <div className="relative">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">nikahin.com/</span>
+                            <input
+                                type="text"
+                                placeholder="misal: nunu-wedding"
+                                value={newSlug}
+                                onChange={(e) => setNewSlug(e.target.value)}
+                                className="w-full pl-[95px] pr-4 py-4 rounded-2xl border border-gray-200 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 outline-none transition-all placeholder:text-gray-300"
+                            />
+                        </div>
+                    </div>
+
                     <button
-                        onClick={() => alert('Fitur buat undangan baru segera hadir!')}
-                        className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-[0.98]"
+                        onClick={handleCreateFirstInvitation}
+                        disabled={isCreating}
+                        className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
                     >
-                        Buat Undangan Pertama
+                        {isCreating ? "Sedang Membuat..." : "Buat Undangan Sekarang"}
                     </button>
                     <button
                         onClick={() => signOut({ callbackUrl: "/login" })}
