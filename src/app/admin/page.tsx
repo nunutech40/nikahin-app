@@ -1,13 +1,28 @@
 import React from "react";
 import { db } from "@/db";
 import { users, invitations, guests } from "@/db/schema";
-import { count, sql } from "drizzle-orm";
-import { Users, FileText, Heart, Activity, TrendingUp, Calendar } from "lucide-react";
+import { count, desc } from "drizzle-orm";
+import { Users, FileText, Heart, Activity, TrendingUp, Calendar, ArrowRight, Mail, Globe } from "lucide-react";
+import Link from "next/link";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 export default async function AdminDashboardPage() {
     const usersCount = await db.select({ value: count() }).from(users);
     const invitationsCount = await db.select({ value: count() }).from(invitations);
     const guestsCount = await db.select({ value: count() }).from(guests);
+
+    // Fetch Recent Activity
+    const latestUsers = await db.query.users.findMany({
+        limit: 5,
+        orderBy: [desc(users.createdAt)],
+    });
+
+    const latestInvitations = await db.query.invitations.findMany({
+        limit: 5,
+        with: { user: true },
+        orderBy: [desc(invitations.createdAt)],
+    });
 
     const stats = [
         { label: "Total Pengguna", value: String(usersCount[0].value), icon: Users, color: "bg-blue-500" },
@@ -18,9 +33,11 @@ export default async function AdminDashboardPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
-            <div>
-                <h2 className="text-3xl font-bold text-slate-900 font-serif tracking-tight">Ringkasan Sistem</h2>
-                <p className="text-slate-500 mt-1">Selamat datang kembali, bos! Berikut adalah performa Nikahin hari ini.</p>
+            <div className="flex justify-between items-end">
+                <div>
+                    <h2 className="text-3xl font-bold text-slate-900 font-serif tracking-tight">Ringkasan Sistem</h2>
+                    <p className="text-slate-500 mt-1">Selamat datang kembali, bos! Berikut adalah performa Nikahin hari ini.</p>
+                </div>
             </div>
 
             {/* Stats Grid */}
@@ -36,24 +53,68 @@ export default async function AdminDashboardPage() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Activity Card */}
-                <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 p-8 flex flex-col justify-center items-center text-center">
-                    <div className="w-16 h-16 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 mb-4 animate-pulse">
-                        <TrendingUp className="w-8 h-8" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Latest Users */}
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+                    <div className="p-6 border-b border-slate-50 flex justify-between items-center">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                            <Users className="w-5 h-5 text-blue-500" />
+                            Pendaftar Terbaru
+                        </h3>
+                        <Link href="/admin/users" className="text-xs font-bold text-[#D4AF37] hover:underline flex items-center gap-1">
+                            Lihat Semua <ArrowRight className="w-3 h-3" />
+                        </Link>
                     </div>
-                    <h3 className="text-xl font-bold text-slate-800">Siap Untuk Skala Besar?</h3>
-                    <p className="text-slate-500 max-w-sm mt-2">Sistem backend kita sudah teroptimasi untuk menangani ribuan undangan secara bersamaan.</p>
+                    <div className="divide-y divide-slate-50">
+                        {latestUsers.map((u) => (
+                            <div key={u.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 text-xs font-bold uppercase">
+                                        {u.email.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-800 truncate max-w-[150px]">{u.email}</p>
+                                        <p className="text-[10px] text-slate-400 uppercase tracking-wider">{format(new Date(u.createdAt), "d MMM yyyy", { locale: id })}</p>
+                                    </div>
+                                </div>
+                                <div className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase ${u.isActive ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                                    {u.isActive ? 'Aktif' : 'Baru'}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Quick Tips */}
-                <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-150 transition-transform duration-500">
-                        <Calendar className="w-32 h-32" />
+                {/* Latest Invitations */}
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-200/50 overflow-hidden">
+                    <div className="p-6 border-b border-slate-50 flex justify-between items-center">
+                        <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                            <Globe className="w-5 h-5 text-[#D4AF37]" />
+                            Undangan Terbaru
+                        </h3>
+                        <Link href="/admin/invitations" className="text-xs font-bold text-[#D4AF37] hover:underline flex items-center gap-1">
+                            Lihat Semua <ArrowRight className="w-3 h-3" />
+                        </Link>
                     </div>
-                    <div className="relative z-10">
-                        <h3 className="text-lg font-bold text-amber-500 uppercase tracking-widest text-[10px] mb-2">Tips Admin</h3>
-                        <p className="text-lg leading-snug font-medium italic">"Jangan lupa cek daftar user baru setiap hari untuk memproses aktivasi manual mereka."</p>
+                    <div className="divide-y divide-slate-50">
+                        {latestInvitations.map((inv) => (
+                            <div key={inv.id} className="p-4 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
+                                        <FileText className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-800 truncate max-w-[150px]">/{inv.slug}</p>
+                                        <p className="text-[10px] text-slate-400 flex items-center gap-1">
+                                            <Mail className="w-3 h-3" /> {inv.user?.email}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className={`text-[10px] font-bold px-2 py-1 rounded-md uppercase ${inv.isPublished ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}>
+                                    {inv.isPublished ? 'Live' : 'Draft'}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
