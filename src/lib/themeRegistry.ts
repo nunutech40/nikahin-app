@@ -31,6 +31,8 @@ import { InvitationData } from "@/types/invitation";
 export interface ThemeProps {
     data: InvitationData;
     guestName?: string;
+    invitationId?: number;
+    guests?: any[];
 }
 
 /**

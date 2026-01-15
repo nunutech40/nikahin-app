@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { submitRSVP } from "@/app/actions/rsvp";
 import {
     Calendar,
     MapPin,
@@ -77,6 +78,8 @@ export interface BasicThemeProps {
     guestName?: string;
     isPreview?: boolean; // Flag to disable container styling for dashboard preview
     isMobile?: boolean; // Flag to force mobile layout (single column)
+    invitationId?: number;
+    guests?: any[];
 }
 
 // =====================================================
@@ -914,26 +917,37 @@ function GiftSection({ giftOptions, shippingAddress }: { giftOptions: BasicTheme
 }
 
 // RSVP Section
-function RSVPSection() {
+function RSVPSection({ invitationId }: { invitationId?: number }) {
     const [formData, setFormData] = useState({
         name: "",
-        attendance: "",
+        attendance: "" as "hadir" | "tidak" | "ragu" | "",
         message: "",
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [status, setStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!invitationId) return;
+
         setIsSubmitting(true);
+        setStatus(null);
 
-        // TODO: Implement Server Action
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const result = await submitRSVP({
+            invitationId,
+            name: formData.name,
+            attendance: formData.attendance as "hadir" | "tidak" | "ragu",
+            message: formData.message,
+        });
 
-        console.log("RSVP Submitted:", formData);
         setIsSubmitting(false);
 
-        // Reset form
-        setFormData({ name: "", attendance: "", message: "" });
+        if (result.success) {
+            setStatus({ type: 'success', message: "Terima kasih! Konfirmasi Anda telah terkirim." });
+            setFormData({ name: "", attendance: "", message: "" });
+        } else {
+            setStatus({ type: 'error', message: result.error || "Gagal mengirim konfirmasi" });
+        }
     };
 
     return (
@@ -955,6 +969,15 @@ function RSVPSection() {
                 onSubmit={handleSubmit}
                 className="max-w-md mx-auto mt-8 glass rounded-2xl p-6 md:p-8 shadow-lg"
             >
+                {status && (
+                    <div className={`mb-4 p-4 rounded-xl text-sm ${status.type === 'success'
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                        }`}>
+                        {status.message}
+                    </div>
+                )}
+
                 <div className="space-y-4">
                     <div>
                         <input
@@ -970,7 +993,7 @@ function RSVPSection() {
                     <div>
                         <select
                             value={formData.attendance}
-                            onChange={(e) => setFormData({ ...formData, attendance: e.target.value })}
+                            onChange={(e) => setFormData({ ...formData, attendance: e.target.value as any })}
                             required
                             className="w-full px-4 py-3 rounded-xl border border-[var(--color-primary-light)] focus:border-[var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20 transition-all"
                         >
@@ -993,12 +1016,15 @@ function RSVPSection() {
 
                     <button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !invitationId}
                         className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-primary-dark)] text-white text-sm md:text-base font-medium hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Send className="w-4 h-4" />
                         {isSubmitting ? "Mengirim..." : "Kirim Konfirmasi"}
                     </button>
+                    {!invitationId && (
+                        <p className="text-[10px] text-center text-red-400 mt-2">Mode Preview: RSVP dinonaktifkan</p>
+                    )}
                 </div>
             </motion.form>
         </section>
@@ -1006,21 +1032,7 @@ function RSVPSection() {
 }
 
 // Guestbook Section
-function GuestBookSection() {
-    // TODO: Fetch from database
-    const guestMessages = [
-        {
-            name: "Sarah & Ahmad",
-            message: "Selamat menempuh hidup baru! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
-            time: "2 jam yang lalu",
-        },
-        {
-            name: "Keluarga Besar Wijaya",
-            message: "Barakallahu lakuma wa baraka alaikuma wa jama'a bainakuma fi khair. Selamat!",
-            time: "5 jam yang lalu",
-        },
-    ];
-
+function GuestBookSection({ messages = [] }: { messages?: any[] }) {
     return (
         <section className="section bg-[var(--color-rose-light)]">
             <motion.div
@@ -1034,35 +1046,39 @@ function GuestBookSection() {
             </motion.div>
 
             <div className="max-w-2xl mx-auto mt-8 space-y-4">
-                {guestMessages.map((guest, index) => (
-                    <motion.div
-                        key={index}
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.1 }}
-                        className="glass rounded-2xl p-5 shadow-lg"
-                    >
-                        <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center flex-shrink-0">
-                                <MessageCircle className="w-5 h-5 text-white" />
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex items-center justify-between mb-2">
-                                    <h4 className="font-semibold text-[var(--color-primary-dark)]">
-                                        {guest.name}
-                                    </h4>
-                                    <span className="text-xs text-[var(--color-text-muted)]">
-                                        {guest.time}
-                                    </span>
+                {messages.length === 0 ? (
+                    <p className="text-center text-[var(--color-text-muted)] italic">Belum ada ucapan. Jadilah yang pertama!</p>
+                ) : (
+                    messages.map((guest, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: index * 0.1 }}
+                            className="glass rounded-2xl p-5 shadow-lg"
+                        >
+                            <div className="flex items-start gap-3">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-dark)] flex items-center justify-center flex-shrink-0">
+                                    <MessageCircle className="w-5 h-5 text-white" />
                                 </div>
-                                <p className="text-sm md:text-base text-[var(--color-text)] leading-relaxed">
-                                    {guest.message}
-                                </p>
+                                <div className="flex-1">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <h4 className="font-semibold text-[var(--color-primary-dark)]">
+                                            {guest.name}
+                                        </h4>
+                                        <span className="text-xs text-[var(--color-text-muted)]">
+                                            {new Date(guest.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </span>
+                                    </div>
+                                    <p className="text-sm md:text-base text-[var(--color-text)] leading-relaxed">
+                                        {guest.message || "Hadir di hari istimewa!"}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    </motion.div>
-                ))}
+                        </motion.div>
+                    ))
+                )}
             </div>
         </section>
     );
@@ -1099,7 +1115,7 @@ function FooterSection({ data }: { data: BasicThemeProps['data'] }) {
 // MAIN THEME COMPONENT
 // =====================================================
 
-export function BasicTheme({ data, guestName, isPreview = false, isMobile = false }: BasicThemeProps) {
+export function BasicTheme({ data, guestName, isPreview = false, isMobile = false, invitationId, guests }: BasicThemeProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isMusicPlaying, setIsMusicPlaying] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
@@ -1228,8 +1244,8 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                         {canUseFeature(data, 'love-story') && <LoveStorySection loveStory={data.loveStory} />}
                         {canUseFeature(data, 'gallery') && <GallerySection gallery={data.gallery} />}
                         {canUseFeature(data, 'gift-registry') && <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />}
-                        {canUseFeature(data, 'rsvp') && <RSVPSection />}
-                        <GuestBookSection />
+                        {canUseFeature(data, 'rsvp') && <RSVPSection invitationId={invitationId} />}
+                        <GuestBookSection messages={guests} />
                         <FooterSection data={data} />
                     </motion.div>
                 )}
