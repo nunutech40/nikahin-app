@@ -47,9 +47,15 @@ Aplikasi menggunakan pola **Theme-based Architecture** untuk memisahkan data dar
 ### 4. Database Schema (Drizzle ORM)
 Schema diimplementasikan dengan fitur **Drizzle Relations** untuk query yang optimal.
 - `users`: Multi-role (admin, customer, agency).
-- `invitations`: Menggunakan `jsonb` untuk fleksibilitas konten undangan.
-- `guests`: Menyimpan data RSVP dan pesan buku tamu secara live.
-- `features` & `packages`: Dasar dari sistem SaaS Gating.
+### 5. Authentication System (NextAuth.js)
+- **Framework**: NextAuth.js v4 (App Router compatible).
+- **Strategy**: JWT-based session management.
+- **Provider**: Credentials Provider (Email & Password).
+- **Security**: 
+    - Middleware protection for all routes matching `/dashboard/:path*`.
+    - Bcrypt password hashing.
+    - Server-side user ownership validation (Phase 5.5).
+- **Session Data**: Extends base session to include `id` and `role`.
 
 ```typescript
 // features: Daftar modul fitur independen

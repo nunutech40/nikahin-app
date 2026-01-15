@@ -357,11 +357,11 @@ Implement authentication system to secure user data. Users can only access and e
 **Rollback Point:** Middleware can be disabled
 
 #### **Phase 5.5: User Authorization**
-- [ ] **T5.5.1** - Add `userId` check in invitation queries
-- [ ] **T5.5.2** - Filter invitations by current user
-- [ ] **T5.5.3** - Prevent editing other users' invitations
-- [ ] **T5.5.4** - Add 403 error handling
-- [ ] **T5.5.5** - Test: Authorization works correctly
+- [x] **T5.5.1** - Add `userId` check in invitation queries
+- [x] **T5.5.2** - Filter invitations by current user
+- [x] **T5.5.3** - Prevent editing other users' invitations
+- [x] **T5.5.4** - Add 403 error handling
+- [x] **T5.5.5** - Test: Authorization works correctly
 
 **Rollback Point:** Authorization checks can be commented out
 
@@ -374,7 +374,7 @@ Implement authentication system to secure user data. Users can only access and e
 
 **Rollback Point:** Profile is separate route
 
-### 📊 Status: ⏳ **NOT STARTED** (0%)
+### 📊 Status: 🔄 **IN PROGRESS** (90%)
 
 ---
 

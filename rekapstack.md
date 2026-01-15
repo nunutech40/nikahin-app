@@ -30,9 +30,10 @@ Konfigurasi ini dioptimalkan untuk menjaga performa mesin pengembang (SSD & RAM)
 - **Database**: PostgreSQL (Baremetal on IDCloudHost)
 - **Database Name**: `nikahin_db_dev` (dedicated)
 - **ORM**: Drizzle ORM (Pure TypeScript)
+- **Authentication**: NextAuth.js (Persistent JWT)
+- **Security**: Bcrypt Hashing, Middleware Route Protection, Server-side Ownership Validation.
 - **Connectivity (Dev)**: Direct Connection to `157.10.161.215` (SSL: disabled)
 - **Connectivity (Prod)**: Localhost (within the same VPS)
-- **Security Strategy**: Schema-based relational data with Drizzle Zod validation.
 *   **Connection Strategy (Production):** Koneksi Localhost (Internal network di dalam server).
 *   **Secrets Management:** 
     *   Local: `.env.local` (Dilarang keras masuk ke version control).

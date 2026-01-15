@@ -29,13 +29,14 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 1.  **Renderer Engine** (✅ Completed)
 2.  **Theme Registry & Dynamic Styles** (✅ Completed)
 3.  **RSVP & Data Persistence** (✅ Completed)
-    -   Guests can submit RSVP (live to DB).
-    -   Invitations loading from real database (via slug).
-    -   Live Guestbook/Wishes.
-4.  **User Dashboard** (🔄 In Progress)
+4.  **User Authentication & Authorization** (✅ Completed)
+    -   Secure registration & login.
+    -   Data isolation (User only sees their own data).
+    -   Protected dashboard area.
+5.  **User Dashboard** (🔄 In Progress)
     -   Split-screen editor with live preview (✅)
-    -   Form persistence to database (🔄 Implementation pending in UI)
-5.  **SaaS Gating System** (⏳ Planned)
+    -   Live Save/Update to Database (✅)
+6.  **SaaS Gating System** (⏳ Planned)
 *   Setiap tema memiliki estetika, animasi, dan tata letak yang berbeda-beda.
 
 ### 3.2. Manajemen Konten Undangan

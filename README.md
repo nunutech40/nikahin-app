@@ -105,17 +105,18 @@ NEXTAUTH_URL=http://localhost:3000
 -   [x] Iterasi 2: Theme Engine (Theme Registry, Dynamic Color/Font)
 -   [x] Iterasi 3: User Dashboard - Data Entry (Form components, Live Preview)
 -   [x] Iterasi 4: Database Integration (PostgreSQL, Drizzle ORM, Live RSVP)
+-   [x] Iterasi 5: Auth & User Management (NextAuth, Secure Routes, Data Isolation)
 
 ---
 
 ## 🛠️ Tech Stack & Database Setup
 
-### Database Development
-Aplikasi menggunakan **PostgreSQL** dengan **Drizzle ORM**. Saat ini terhubung ke database dedicated di server IDCloudHost:
-
-- **Database**: `nikahin_db_dev`
-- **Host**: `157.10.161.215` (Direct Connection)
-- **ORM**: Drizzle ORM + Drizzle Kit
+### Authentication & Security
+- **Auth Provider**: NextAuth.js (Credentials Provider)
+- **Hashing**: Bcrypt (Round 10)
+- **Session Layer**: JWT (JSON Web Token)
+- **Role Control**: Middleware protection for `/dashboard/*`
+- **Data Isolation**: Server-side user ownership checks on all DB operations.
 
 ### Database Scripts
 Tersedia beberapa perintah untuk manajemen database:
