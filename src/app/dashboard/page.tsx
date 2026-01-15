@@ -13,6 +13,13 @@ export default async function DashboardPage() {
     }
 
     const userId = Number((session.user as any).id);
+    const userRole = (session.user as any).role;
+
+    // JIKA ADMIN: Langsung lempar ke Admin Panel, gak usah lewat dashboard biasa
+    if (userRole === "admin") {
+        redirect("/admin");
+    }
+
     const userInvitations = await getUserInvitations(userId);
 
     // Fetch available themes and packages
@@ -31,6 +38,7 @@ export default async function DashboardPage() {
         <DashboardClient
             initialData={initialData}
             userId={userId}
+            userRole={userRole}
             availableThemes={availableThemes as any}
             availablePackages={availablePackages as any}
         />

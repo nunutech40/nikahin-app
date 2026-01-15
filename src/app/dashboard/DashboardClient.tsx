@@ -8,7 +8,7 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, AlertCircle, LogOut, User
+    Lock, AlertCircle, LogOut, User, ShieldCheck
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -32,6 +32,7 @@ import { saveInvitation, createInvitation } from "@/app/actions/invitation";
 interface DashboardClientProps {
     initialData: any | null;
     userId: number;
+    userRole?: string;
     availableThemes: { id: number; slug: string; name: string }[];
     availablePackages: { id: number; slug: string; name: string }[];
 }
@@ -39,6 +40,7 @@ interface DashboardClientProps {
 export default function DashboardPage({
     initialData,
     userId,
+    userRole,
     availableThemes,
     availablePackages
 }: DashboardClientProps) {
@@ -275,6 +277,19 @@ export default function DashboardPage({
                     >
                         Atau keluar dari akun
                     </button>
+
+                    {userRole === 'admin' && (
+                        <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">Administrator Access</p>
+                            <Link
+                                href="/admin"
+                                className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl shadow-slate-200 transition-all active:scale-[0.98] flex items-center justify-center gap-3 hover:bg-slate-800"
+                            >
+                                <ShieldCheck className="w-5 h-5 text-amber-500" />
+                                Masuk ke Admin Panel
+                            </Link>
+                        </div>
+                    )}
                 </div>
             </div>
         );
