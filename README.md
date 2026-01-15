@@ -101,14 +101,29 @@ NEXTAUTH_URL=http://localhost:3000
 
 ## 📋 Development Roadmap
 
-- [x] **Iterasi 1:** The Renderer (Public Page - Static) ✅
-- [x] **Iterasi 2:** The Theme Engine (Decoupling) ✅
-- [ ] **Iterasi 3:** User Dashboard (Data Entry) 🔄
-- [ ] **Iterasi 4:** Database Integration (RSVP & Persistence)
-- [ ] **Iterasi 5:** Auth & User Management
-- [ ] **Iterasi 6:** Super Admin Panel
+-   [x] Iterasi 1: Renderer Dasar (Hero, Guest Greeting, Music)
+-   [x] Iterasi 2: Theme Engine (Theme Registry, Dynamic Color/Font)
+-   [x] Iterasi 3: User Dashboard - Data Entry (Form components, Live Preview)
+-   [x] Iterasi 4: Database Integration (PostgreSQL, Drizzle ORM, Live RSVP)
 
-Lihat [todo.md](./todo.md) untuk detail lengkap roadmap.
+---
+
+## 🛠️ Tech Stack & Database Setup
+
+### Database Development
+Aplikasi menggunakan **PostgreSQL** dengan **Drizzle ORM**. Saat ini terhubung ke database dedicated di server IDCloudHost:
+
+- **Database**: `nikahin_db_dev`
+- **Host**: `157.10.161.215` (Direct Connection)
+- **ORM**: Drizzle ORM + Drizzle Kit
+
+### Database Scripts
+Tersedia beberapa perintah untuk manajemen database:
+- `pnpm db:generate`: Membuat file migrasi dari schema.
+- `pnpm db:push`: Sinkronisasi schema langsung ke database server.
+- `pnpm db:seed`: Memasukkan data awal (sample packages, themes, user, & invitation).
+- `pnpm db:studio`: GUI browser untuk melihat data.
+- `pnpm db:schema`: (Legacy) Untuk setup schema isolasi jika diperlukan.
 
 ## 🧪 Testing
 

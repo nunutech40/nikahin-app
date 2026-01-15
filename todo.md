@@ -316,43 +316,43 @@ Implement authentication system to secure user data. Users can only access and e
 ### 📦 Tasks Breakdown
 
 #### **Phase 5.1: NextAuth Setup**
-- [ ] **T5.1.1** - Install NextAuth.js
+- [x] **T5.1.1** - Install NextAuth.js
   ```bash
   npm install next-auth
   ```
-- [ ] **T5.1.2** - Create `/src/app/api/auth/[...nextauth]/route.ts`
-- [ ] **T5.1.3** - Configure credentials provider
-- [ ] **T5.1.4** - Setup session strategy (JWT)
-- [ ] **T5.1.5** - Add environment variables for auth
-- [ ] **T5.1.6** - Test: Auth API routes work
+- [x] **T5.1.2** - Create `/src/app/api/auth/[...nextauth]/route.ts`
+- [x] **T5.1.3** - Configure credentials provider
+- [x] **T5.1.4** - Setup session strategy (JWT)
+- [x] **T5.1.5** - Add environment variables for auth
+- [x] **T5.1.6** - Test: Auth API routes work
 
 **Rollback Point:** Auth is separate API route, can be disabled
 
 #### **Phase 5.2: User Registration**
-- [ ] **T5.2.1** - Create `/src/app/register/page.tsx`
-- [ ] **T5.2.2** - Build registration form
-- [ ] **T5.2.3** - Create `registerUser()` Server Action
-- [ ] **T5.2.4** - Hash passwords with bcrypt
-- [ ] **T5.2.5** - Insert user to `users` table
-- [ ] **T5.2.6** - Test: User registration works
+- [x] **T5.2.1** - Create `/src/app/register/page.tsx`
+- [x] **T5.2.2** - Build registration form
+- [x] **T5.2.3** - Create `registerUser()` Server Action
+- [x] **T5.2.4** - Hash passwords with bcrypt
+- [x] **T5.2.5** - Insert user to `users` table
+- [x] **T5.2.6** - Test: User registration works
 
 **Rollback Point:** Registration is separate route
 
 #### **Phase 5.3: Login Flow**
-- [ ] **T5.3.1** - Create `/src/app/login/page.tsx`
-- [ ] **T5.3.2** - Build login form
-- [ ] **T5.3.3** - Implement signIn with NextAuth
-- [ ] **T5.3.4** - Add redirect after login
-- [ ] **T5.3.5** - Test: Login flow works
+- [x] **T5.3.1** - Create `/src/app/login/page.tsx`
+- [x] **T5.3.2** - Build login form
+- [x] **T5.3.3** - Implement signIn with NextAuth
+- [x] **T5.3.4** - Add redirect after login
+- [x] **T5.3.5** - Test: Login flow works
 
 **Rollback Point:** Login is separate route
 
 #### **Phase 5.4: Protected Routes**
-- [ ] **T5.4.1** - Create middleware for auth check
-- [ ] **T5.4.2** - Protect `/dashboard` routes
-- [ ] **T5.4.3** - Redirect unauthenticated users to login
-- [ ] **T5.4.4** - Add session provider to layout
-- [ ] **T5.4.5** - Test: Protection works correctly
+- [x] **T5.4.1** - Create middleware for auth check
+- [x] **T5.4.2** - Protect `/dashboard` routes
+- [x] **T5.4.3** - Redirect unauthenticated users to login
+- [x] **T5.4.4** - Add session provider to layout
+- [x] **T5.4.5** - Test: Protection works correctly
 
 **Rollback Point:** Middleware can be disabled
 

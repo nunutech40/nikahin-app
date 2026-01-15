@@ -26,12 +26,13 @@ Konfigurasi ini dioptimalkan untuk menjaga performa mesin pengembang (SSD & RAM)
 
 ---
 
-## 3. Data & Security Architecture
-
-*   **Database:** PostgreSQL (Housed on IDCloudHost).
-*   **Connection Strategy (Development):** **SSH Tunneling**.
-    *   Local Port: `5433` → Remote Port: `5432`.
-    *   Target DB: `undangan_dev` (Lingkungan isolasi untuk pengembangan).
+### 3. Data & Security Architecture
+- **Database**: PostgreSQL (Baremetal on IDCloudHost)
+- **Database Name**: `nikahin_db_dev` (dedicated)
+- **ORM**: Drizzle ORM (Pure TypeScript)
+- **Connectivity (Dev)**: Direct Connection to `157.10.161.215` (SSL: disabled)
+- **Connectivity (Prod)**: Localhost (within the same VPS)
+- **Security Strategy**: Schema-based relational data with Drizzle Zod validation.
 *   **Connection Strategy (Production):** Koneksi Localhost (Internal network di dalam server).
 *   **Secrets Management:** 
     *   Local: `.env.local` (Dilarang keras masuk ke version control).

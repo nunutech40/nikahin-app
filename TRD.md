@@ -35,9 +35,21 @@ Aplikasi menggunakan pola **Theme-based Architecture** untuk memisahkan data dar
 
 ---
 
-### 3. Database Schema (Source of Truth v2.0)
+### 3. Database Infrastructure
+- **Provider**: PostgreSQL on Baremetal (IDCloudHost)
+- **Database Name**: `nikahin_db_dev` (dedicated)
+- **Schema Management**: Drizzle ORM (Pure TypeScript)
+- **Connection**: Direct connection via IP `157.10.161.215` for development.
+- **Isolation**: Previously planned with PostgreSQL Schema, now using a dedicated database for better security.
 
-Skema database kini mendukung **Dynamic Feature Gating**.
+---
+
+### 4. Database Schema (Drizzle ORM)
+Schema diimplementasikan dengan fitur **Drizzle Relations** untuk query yang optimal.
+- `users`: Multi-role (admin, customer, agency).
+- `invitations`: Menggunakan `jsonb` untuk fleksibilitas konten undangan.
+- `guests`: Menyimpan data RSVP dan pesan buku tamu secara live.
+- `features` & `packages`: Dasar dari sistem SaaS Gating.
 
 ```typescript
 // features: Daftar modul fitur independen

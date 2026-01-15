@@ -25,10 +25,17 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 
 ---
 
-## 3. Functional Requirements
-
-### 3.1. Sistem Tema Dinamis
-*   Platform harus mendukung penggantian tema secara instan untuk satu data undangan yang sama.
+### 1. Functional Requirements
+1.  **Renderer Engine** (✅ Completed)
+2.  **Theme Registry & Dynamic Styles** (✅ Completed)
+3.  **RSVP & Data Persistence** (✅ Completed)
+    -   Guests can submit RSVP (live to DB).
+    -   Invitations loading from real database (via slug).
+    -   Live Guestbook/Wishes.
+4.  **User Dashboard** (🔄 In Progress)
+    -   Split-screen editor with live preview (✅)
+    -   Form persistence to database (🔄 Implementation pending in UI)
+5.  **SaaS Gating System** (⏳ Planned)
 *   Setiap tema memiliki estetika, animasi, dan tata letak yang berbeda-beda.
 
 ### 3.2. Manajemen Konten Undangan
