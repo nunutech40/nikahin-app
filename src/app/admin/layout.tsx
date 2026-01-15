@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import {
     LayoutDashboard,
     Users,
@@ -11,11 +13,14 @@ import {
     ChevronRight
 } from "lucide-react";
 
-export default function AdminLayout({
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const session = await getServerSession(authOptions);
+    const adminEmail = session?.user?.email || "Admin";
+
     const menuItems = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
         { label: "Manajemen User", icon: Users, href: "/admin/users" },
@@ -78,15 +83,15 @@ export default function AdminLayout({
             <main className="flex-1 flex flex-col overflow-hidden">
                 {/* Top Header */}
                 <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
-                    <h1 className="text-xl font-bold text-slate-800">Panel Administrator</h1>
+                    <h1 className="text-xl font-bold text-slate-800 font-serif">Panel Administrator</h1>
                     <div className="flex items-center gap-4">
                         <div className="w-px h-6 bg-slate-200" />
                         <div className="flex items-center gap-3">
                             <div className="text-right hidden sm:block">
-                                <p className="text-xs font-bold text-slate-900 uppercase">Administrator</p>
-                                <p className="text-[10px] text-slate-400">System Root</p>
+                                <p className="text-[10px] font-bold text-slate-900 uppercase tracking-wider">{adminEmail.split('@')[0]}</p>
+                                <p className="text-[9px] text-amber-600 font-bold uppercase tracking-widest leading-none">Super Admin</p>
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 border border-slate-200">
+                            <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center text-amber-500 border border-amber-100 shadow-sm">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
                         </div>
