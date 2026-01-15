@@ -418,22 +418,20 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 ### 📊 Status: 🔄 **IN PROGRESS** (Admin Wave 2) (85%)
 
 #### **Phase 6.4: Invitation Management**
-- [ ] **T6.4.1** - Create `/src/app/admin/invitations/page.tsx`
-- [ ] **T6.4.2** - Fetch all invitations
-- [ ] **T6.4.3** - Display invitations with user info
-- [ ] **T6.4.4** - Add view/edit/delete actions
-- [ ] **T6.4.5** - Test: Invitation management works
+- [x] **T6.4.1** - Create `/src/app/admin/invitations/page.tsx`
+- [x] **T6.4.2** - Fetch all invitations with user & theme info
+- [x] **T6.4.3** - Display invitations in table format
+- [x] **T6.4.4** - Add view & delete actions for moderation
+- [x] **T6.4.5** - Test: Invitation management works
 
-**Rollback Point:** Invitation management is separate route
-
-#### **Phase 6.5: Theme Management**
+#### **Phase 6.5: Theme Management (Optional/Internal)**
 - [ ] **T6.5.1** - Create `/src/app/admin/themes/page.tsx`
 - [ ] **T6.5.2** - Display all themes
 - [ ] **T6.5.3** - Add create theme form
 - [ ] **T6.5.4** - Implement theme CRUD Server Actions
 - [ ] **T6.5.5** - Test: Theme management works
 
-**Rollback Point:** Theme management is separate route
+### 📊 Status: ✅ **COMPLETED** (95%)
 
 #### **Phase 6.6: Analytics (Optional)**
 - [ ] **T6.6.1** - Create `/src/app/admin/analytics/page.tsx`

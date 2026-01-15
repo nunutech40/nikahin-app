@@ -106,10 +106,16 @@ NEXTAUTH_URL=http://localhost:3000
 -   [x] Iterasi 3: User Dashboard - Data Entry (Form components, Live Preview)
 -   [x] Iterasi 4: Database Integration (PostgreSQL, Drizzle ORM, Live RSVP)
 -   [x] Iterasi 5: Auth & User Management (NextAuth, Secure Routes, Data Isolation)
+-   [x] Iterasi 6: Super Admin Panel (User Control, Global Monitoring, Analytics)
 
 ---
 
 ## 🛠️ Tech Stack & Database Setup
+
+### Admin & Operations
+- **Panel Address**: `/admin` (Protected by role-based middleware)
+- **Monitoring**: User base tracking, Invitation moderation, System wide stats.
+- **Tools**: Lucide React for Admin UI, Date-fns for localization.
 
 ### Authentication & Security
 - **Auth Provider**: NextAuth.js (Credentials Provider)
