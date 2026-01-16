@@ -3,13 +3,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/db";
 import { users, invitations, visitorLogs } from "@/db/schema";
-import { count, desc, eq, sql, inArray } from "drizzle-orm";
-import { Users, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Heart, Phone, Mail } from "lucide-react";
+import { count, desc, eq, inArray } from "drizzle-orm";
+import { Users, FileText, BarChart3, TrendingUp, Calendar, Phone } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import RoyalCard from "@/components/ui/RoyalCard";
 import RoyalBadge from "@/components/ui/RoyalBadge";
+import ReferralLinkClient from "./ReferralLinkClient";
 
 // --- SUB-COMPONENTS (Data Isolation Logic) ---
 
@@ -28,11 +29,19 @@ async function AgencyStatsGrid({ sellerId }: { sellerId: number }) {
             .where(eq(users.referredBy, sellerId)),
     ]);
 
+    const soldCount = i[0].value;
+    const commission = soldCount * 25000;
+    const formattedCommission = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+    }).format(commission);
+
     const stats = [
         { label: "Direct Customers", value: String(u[0].value), icon: Users, gradient: "from-emerald-600 to-teal-700", shadow: "shadow-emerald-200" },
-        { label: "Sold Invitations", value: String(i[0].value), icon: FileText, gradient: "from-blue-600 to-indigo-700", shadow: "shadow-blue-200" },
+        { label: "Sold Invitations", value: String(soldCount), icon: FileText, gradient: "from-blue-600 to-indigo-700", shadow: "shadow-blue-200" },
         { label: "Partner Views", value: String(v[0].value), icon: BarChart3, gradient: "from-amber-500 to-orange-600", shadow: "shadow-amber-200" },
-        { label: "Commission Est.", value: "Rp 0", icon: TrendingUp, gradient: "from-rose-500 to-pink-600", shadow: "shadow-rose-200" },
+        { label: "Commission Est.", value: formattedCommission, icon: TrendingUp, gradient: "from-rose-500 to-pink-600", shadow: "shadow-rose-200" },
     ];
 
     return (
@@ -156,6 +165,12 @@ export default async function AgencyDashboardPage() {
     const session = await getServerSession(authOptions);
     const sellerId = Number((session?.user as any)?.id);
 
+    // Fetch seller's referral code
+    const seller = await db.query.users.findFirst({
+        where: eq(users.id, sellerId),
+        columns: { referralCode: true }
+    });
+
     return (
         <div className="space-y-10">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -171,6 +186,10 @@ export default async function AgencyDashboardPage() {
                     <span className="text-xs font-bold text-slate-600 uppercase tracking-widest">{format(new Date(), "EEEE, d MMMM yyyy", { locale: id })}</span>
                 </div>
             </div>
+
+            {seller?.referralCode && (
+                <ReferralLinkClient referralCode={seller.referralCode} />
+            )}
 
             <Suspense fallback={<div className="h-40 bg-slate-100 rounded-3xl animate-pulse" />}>
                 <AgencyStatsGrid sellerId={sellerId} />

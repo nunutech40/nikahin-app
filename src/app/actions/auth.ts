@@ -12,6 +12,7 @@ const registerSchema = z.object({
     name: z.string().min(2, "Nama minimal 2 karakter"),
     phone: z.string().min(10, "Nomor WhatsApp tidak valid"),
     role: z.enum(["customer", "agency"]).optional().default("customer"),
+    referredByCode: z.string().optional(),
 });
 
 export async function registerUser(formData: any) {
@@ -30,7 +31,23 @@ export async function registerUser(formData: any) {
         // 2. Hash password
         const hashedPassword = await bcrypt.hash(validated.password, 10);
 
-        // 3. Insert user
+        // 3. Find referrer if code is provided
+        let referrerId: number | undefined = undefined;
+        if (validated.referredByCode) {
+            const referrer = await db.query.users.findFirst({
+                where: eq(users.referralCode, validated.referredByCode),
+            });
+            if (referrer) {
+                referrerId = referrer.id;
+            }
+        }
+
+        // 4. Generate referral code for agencies
+        const referralCode = validated.role === 'agency'
+            ? `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
+            : null;
+
+        // 5. Insert user
         await db.insert(users).values({
             email: validated.email,
             password: hashedPassword,
@@ -38,6 +55,8 @@ export async function registerUser(formData: any) {
             phone: validated.phone,
             role: validated.role as "customer" | "agency" | "admin",
             isActive: true, // Default to true for now
+            referralCode: referralCode,
+            referredBy: referrerId,
         });
 
         return { success: true };

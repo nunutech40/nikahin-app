@@ -8,7 +8,8 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, AlertCircle, LogOut, User, ShieldCheck, Mail
+    Lock, AlertCircle, LogOut, User, ShieldCheck, Mail,
+    Copy, Share2, ExternalLink
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -57,6 +58,20 @@ export default function DashboardPage({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("mempelai");
     const [zodError, setZodError] = useState<z.ZodError | null>(null);
+
+    const handleCopyLink = () => {
+        const url = `${window.location.origin}/${invitationData.slug}`;
+        navigator.clipboard.writeText(url);
+        toast.success("Link undangan berhasil disalin!", {
+            description: "Silakan bagikan ke tamu undangan Anda."
+        });
+    };
+
+    const handleShareWhatsApp = () => {
+        const url = `${window.location.origin}/${invitationData.slug}`;
+        const text = `Halo! Kami mengundang Anda ke acara pernikahan kami. Lihat detailnya di sini: ${url}`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    };
 
     // Handlers
     const handleCoupleChange = (section: 'groom' | 'bride', field: keyof Person, value: string) => {
@@ -306,21 +321,25 @@ export default function DashboardPage({
             {/* Header */}
             <header className="bg-white border-b border-slate-200 shadow-sm z-50">
                 <div className="px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                         <button
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                             className="lg:hidden p-2 hover:bg-slate-100 rounded-lg transition-colors"
                         >
                             {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                         </button>
-                        <div>
+                        <div className="flex items-center gap-3">
                             <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-                                💍 <span className="hidden sm:inline">Nikahin Dashboard</span>
+                                💍 <span className="hidden sm:inline">Nikahin</span>
                             </h1>
+                            <div className="hidden xs:flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                                <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Free Tier</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="hidden md:flex bg-slate-100 p-1 rounded-lg">
+                    <div className="hidden lg:flex bg-slate-100 p-1 rounded-lg">
                         <button
                             onClick={() => setPreviewMode("mobile")}
                             className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${previewMode === "mobile" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"
@@ -338,39 +357,52 @@ export default function DashboardPage({
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Link
-                            href="/dashboard/rsvp"
-                            className="bg-slate-100 p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all relative group flex items-center gap-2"
-                            title="RSVP Inbox"
+                        <button
+                            onClick={handleCopyLink}
+                            className="p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all hidden sm:flex"
+                            title="Salin Link"
                         >
-                            <Mail className="w-5 h-5" />
-                            <span className="text-[10px] font-black uppercase tracking-widest pr-1 hidden sm:inline">RSVP Inbox</span>
-                            {/* Simple dot indicator for NEW RSVPs could go here later */}
-                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+                            <Copy className="w-5 h-5" />
+                        </button>
+
+                        <button
+                            onClick={handleShareWhatsApp}
+                            className="p-2 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all hidden sm:flex"
+                            title="Share WA"
+                        >
+                            <Share2 className="w-5 h-5" />
+                        </button>
+
+                        <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block" />
+
+                        <Link
+                            href={`/${invitationData.slug}`}
+                            target="_blank"
+                            className="p-2 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all flex items-center gap-2"
+                            title="Lihat Undangan"
+                        >
+                            <ExternalLink className="w-5 h-5" />
+                            <span className="text-[10px] font-black uppercase tracking-widest hidden md:inline">Live Preview</span>
                         </Link>
 
                         <Link
-                            href="/dashboard/profile"
-                            className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors hidden sm:flex"
-                            title="Profil Saya"
+                            href="/dashboard/rsvp"
+                            className="bg-slate-50 p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all relative group flex items-center gap-2"
+                            title="RSVP Inbox"
                         >
-                            <User className="w-5 h-5" />
+                            <Mail className="w-5 h-5" />
+                            <span className="text-[10px] font-black uppercase tracking-widest pr-1 hidden sm:inline">RSVP</span>
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
                         </Link>
+
+                        <div className="w-px h-6 bg-slate-200 mx-1" />
 
                         <button
                             onClick={handleSave}
                             disabled={isSaving}
-                            className="px-4 py-2 bg-[var(--color-primary)] text-white rounded-lg text-sm font-medium hover:bg-[var(--color-primary-dark)] transition-all shadow-sm disabled:opacity-50 flex items-center gap-2"
+                            className="px-4 py-2 bg-[#D4AF37] text-white rounded-lg text-sm font-bold hover:bg-[#b28f1f] transition-all shadow-sm shadow-amber-200 disabled:opacity-50"
                         >
-                            {isSaving ? "Menyimpan..." : "Simpan"}
-                        </button>
-
-                        <button
-                            onClick={() => signOut({ callbackUrl: "/login" })}
-                            className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Keluar"
-                        >
-                            <LogOut className="w-5 h-5" />
+                            {isSaving ? "Saving..." : "Save"}
                         </button>
                     </div>
                 </div>

@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { registerUser } from "@/app/actions/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Heart, Mail, Lock, User, ArrowRight, Phone, Calendar, Eye, EyeOff } from "lucide-react";
 
 export default function RegisterPage() {
+    const searchParams = useSearchParams();
+    const refCode = searchParams.get("ref");
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
@@ -23,7 +26,10 @@ export default function RegisterPage() {
         setIsSubmitting(true);
         setError(null);
 
-        const result = await registerUser(formData);
+        const result = await registerUser({
+            ...formData,
+            referredByCode: refCode || undefined
+        });
 
         if (result.success) {
             router.push("/login?registered=true");

@@ -1,8 +1,8 @@
 import React, { Suspense } from "react";
 import { db } from "@/db";
-import { users, invitations, guests, visitorLogs } from "@/db/schema";
-import { count, desc, eq } from "drizzle-orm";
-import { Users, FileText, Heart, BarChart3, Calendar, ArrowRight, Mail, Globe, Lock } from "lucide-react";
+import { users, invitations, guests, visitorLogs, transactions } from "@/db/schema";
+import { count, desc, eq, sum } from "drizzle-orm";
+import { Users, FileText, Heart, BarChart3, Calendar, ArrowRight, Mail, Globe, Lock, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -13,18 +13,26 @@ import SystemDistribution from "@/components/dashboard/SystemDistribution";
 // --- SUB-COMPONENTS (Data Fetching Units) ---
 
 async function StatsGrid() {
-    const [u, i, g, v] = await Promise.all([
+    const [u, i, g, v, r] = await Promise.all([
         db.select({ value: count() }).from(users),
         db.select({ value: count() }).from(invitations),
         db.select({ value: count() }).from(guests),
         db.select({ value: count() }).from(visitorLogs),
+        db.select({ value: sum(transactions.amount) }).from(transactions).where(eq(transactions.status, "approved")),
     ]);
 
+    const revenue = Number(r[0].value || 0);
+    const formattedRevenue = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+    }).format(revenue);
+
     const stats = [
-        { label: "Total Pengguna", value: String(u[0].value), icon: Users, gradient: "from-blue-600 to-indigo-700", shadow: "shadow-blue-200" },
-        { label: "Undangan Dibuat", value: String(i[0].value), icon: FileText, gradient: "from-[#D4AF37] to-[#B8860B]", shadow: "shadow-amber-200" },
-        { label: "Guest Interactions", value: String(g[0].value), icon: Heart, gradient: "from-rose-500 to-pink-600", shadow: "shadow-rose-200" },
-        { label: "Platform Views", value: String(v[0].value), icon: BarChart3, gradient: "from-emerald-500 to-teal-600", shadow: "shadow-emerald-200" },
+        { label: "Total Revenue", value: formattedRevenue, icon: CreditCard, gradient: "from-emerald-600 to-teal-700", shadow: "shadow-emerald-200" },
+        { label: "Total Users", value: String(u[0].value), icon: Users, gradient: "from-blue-600 to-indigo-700", shadow: "shadow-blue-200" },
+        { label: "Active Invitations", value: String(i[0].value), icon: FileText, gradient: "from-[#D4AF37] to-[#B8860B]", shadow: "shadow-amber-200" },
+        { label: "Platform Views", value: String(v[0].value), icon: BarChart3, gradient: "from-amber-500 to-orange-600", shadow: "shadow-amber-200" },
     ];
 
     return (

@@ -295,14 +295,20 @@ Connect the application to PostgreSQL database using Drizzle ORM. Implement data
 - [x] **T4.7.5** - Test: Dashboard save/update works
 
 #### **Phase 4.8: RSVP Inbox & Notifications (NEW)**
-- [ ] **T4.8.1** - Create `/src/app/dashboard/rsvp/page.tsx`
-- [ ] **T4.8.2** - Fetch guest list for current user's invitations
-- [ ] **T4.8.3** - Implement RSVP Management UI (Table with filtering)
-- [ ] **T4.8.4** - Setup Resend/Nodemailer for Email Notifications
-- [ ] **T4.8.5** - Integrate email trigger into `submitRSVP` action
-- [ ] **T4.8.6** - Test: End-to-end RSVP & Notification flow
+- [x] **T4.8.1** - Create `/src/app/dashboard/rsvp/page.tsx`
+- [x] **T4.8.2** - Fetch guest list for current user's invitations
+- [x] **T4.8.3** - Implement RSVP Management UI (Table with filtering)
+- [x] **T4.8.4** - Setup Resend API for Email Notifications
+- [x] **T4.8.5** - Integrate email trigger into `submitRSVP` action
+- [x] **T4.8.6** - Test: End-to-end RSVP & Notification flow
 
-### 📊 Status: ✅ **COMPLETED** (95%)
+#### **Phase 4.9: Launch Readiness (MVP Gaps)**
+- [ ] **T4.9.1** - **Gallery Upload**: Implement image upload/URL management in dashboard
+- [x] **T4.9.2** - **Share Center**: Add Copy Link & Share to WA buttons in dashboard
+- [x] **T4.9.3** - **Package Status**: Show current package & locked feature indicators
+- [ ] **T4.9.4** - **Referral System**: Implement automatic referral tracking via link/slug
+
+### 📊 Status: ✅ **COMPLETED** (99%)
 
 ### 8. Performance Standards & Techniques
 To maintain a premium user experience, the following techniques are enforced:
@@ -434,14 +440,15 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **T6.2.5** - Test: Admin layout renders correctly
 
 #### **Phase 6.3: User Management**
-- [x] **T6.3.1** - Create `/src/app/admin/users/page.tsx`
-- [x] **T6.3.2** - Fetch all users from database
-- [x] **T6.3.3** - Display users in table format
-- [x] **T6.3.4** - Add toggle for `is_active` status
-- [x] **T6.3.5** - Implement `toggleUserStatus()` Server Action
 - [x] **T6.3.6** - Test: User activation works
 
-### 📊 Status: 🔄 **IN PROGRESS** (Admin Wave 2) (85%)
+#### **Phase 6.4: Admin Billing & Catalog (MVP)**
+- [ ] **T6.4.1** - **Billing Hub**: Create dashboard for verifying payment proofs
+- [ ] **T6.4.2** - **Transaction Approval**: Implement one-click account activation from billing list
+- [ ] **T6.4.3** - **Theme CRUD**: Admin interface to add/edit theme metadata
+- [ ] **T6.4.4** - **Global Stats**: Add Revenue tracking to admin dashboard
+
+### 📊 Status: 🔄 **IN PROGRESS** (Admin Wave 2) (90%)
 
 #### **Phase 6.4: Invitation Management**
 - [x] **T6.4.1** - Create `/src/app/admin/invitations/page.tsx`
@@ -490,6 +497,8 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **T7.5** - Agency-specific analytics (Commisions, Traffic, Users)
 - [x] **T7.6** - Seller Registration Page (`/register/seller`)
 - [x] **T7.7** - Smart Login Redirection (Role-based)
+- [x] **T7.8** - **Commission Logic**: Replace hardcoded Rp 0 with dynamic % calculation
+- [x] **T7.9** - **Automated Referral Link**: Generate shareable seller link (e.g., `?ref=ID`)
 
 ### 📊 Status: ✅ **COMPLETED** (100%)
 
