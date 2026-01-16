@@ -9,9 +9,11 @@ import { z } from "zod";
 const registerSchema = z.object({
     email: z.string().email("Email tidak valid"),
     password: z.string().min(6, "Password minimal 6 karakter"),
+    name: z.string().min(2, "Nama minimal 2 karakter"),
+    phone: z.string().min(10, "Nomor WhatsApp tidak valid"),
 });
 
-export async function registerUser(formData: z.infer<typeof registerSchema>) {
+export async function registerUser(formData: any) {
     try {
         const validated = registerSchema.parse(formData);
 
@@ -31,6 +33,8 @@ export async function registerUser(formData: z.infer<typeof registerSchema>) {
         await db.insert(users).values({
             email: validated.email,
             password: hashedPassword,
+            name: validated.name,
+            phone: validated.phone,
             role: "customer",
             isActive: true, // Default to true for now
         });

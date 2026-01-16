@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search } from "lucide-react";
+import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search, Phone } from "lucide-react";
 import { toggleUserStatus, updateUserRole } from "@/app/actions/admin";
 import { toast } from "sonner";
 import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
@@ -87,14 +87,30 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                             <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
                                 <td className="px-6 py-5">
                                     <div className="flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-[#D4AF37]/10 group-hover:text-[#D4AF37] transition-all">
-                                            <User className="w-6 h-6" />
+                                        <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:bg-[#D4AF37]/10 group-hover:text-[#D4AF37] transition-all overflow-hidden">
+                                            {user.name ? (
+                                                <span className="font-black text-lg text-[#D4AF37]">{user.name.charAt(0)}</span>
+                                            ) : (
+                                                <User className="w-6 h-6" />
+                                            )}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-slate-900 line-clamp-1">{user.email.split('@')[0]}</p>
-                                            <div className="flex items-center gap-1.5 text-slate-400 text-xs mt-0.5">
-                                                <Mail className="w-3 h-3" />
-                                                {user.email}
+                                            <p className="font-bold text-slate-900 line-clamp-1">{user.name || user.email.split('@')[0]}</p>
+                                            <div className="flex flex-col gap-0.5 mt-0.5">
+                                                <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-medium uppercase tracking-wider">
+                                                    <Mail className="w-3 h-3" />
+                                                    {user.email}
+                                                </div>
+                                                {user.phone && (
+                                                    <a
+                                                        href={`https://wa.me/${user.phone.replace(/^0/, '62')}`}
+                                                        target="_blank"
+                                                        className="flex items-center gap-1.5 text-emerald-600 text-[10px] font-bold hover:underline"
+                                                    >
+                                                        <Phone className="w-3 h-3" />
+                                                        {user.phone}
+                                                    </a>
+                                                )}
                                             </div>
                                         </div>
                                     </div>

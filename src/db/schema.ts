@@ -26,12 +26,15 @@ export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   password: text("password").notNull(),
+  name: varchar("name", { length: 255 }), // Added for personalization
+  phone: varchar("phone", { length: 20 }), // Essential for WA communication
+  weddingDate: timestamp("wedding_date"), // Critical for analysis/segmentation
   role: userRoleEnum("role").default("customer").notNull(),
   isActive: boolean("is_active").default(false).notNull(),
   referralCode: varchar("referral_code", { length: 50 }),
   referredBy: integer("referred_by").references((): any => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
 // ============================================

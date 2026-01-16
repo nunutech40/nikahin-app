@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/db";
 import { users, invitations, visitorLogs } from "@/db/schema";
 import { count, desc, eq, sql } from "drizzle-orm";
-import { Users, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Heart } from "lucide-react";
+import { Users, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Heart, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -65,8 +65,6 @@ async function AgencyRecentActivity({ sellerId }: { sellerId: number }) {
             limit: 5,
             with: { user: true },
             orderBy: [desc(invitations.createdAt)],
-            // In a real query, we'd join invitations to users to filter by sellerId
-            // but for simple Drizzle query we might need a more complex builder:
             where: sql`EXISTS (SELECT 1 FROM ${users} WHERE ${users.id} = ${invitations.userId} AND ${users.referredBy} = ${sellerId})`
         })
     ]);
@@ -76,17 +74,33 @@ async function AgencyRecentActivity({ sellerId }: { sellerId: number }) {
             {/* My Customers */}
             <RoyalCard>
                 <div className="flex justify-between items-center mb-8">
-                    <h3 className="font-serif font-black text-xl text-slate-800 flex items-center gap-3">
-                        My New Clients
-                    </h3>
-                    <Link href="/agency/customers" className="text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:underline">View All</Link>
+                    <div className="flex flex-col">
+                        <h3 className="font-serif font-black text-xl text-slate-800 flex items-center gap-3">
+                            My New Clients
+                        </h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Growth Audit List</p>
+                    </div>
+                    <Link href="/agency/customers" className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:bg-emerald-50 transition-colors">View All</Link>
                 </div>
                 <div className="space-y-4">
                     {latestUsers.length > 0 ? latestUsers.map(u => (
-                        <div key={u.id} className="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-                            <div>
-                                <p className="text-sm font-bold text-slate-900">{u.email}</p>
-                                <p className="text-[10px] text-slate-400 font-bold uppercase">{format(new Date(u.createdAt), "d MMM yyyy", { locale: id })}</p>
+                        <div key={u.id} className="flex justify-between items-center p-5 bg-slate-50/50 rounded-2xl border border-slate-100/50 hover:border-emerald-200 transition-all group">
+                            <div className="flex gap-4 items-center">
+                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-emerald-600 font-black shadow-sm group-hover:scale-110 transition-transform">
+                                    {u.name?.charAt(0) || "U"}
+                                </div>
+                                <div className="flex flex-col">
+                                    <p className="text-sm font-black text-slate-900 leading-tight">{u.name || u.email.split('@')[0]}</p>
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <p className="text-[9px] text-slate-400 font-bold uppercase">{format(new Date(u.createdAt), "d MMM", { locale: id })}</p>
+                                        <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                        {u.phone && (
+                                            <a href={`https://wa.me/${u.phone.replace(/^0/, '62')}`} target="_blank" className="flex items-center gap-1 text-emerald-600 text-[9px] font-black hover:underline uppercase">
+                                                <Phone className="w-2.5 h-2.5" /> Client WhatsApp
+                                            </a>
+                                        )}
+                                    </div>
+                                </div>
                             </div>
                             <RoyalBadge variant={u.isActive ? "success" : "neutral"}>{u.isActive ? "Active" : "Pending"}</RoyalBadge>
                         </div>
@@ -97,17 +111,25 @@ async function AgencyRecentActivity({ sellerId }: { sellerId: number }) {
             {/* Managed Invitations */}
             <RoyalCard>
                 <div className="flex justify-between items-center mb-8">
-                    <h3 className="font-serif font-black text-xl text-slate-800 flex items-center gap-3">
-                        Client Invitations
-                    </h3>
-                    <Link href="/agency/invitations" className="text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:underline">View All</Link>
+                    <div className="flex flex-col">
+                        <h3 className="font-serif font-black text-xl text-slate-800 flex items-center gap-3">
+                            Client Invitations
+                        </h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Active Sales pipeline</p>
+                    </div>
+                    <Link href="/agency/invitations" className="px-4 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[10px] font-black text-emerald-600 uppercase tracking-widest hover:bg-emerald-50 transition-colors">View All</Link>
                 </div>
                 <div className="space-y-4">
                     {latestInvitations.length > 0 ? latestInvitations.map(inv => (
-                        <div key={inv.id} className="flex justify-between items-center p-4 bg-slate-50/50 rounded-2xl border border-slate-100/50">
-                            <div>
-                                <p className="text-sm font-bold text-slate-900">/{inv.slug}</p>
-                                <p className="text-[10px] text-slate-400 font-bold truncate max-w-[150px]">{inv.user?.email}</p>
+                        <div key={inv.id} className="flex justify-between items-center p-5 bg-slate-50/50 rounded-2xl border border-slate-100/50 hover:border-blue-200 transition-all group">
+                            <div className="flex gap-4 items-center">
+                                <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
+                                    <FileText className="w-5 h-5" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <p className="text-sm font-black text-slate-900 leading-tight">/{inv.slug}</p>
+                                    <p className="text-[9px] text-slate-400 font-bold uppercase mt-1 truncate max-w-[120px]">By {inv.user?.name || inv.user?.email}</p>
+                                </div>
                             </div>
                             <RoyalBadge variant={inv.isPublished ? "success" : "neutral"}>{inv.isPublished ? "Live" : "Draft"}</RoyalBadge>
                         </div>
@@ -122,7 +144,7 @@ async function AgencyRecentActivity({ sellerId }: { sellerId: number }) {
 
 export default async function AgencyDashboardPage() {
     const session = await getServerSession(authOptions);
-    const sellerId = Number(session?.user?.id);
+    const sellerId = Number((session?.user as any)?.id);
 
     return (
         <div className="space-y-10">
