@@ -30,6 +30,7 @@ export const users = pgTable("users", {
   phone: varchar("phone", { length: 20 }), // Essential for WA communication
   weddingDate: timestamp("wedding_date"), // Critical for analysis/segmentation
   role: userRoleEnum("role").default("customer").notNull(),
+  packageId: integer("package_id").references(() => packages.id), // Customer's subscription package
   isActive: boolean("is_active").default(false).notNull(),
   referralCode: varchar("referral_code", { length: 50 }),
   referredBy: integer("referred_by").references((): any => users.id),
@@ -158,9 +159,13 @@ export const transactions = pgTable("transactions", {
 // RELATIONS
 // ============================================
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
   invitations: many(invitations),
   transactions: many(transactions),
+  package: one(packages, {
+    fields: [users.packageId],
+    references: [packages.id],
+  }),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one, many }) => ({

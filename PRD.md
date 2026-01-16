@@ -26,8 +26,8 @@ Fitur-fitur berikut **SUDAH SELESAI** dikembangkan dan siap digunakan:
 | **Renderer Engine** | Dynamic Theme Loading, Mobile-First View, Premium Animations (Framer Motion). |
 | **Data Management** | Input Mempelai, Acara, Love Story, Galeri, Quote, Music. |
 | **Interactive** | Live Preview Editor (Split Screen), RSVP System, RSVP Inbox (Export CSV). |
-| **Gating System** | Server-side protection (Backend menolak data fitur premium jika paket User Free). |
-| **Admin Ops** | Verifikasi Pembayaran Manual, Aktivasi User, Dashboard Statistik. |
+| **Gating System** | Dynamic Feature Matrix (Admin can toggle features per package), `lib/featureGating` helper for backend/frontend restriction. |
+| **Admin Ops** | User Management (Paket View), Feature Matrix Configuration UI, Activation User. |
 | **Sharing** | Dynamic OG Tags (SEO Friendly Links for WhatsApp). |
 
 ---

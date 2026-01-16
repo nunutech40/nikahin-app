@@ -113,3 +113,38 @@ export async function createSeller(data: { name: string, email: string, phone: s
         return { success: false, error: "Gagal membuat akun seller." };
     }
 }
+
+/**
+ * Update Package Features (Super Admin only)
+ */
+export async function updatePackageFeatures(packageId: number, featureIds: number[]) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        const { packageFeatures } = await import("@/db/schema");
+
+        // Delete all existing features for this package
+        await db.delete(packageFeatures).where(eq(packageFeatures.packageId, packageId));
+
+        // Insert new features
+        if (featureIds.length > 0) {
+            await db.insert(packageFeatures).values(
+                featureIds.map(featureId => ({
+                    packageId,
+                    featureId,
+                }))
+            );
+        }
+
+        revalidatePath("/admin/features");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating package features:", error);
+        return { success: false, error: "Failed to update package features." };
+    }
+}
+

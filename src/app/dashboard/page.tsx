@@ -24,6 +24,8 @@ export default async function DashboardPage() {
     }
 
     const userInvitations = await getUserInvitations(userId);
+    const { getUserFeatures } = await import("@/lib/featureGating");
+    const userFeatures = await getUserFeatures(userId);
 
     // Fetch available themes and packages
     const availableThemes = await db.query.themes.findMany({
@@ -33,9 +35,14 @@ export default async function DashboardPage() {
         where: (packages, { eq }) => eq(packages.isActive, true)
     });
 
-    const initialData = userInvitations.length > 0
+    let initialData = userInvitations.length > 0
         ? userInvitations[0]
         : null;
+
+    // Inject features into content
+    if (initialData?.content) {
+        (initialData.content as any).features = userFeatures;
+    }
 
     return (
         <DashboardClient

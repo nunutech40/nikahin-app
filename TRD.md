@@ -54,7 +54,20 @@ Aplikasi menggunakan pola **Theme-based Architecture** untuk memisahkan data dar
 
 ### 4. Database Schema (Drizzle ORM)
 Schema diimplementasikan dengan fitur **Drizzle Relations** untuk query yang optimal.
-- `users`: Multi-role (admin, customer, agency).
+
+#### 4.1. Core Tables
+*   **`users`**: Multi-role (admin, customer, agency). Memiliki `package_id` untuk menentukan tier langganan.
+*   **`features`**: Daftar modul fitur independen (e.g. `rsvp`, `gallery`, `music`). Memiliki flag `is_core`.
+*   **`packages`**: Definisi paket (Bronze, Silver, Gold) dengan harga dan status aktif.
+*   **`package_features`**: Pivot table yang menghubungkan `packages` dengan `features` (Many-to-Many).
+*   **`invitations`**: Inti data undangan, terhubung ke `users`, `themes`, dan `packages`.
+*   **`themes`**: Daftar tema yang tersedia.
+
+#### 4.2. Transactional Tables
+*   **`guests`**: Data tamu (RSVP & Guestbook).
+*   **`transactions`**: Log pembayaran dan status pesanan.
+*   **`visitor_logs`**: Data analytics pengunjung per undangan.
+
 ### 5. Authentication System (NextAuth.js)
 - **Framework**: NextAuth.js v4 (App Router compatible).
 - **Strategy**: JWT-based session management.
@@ -78,27 +91,9 @@ Untuk user baru yang belum memiliki undangan:
     -   `content`: Menggunakan `MOCK_DATA` sebagai template awal.
 4.  **Auto-Load**: Halaman reload dan langsung masuk ke mode editor.
 
-```typescript
-// features: Daftar modul fitur independen
-export const features = pgTable("features", {
-  id: serial("id").primaryKey(),
-  code: varchar("code").unique().notNull(), // e.g. 'rsvp_system', 'premium_gallery'
-  name: varchar("name").notNull(),
-  isCore: boolean("is_core").default(false),
-});
+// 6.2. Feature Matrix & Packages (Implemented Iteration 7)
+// Memungkinkan Admin mengatur tiering fitur secara dinamis via UI Matrix.
 
-// package_features: Relasi fitur ke paket (Admin controlled)
-export const packageFeatures = pgTable("package_features", {
-  packageId: integer("package_id").references(() => packages.id),
-  featureId: integer("feature_id").references(() => features.id),
-});
-
-// invitations: Ditambahkan package_id untuk kontrol akses
-export const invitations = pgTable("invitations", {
-  // ... existing fields
-  packageId: integer("package_id").references(() => packages.id),
-});
-```
 
 ---
 
@@ -106,11 +101,15 @@ export const invitations = pgTable("invitations", {
 
 Untuk menjamin modularitas seperti yang diminta di PRD:
 
-1.  **Permission Check**: Setiap komponen UI di Dashboard (misal: `RSVPSection` atau `GalleryForm`) akan memanggil fungsi helper `canUseFeature(invitationData, 'feature_code')`.
-2.  **Logic**: 
-    - Jika fitur bertanda `isCore: true`, kembalikan `true`.
-    - Jika tidak, cek apakah `feature_code` ada di dalam daftar fitur yang di-link ke `package_id` undangan tersebut.
-3.  **UI Feedback**: Jika `false`, komponen akan menampilkan *Overlay* "Upgrade to Unlock" agar Admin bisa melakukan monetisasi.
+1.  **Helper Library**: Implementasi di `src/lib/featureGating.ts` yang menyediakan fungsi:
+    - `hasFeatureAccess(userId, featureCode)`: Cek akses fitur tunggal.
+    - `getUserFeatures(userId)`: Ambil semua kode fitur yang dimiliki user.
+    - `getUserPackageInfo(userId)`: Ambil info detail paket dan fitur.
+2.  **Server Component Integration**: Query menggunakan `db.query.users.findFirst` dengan relation `package -> features -> feature` untuk efisiensi.
+3.  **Logic**: 
+    - Jika fitur bertanda `isCore: true`, fitur tersebut bisa diakses oleh semua paket (walaupun tidak terdaftar di `package_features`).
+    - Jika tidak, sistem mengecek kecocokan `code` fitur di dalam paket user.
+4.  **UI Feedback**: Jika akses ditolak, Editor akan menampilkan *Overlay* "Upgrade to Unlock" atau menyembunyikan opsi konfigurasi premium.
 
 ---
 

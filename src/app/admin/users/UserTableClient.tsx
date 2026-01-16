@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search, Phone } from "lucide-react";
+import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search, Phone, Package } from "lucide-react";
 import { toggleUserStatus, updateUserRole } from "@/app/actions/admin";
 import { toast } from "sonner";
 import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
@@ -77,6 +77,7 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                         <tr className="bg-slate-50 border-b border-slate-100">
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Informasi User</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Role & Access</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Paket</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Status</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Terdaftar</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Aksi</th>
@@ -132,6 +133,22 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                                     </button>
                                 </td>
                                 <td className="px-6 py-5 text-center">
+                                    {user.package ? (
+                                        <RoyalBadge
+                                            variant={
+                                                user.package.slug === 'gold' ? 'gold' :
+                                                    user.package.slug === 'silver' ? 'neutral' :
+                                                        'info'
+                                            }
+                                            icon={Package}
+                                        >
+                                            {user.package.name}
+                                        </RoyalBadge>
+                                    ) : (
+                                        <span className="text-xs text-slate-300 font-medium">Belum berlangganan</span>
+                                    )}
+                                </td>
+                                <td className="px-6 py-5 text-center">
                                     <RoyalBadge variant={user.isActive ? "success" : "neutral"} icon={user.isActive ? CheckCircle2 : XCircle}>
                                         {user.isActive ? 'Aktif' : 'Nonaktif'}
                                     </RoyalBadge>
@@ -159,7 +176,7 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={5}>
+                                <td colSpan={6}>
                                     <RoyalEmptyState
                                         title="User tidak ditemukan"
                                         description="Coba gunakan email lain atau hapus filter pencarian kamu."

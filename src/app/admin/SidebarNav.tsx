@@ -12,7 +12,8 @@ import {
     Settings,
     BarChart3,
     Store,
-    CreditCard
+    CreditCard,
+    Package
 } from "lucide-react";
 
 export default function SidebarNav() {
@@ -21,6 +22,7 @@ export default function SidebarNav() {
     const menuItems = [
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
         { label: "Billing & Keuangan", icon: CreditCard, href: "/admin/billing" },
+        { label: "Features & Paket", icon: Package, href: "/admin/features" },
         { label: "Manajemen Seller", icon: Store, href: "/admin/sellers" },
         { label: "Manajemen User", icon: Users, href: "/admin/users" },
         { label: "Semua Undangan", icon: FileText, href: "/admin/invitations" },

@@ -7,6 +7,9 @@ import UserTableClient from "./UserTableClient";
 export default async function AdminUsersPage() {
     const allUsers = await db.query.users.findMany({
         orderBy: [desc(users.createdAt)],
+        with: {
+            package: true,
+        },
     });
 
     return (
