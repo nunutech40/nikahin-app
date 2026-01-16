@@ -404,6 +404,14 @@ export default function DashboardPage({
                         >
                             {isSaving ? "Saving..." : "Save"}
                         </button>
+
+                        <button
+                            onClick={() => signOut({ callbackUrl: "/login" })}
+                            className="bg-slate-100 p-2 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all ml-2"
+                            title="Keluar"
+                        >
+                            <LogOut className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
             </header>
