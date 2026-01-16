@@ -148,3 +148,27 @@ export async function updatePackageFeatures(packageId: number, featureIds: numbe
     }
 }
 
+/**
+ * Toggle Feature Core/Default Status (Super Admin only)
+ */
+export async function toggleFeatureCoreStatus(featureId: number, currentStatus: boolean) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        const { features } = await import("@/db/schema");
+        await db
+            .update(features)
+            .set({ isCore: !currentStatus })
+            .where(eq(features.id, featureId));
+
+        revalidatePath("/admin/features");
+        return { success: true };
+    } catch (error) {
+        console.error("Error toggling feature core status:", error);
+        return { success: false, error: "Failed to update feature status." };
+    }
+}
