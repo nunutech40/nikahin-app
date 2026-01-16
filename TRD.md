@@ -108,34 +108,20 @@ Untuk menjamin modularitas seperti yang diminta di PRD:
 
 ## 5. Fitur & Status Implementasi (Current State)
 
+## 5. Fitur & Status Implementasi (Current State)
+
 ### ✅ Fitur yang Sudah Selesai (Source of Truth)
-1.  **Rendering Engine:** Halaman publik `[slug]` sudah bisa merender data secara dinamis mengalir ke komponen tema.
-2.  **Basic Theme:** Komponen tema dasar (`BasicTheme.tsx`) dengan fitur lengkap:
-    *   Responsive (Mobile-First)
-    *   Animasi pembuka (Welcome Modal)
-    *   Music Toggle & Bottom Navigation
-    *   Dynamic Styles (CSS Variable Injection untuk warna & font).
-3.  **Dashboard Editor:**
-    *   Split-screen layout (Form di kiri, Preview Mobile di kanan).
-    *   Sistem form modular: Info Mempelai, Acara, Galeri, Quotes, Musik, Pengaturan Tampilan.
-4.  **Appearance System:** Integrasi Zod untuk validasi input dan sistem picker warna/font yang langsung mengubah preview.
-5.  **Font System:** Dynamic loading Google Fonts di dalam tema berdasarkan input user.
+1.  **Database Integration (Iteration 4):** PostgreSQL integration via Drizzle ORM is fully operational.
+2.  **Auth System (Iteration 5):** NextAuth.js JWT authentication with role-based access control (Admin/Customer).
+3.  **Super Admin Panel (Iteration 6):** Full user management, invitation monitoring, and activity tracking.
+4.  **Royal UI System:** Modern premium aesthetic with reusable components (`RoyalCard`, `RoyalBadge`, `RoyalSkeleton`).
+5.  **Dashboard Editor:** Split-screen layout with real-time preview and dynamic feature gating.
 
 ### ⏳ Fitur yang Direncanakan (Planned)
-1.  **Database Integration (Phase 4):** Mengganti Mock Data dengan koneksi PostgreSQL asli via Drizzle.
-2.  **RSVP Server Actions:** Implementasi submit RSVP dari sisi Guest ke database.
-3.  **Auth System (NextAuth):** Securing dashboard agar user hanya bisa edit data miliknya.
-4.  **Admin Panel:** UI untuk Super Admin mengaktivasi user dan kelola tema.
-
----
-
-## 5. Development Workflow
-
-*   **Database Management:** Semua perubahan skema harus dilakukan via `drizzle-kit generate` dan `push`.
-*   **SSH Tunneling:** Developer wajib menyalakan tunnel SSH ke DB IDCloudHost pada port 5433 sebelum menjalankan aplikasi di lokal (untuk Iterasi 4 nanti).
-*   **Theme Development:** Developer yang ingin membuat tema baru cukup membuat komponen di `src/components/themes/` dan mendaftarkannya di `ThemeRegistry`.
+1.  **RSVP Dashboard:** Detailed analytics for guest responses.
+2.  **Theme Marketplace:** UI for admins to manage themes and templates.
 
 ---
 
 **Nikahin App Technical Documentation**
-*Dokumen ini harus diperbarui secara berkala seiring berjalannya fase pada `todo.md`.*
+*Dokumen ini diperbarui pada Iterasi 6 - Super Admin Panel.*

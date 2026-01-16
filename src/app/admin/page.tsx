@@ -6,6 +6,9 @@ import { Users, FileText, Heart, Activity, TrendingUp, Calendar, ArrowRight, Mai
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import RoyalCard from "@/components/ui/RoyalCard";
+import RoyalBadge from "@/components/ui/RoyalBadge";
+import { Lock } from "lucide-react";
 
 export default async function AdminDashboardPage() {
     const usersCount = await db.select({ value: count() }).from(users);
@@ -50,7 +53,7 @@ export default async function AdminDashboardPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 {stats.map((stat) => (
-                    <div key={stat.label} className="bg-white p-8 rounded-[32px] border border-slate-100 shadow-xl shadow-slate-200/40 group hover:border-amber-200 transition-all duration-500 relative overflow-hidden">
+                    <RoyalCard key={stat.label} hoverable className="relative overflow-hidden group">
                         {/* Decorative Gradient Background */}
                         <div className={`absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br ${stat.gradient} opacity-[0.03] rounded-full group-hover:scale-150 transition-transform duration-700`} />
 
@@ -61,7 +64,7 @@ export default async function AdminDashboardPage() {
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">{stat.label}</p>
                             <p className="text-4xl font-black text-slate-900 mt-2 tracking-tighter">{stat.value}</p>
                         </div>
-                    </div>
+                    </RoyalCard>
                 ))}
             </div>
 
@@ -91,9 +94,9 @@ export default async function AdminDashboardPage() {
                                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{format(new Date(u.createdAt), "d MMM yyyy", { locale: id })}</p>
                                     </div>
                                 </div>
-                                <div className={`text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${u.isActive ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-slate-50 text-slate-400 border border-slate-100'}`}>
-                                    {u.isActive ? 'Active' : 'Pending'}
-                                </div>
+                                <RoyalBadge variant={u.isActive ? "success" : "neutral"}>
+                                    {u.isActive ? "Active" : "Pending"}
+                                </RoyalBadge>
                             </div>
                         ))}
                     </div>
@@ -126,9 +129,9 @@ export default async function AdminDashboardPage() {
                                         </p>
                                     </div>
                                 </div>
-                                <div className={`text-[9px] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest ${inv.isPublished ? 'bg-amber-50 text-amber-600 border border-amber-100' : 'bg-slate-50 text-slate-400 border border-slate-100'}`}>
-                                    {inv.isPublished ? 'Live' : 'Draft'}
-                                </div>
+                                <RoyalBadge variant={inv.isPublished ? "gold" : "neutral"} icon={inv.isPublished ? Globe : Lock}>
+                                    {inv.isPublished ? "Live" : "Draft"}
+                                </RoyalBadge>
                             </div>
                         ))}
                     </div>
