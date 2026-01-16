@@ -13,6 +13,7 @@ import {
 import { z } from "zod";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 // Feature Gating
 import { canUseFeature } from "@/lib/features";
@@ -165,12 +166,14 @@ export default function DashboardPage({
                 setActiveTab(tabMapping[firstErrorPath]);
             }
 
-            alert(`Ada ${result.error.issues.length} data yang belum lengkap atau salah. Silakan cek bagian yang berwarna merah.`);
+            toast.error(`Ada ${result.error.issues.length} data yang belum lengkap atau salah.`, {
+                description: "Silakan cek bagian yang berwarna merah."
+            });
         } else {
             setZodError(null);
 
             if (!invitationId) {
-                alert("ID Undangan tidak ditemukan. Silakan hubungi admin.");
+                toast.error("ID Undangan tidak ditemukan. Silakan hubungi admin.");
                 return;
             }
 
@@ -178,12 +181,12 @@ export default function DashboardPage({
             try {
                 const saveResult = await saveInvitation(invitationId, invitationData);
                 if (saveResult.success) {
-                    alert("✅ Undangan kamu berhasil disimpan!");
+                    toast.success("Undangan kamu berhasil disimpan!");
                 } else {
-                    alert("❌ Gagal menyimpan: " + saveResult.error);
+                    toast.error("Gagal menyimpan: " + saveResult.error);
                 }
             } catch (err) {
-                alert("❌ Terjadi kesalahan saat menyimpan data.");
+                toast.error("Terjadi kesalahan saat menyimpan data.");
             } finally {
                 setIsSaving(false);
             }
@@ -192,7 +195,7 @@ export default function DashboardPage({
 
     const handleCreateFirstInvitation = async () => {
         if (!newSlug) {
-            alert("Harap masukkan URL undangan (misal: nunu-wedding)");
+            toast.error("Harap masukkan URL undangan (misal: nunu-wedding)");
             return;
         }
 
@@ -205,7 +208,7 @@ export default function DashboardPage({
             const defaultPackage = availablePackages.find(p => p.slug === 'basic') || availablePackages[0];
 
             if (!defaultTheme || !defaultPackage) {
-                alert("Konfigurasi tema/paket tidak ditemukan.");
+                toast.error("Konfigurasi tema/paket tidak ditemukan.");
                 return;
             }
 
@@ -217,13 +220,16 @@ export default function DashboardPage({
             );
 
             if (result.success) {
+                toast.success("Selamat! Undangan pertama kamu berhasil dibuat.");
                 // Refresh window to load new data
-                window.location.reload();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
             } else {
-                alert("❌ Gagal membuat undangan: " + result.error);
+                toast.error("Gagal membuat undangan: " + result.error);
             }
         } catch (err) {
-            alert("❌ Terjadi kesalahan saat membuat undangan.");
+            toast.error("Terjadi kesalahan saat membuat undangan.");
         } finally {
             setIsCreating(false);
         }

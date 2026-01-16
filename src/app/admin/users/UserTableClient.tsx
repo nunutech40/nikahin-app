@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search } from "lucide-react";
 import { toggleUserStatus } from "@/app/actions/admin";
+import { toast } from "sonner";
 
 interface UserTableClientProps {
     initialUsers: any[];
@@ -22,11 +23,13 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
         setLoadingId(userId);
         try {
             const result = await toggleUserStatus(userId, currentStatus);
-            if (!result.success) {
-                alert(result.error);
+            if (result.success) {
+                toast.success(currentStatus ? "Akun dinonaktifkan" : "Akun berhasil diaktifkan");
+            } else {
+                toast.error(result.error || "Gagal mengubah status user");
             }
         } catch (err) {
-            alert("Terjadi kesalahan sistem.");
+            toast.error("Terjadi kesalahan sistem.");
         } finally {
             setLoadingId(null);
         }

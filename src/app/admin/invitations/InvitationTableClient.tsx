@@ -6,6 +6,7 @@ import { id } from "date-fns/locale";
 import { FileText, User, Palette, ExternalLink, Trash2, Globe, Lock, RefreshCcw, Search } from "lucide-react";
 import Link from "next/link";
 import { deleteInvitation } from "@/app/actions/admin";
+import { toast } from "sonner";
 
 interface InvitationTableClientProps {
     initialInvitations: any[];
@@ -28,11 +29,13 @@ export default function InvitationTableClient({ initialInvitations }: Invitation
         setLoadingId(id);
         try {
             const result = await deleteInvitation(id);
-            if (!result.success) {
-                alert(result.error);
+            if (result.success) {
+                toast.success(`Undangan /${slug} berhasil dihapus`);
+            } else {
+                toast.error(result.error || "Gagal menghapus undangan");
             }
         } catch (err) {
-            alert("Terjadi kesalahan sistem saat menghapus.");
+            toast.error("Terjadi kesalahan sistem saat menghapus.");
         } finally {
             setLoadingId(null);
         }

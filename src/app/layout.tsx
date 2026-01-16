@@ -21,6 +21,8 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,8 +31,9 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body
-        className={`${playfair.variable} ${montserrat.variable} antialiased`}
+        className={`${playfair.variable} ${montserrat.variable} antialiased font-montserrat`}
       >
+        <Toaster position="top-center" richColors />
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
