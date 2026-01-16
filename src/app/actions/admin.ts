@@ -77,3 +77,39 @@ export async function updateUserRole(userId: number, newRole: "admin" | "custome
         return { success: false, error: "Database error occurred." };
     }
 }
+
+/**
+ * Direct Create Seller (Super Admin only)
+ */
+export async function createSeller(data: { name: string, email: string, phone: string, password: string }) {
+    const session = await getServerSession(authOptions);
+    const bcrypt = await import("bcrypt");
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+
+        await db.insert(users).values({
+            email: data.email,
+            password: hashedPassword,
+            name: data.name,
+            phone: data.phone,
+            role: "agency",
+            isActive: true,
+        });
+
+        revalidatePath("/admin/sellers");
+        revalidatePath("/admin/users");
+
+        return { success: true };
+    } catch (error: any) {
+        if (error.code === '23505') { // Postgres unique violation
+            return { success: false, error: "Email sudah terdaftar." };
+        }
+        console.error("Error creating seller:", error);
+        return { success: false, error: "Gagal membuat akun seller." };
+    }
+}

@@ -11,6 +11,7 @@ const registerSchema = z.object({
     password: z.string().min(6, "Password minimal 6 karakter"),
     name: z.string().min(2, "Nama minimal 2 karakter"),
     phone: z.string().min(10, "Nomor WhatsApp tidak valid"),
+    role: z.enum(["customer", "agency"]).optional().default("customer"),
 });
 
 export async function registerUser(formData: any) {
@@ -35,7 +36,7 @@ export async function registerUser(formData: any) {
             password: hashedPassword,
             name: validated.name,
             phone: validated.phone,
-            role: "customer",
+            role: validated.role as "customer" | "agency" | "admin",
             isActive: true, // Default to true for now
         });
 

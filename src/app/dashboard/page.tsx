@@ -15,9 +15,12 @@ export default async function DashboardPage() {
     const userId = Number((session.user as any).id);
     const userRole = (session.user as any).role;
 
-    // JIKA ADMIN: Langsung lempar ke Admin Panel, gak usah lewat dashboard biasa
+    // JIKA ADMIN & AGENCY: Lempar ke portal masing-masing, jangan ke dashboard user biasa
     if (userRole === "admin") {
         redirect("/admin");
+    }
+    if (userRole === "agency") {
+        redirect("/agency");
     }
 
     const userInvitations = await getUserInvitations(userId);

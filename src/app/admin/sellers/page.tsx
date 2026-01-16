@@ -8,6 +8,7 @@ import { id } from "date-fns/locale";
 import RoyalBadge from "@/components/ui/RoyalBadge";
 import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
 import Link from "next/link";
+import AddSellerClient from "./AddSellerClient";
 
 async function SellerListTable() {
     // Fetch all users with 'agency' role
@@ -63,10 +64,14 @@ async function SellerListTable() {
                                 <td className="px-8 py-6">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform">
-                                            <Store className="w-6 h-6" />
+                                            {seller.name ? (
+                                                <span className="font-black text-lg">{seller.name.charAt(0)}</span>
+                                            ) : (
+                                                <Store className="w-6 h-6" />
+                                            )}
                                         </div>
                                         <div>
-                                            <p className="font-black text-slate-900 leading-tight">{seller.email.split('@')[0]}</p>
+                                            <p className="font-black text-slate-900 leading-tight">{seller.name || seller.email.split('@')[0]}</p>
                                             <div className="flex items-center gap-1.5 mt-1 text-slate-400">
                                                 <Mail className="w-3 h-3" />
                                                 <p className="text-[10px] font-bold uppercase tracking-widest">{seller.email}</p>
@@ -113,7 +118,7 @@ async function SellerListTable() {
 export default function AdminSellersPage() {
     return (
         <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h2 className="text-4xl font-black text-slate-900 font-serif tracking-tight">Manajemen Seller</h2>
                     <p className="text-slate-400 mt-2 font-medium flex items-center gap-2">
@@ -121,13 +126,16 @@ export default function AdminSellersPage() {
                         List partner agensi yang mengelola jaringan Nikahin.
                     </p>
                 </div>
-                <div className="relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
-                    <input
-                        type="search"
-                        placeholder="Search seller..."
-                        className="pl-11 pr-6 py-3 bg-white border border-slate-100 rounded-2xl text-xs font-bold shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/30 transition-all w-64"
-                    />
+                <div className="flex items-center gap-4">
+                    <div className="relative group">
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
+                        <input
+                            type="search"
+                            placeholder="Search seller..."
+                            className="pl-11 pr-6 py-3 bg-white border border-slate-100 rounded-2xl text-xs font-bold shadow-sm focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500/30 transition-all w-64"
+                        />
+                    </div>
+                    <AddSellerClient />
                 </div>
             </div>
 

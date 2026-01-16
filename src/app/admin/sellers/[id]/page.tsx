@@ -86,8 +86,16 @@ async function SellerActivityList({ sellerId }: { sellerId: number }) {
                         {sellerCustomers.map((customer) => (
                             <tr key={customer.id}>
                                 <td className="py-5">
-                                    <p className="text-sm font-bold text-slate-900">{customer.email}</p>
-                                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Joined {new Date(customer.createdAt).toLocaleDateString()}</p>
+                                    <p className="text-sm font-bold text-slate-900">{customer.name || customer.email.split('@')[0]}</p>
+                                    <div className="flex items-center gap-2 mt-0.5">
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">{customer.email}</p>
+                                        {customer.phone && (
+                                            <>
+                                                <span className="w-1 h-1 rounded-full bg-slate-200" />
+                                                <a href={`https://wa.me/${customer.phone.replace(/^0/, '62')}`} target="_blank" className="text-emerald-600 text-[9px] font-black uppercase hover:underline">WhatsApp</a>
+                                            </>
+                                        )}
+                                    </div>
                                 </td>
                                 <td className="py-5 text-center">
                                     <span className="text-sm font-black text-slate-800">{customer.invitations.length}</span>
@@ -132,12 +140,21 @@ export default async function SellerInsightPage({ params }: { params: Promise<{ 
                 </Link>
                 <div>
                     <div className="flex items-center gap-3">
-                        <h2 className="text-3xl font-black text-slate-900 font-serif tracking-tight">Seller Insights: {seller.email.split('@')[0]}</h2>
+                        <h2 className="text-3xl font-black text-slate-900 font-serif tracking-tight">
+                            Seller Insights: {seller.name || seller.email.split('@')[0]}
+                        </h2>
                         <RoyalBadge variant="success">Partner Account</RoyalBadge>
                     </div>
-                    <p className="text-slate-400 mt-1 font-medium flex items-center gap-2 uppercase text-[10px] tracking-widest">
-                        <Mail className="w-3 h-3 text-[#D4AF37]" /> {seller.email}
-                    </p>
+                    <div className="flex items-center gap-4 mt-1">
+                        <p className="text-slate-400 font-medium flex items-center gap-2 uppercase text-[10px] tracking-widest">
+                            <Mail className="w-3 h-3 text-[#D4AF37]" /> {seller.email}
+                        </p>
+                        {seller.phone && (
+                            <p className="text-slate-400 font-medium flex items-center gap-2 uppercase text-[10px] tracking-widest">
+                                <Smartphone className="w-3 h-3 text-emerald-500" /> {seller.phone}
+                            </p>
+                        )}
+                    </div>
                 </div>
             </div>
 

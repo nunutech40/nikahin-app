@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Heart, Mail, Lock, LogIn, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -40,7 +40,16 @@ function LoginForm() {
                 setError("Email atau password salah");
                 setIsSubmitting(false);
             } else {
-                router.push("/dashboard");
+                const session = await getSession();
+                const role = (session?.user as any)?.role;
+
+                if (role === "admin") {
+                    router.push("/admin");
+                } else if (role === "agency") {
+                    router.push("/agency");
+                } else {
+                    router.push("/dashboard");
+                }
                 router.refresh();
             }
         } catch (err) {

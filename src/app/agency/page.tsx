@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/db";
 import { users, invitations, visitorLogs } from "@/db/schema";
-import { count, desc, eq, sql } from "drizzle-orm";
+import { count, desc, eq, sql, inArray } from "drizzle-orm";
 import { Users, FileText, BarChart3, TrendingUp, Calendar, ArrowRight, Heart, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -54,19 +54,29 @@ async function AgencyStatsGrid({ sellerId }: { sellerId: number }) {
 }
 
 async function AgencyRecentActivity({ sellerId }: { sellerId: number }) {
-    // Isolated Activity
+    // 1. Get IDs of all customers referred by this seller
+    const myCustomerIds = await db
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.referredBy, sellerId));
+
+    const userIds = myCustomerIds.map(u => u.id);
+
+    // 2. Fetch latest activity with safety check for empty user list
     const [latestUsers, latestInvitations] = await Promise.all([
         db.query.users.findMany({
             where: eq(users.referredBy, sellerId),
             limit: 5,
             orderBy: [desc(users.createdAt)]
         }),
-        db.query.invitations.findMany({
-            limit: 5,
-            with: { user: true },
-            orderBy: [desc(invitations.createdAt)],
-            where: sql`EXISTS (SELECT 1 FROM ${users} WHERE ${users.id} = ${invitations.userId} AND ${users.referredBy} = ${sellerId})`
-        })
+        userIds.length > 0
+            ? db.query.invitations.findMany({
+                where: inArray(invitations.userId, userIds),
+                limit: 5,
+                with: { user: true },
+                orderBy: [desc(invitations.createdAt)],
+            })
+            : Promise.resolve([])
     ]);
 
     return (
