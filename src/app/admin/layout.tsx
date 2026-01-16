@@ -12,6 +12,7 @@ import {
     ShieldCheck,
     ChevronRight
 } from "lucide-react";
+import SidebarNav from "./SidebarNav";
 
 export default async function AdminLayout({
     children,
@@ -20,14 +21,6 @@ export default async function AdminLayout({
 }) {
     const session = await getServerSession(authOptions);
     const adminEmail = session?.user?.email || "Admin";
-
-    const menuItems = [
-        { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
-        { label: "Manajemen User", icon: Users, href: "/admin/users" },
-        { label: "Semua Undangan", icon: FileText, href: "/admin/invitations" },
-        { label: "Tema & Template", icon: Palette, href: "/admin/themes" },
-        { label: "Pengaturan Sistem", icon: Settings, href: "/admin/settings" },
-    ];
 
     return (
         <div className="flex h-screen bg-slate-50 overflow-hidden">
@@ -45,21 +38,7 @@ export default async function AdminLayout({
                     </Link>
                 </div>
 
-                <nav className="flex-1 px-4 mt-4 space-y-1 overflow-y-auto">
-                    {menuItems.map((item) => (
-                        <Link
-                            key={item.label}
-                            href={item.label === "Dashboard" ? "/admin" : item.href}
-                            className="flex items-center justify-between px-4 py-3 rounded-xl transition-all hover:bg-slate-800 text-slate-400 hover:text-white group"
-                        >
-                            <div className="flex items-center gap-3">
-                                <item.icon className="w-5 h-5 group-hover:text-amber-500 transition-colors" />
-                                <span className="text-sm font-medium">{item.label}</span>
-                            </div>
-                            <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                        </Link>
-                    ))}
-                </nav>
+                <SidebarNav />
 
                 <div className="p-4 border-t border-slate-800">
                     <Link
