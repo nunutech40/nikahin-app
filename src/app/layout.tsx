@@ -17,6 +17,10 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "Nikahin - Undangan Pernikahan Digital",
   description: "Platform undangan pernikahan digital berbasis tema yang elegan dan modern",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-icon.png",
+  },
 };
 
 import { AuthProvider } from "@/components/providers/AuthProvider";

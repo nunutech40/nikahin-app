@@ -10,6 +10,8 @@ import { BasicTheme } from "@/components/themes/BasicTheme";
  * ============================================
  */
 
+import { Metadata } from "next";
+
 interface PageProps {
     params: Promise<{
         slug: string;
@@ -17,6 +19,45 @@ interface PageProps {
     searchParams: Promise<{
         to?: string;
     }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { slug } = await params;
+    const result = await getInvitationBySlug(slug);
+
+    if (!result) return { title: "Undangan Tidak Ditemukan" };
+
+    const { data } = result;
+    const bride = data.bride?.name || "Pengantin Wanita";
+    const groom = data.groom?.name || "Pengantin Pria";
+    const title = `The Wedding of ${bride} & ${groom} | Nikahin`;
+    const description = `Buka undangan digital pernikahan ${bride} & ${groom}. Bergabunglah dalam kebahagiaan kami.`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: "website",
+            url: `https://nikahin.app/${slug}`, // Gantilah dengan domain asli nanti
+            siteName: "Nikahin",
+            images: [
+                {
+                    url: "/favicon.png", // Fallback ke logo premium kita sementara
+                    width: 1200,
+                    height: 630,
+                    alt: title,
+                },
+            ],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: ["/favicon.png"],
+        },
+    };
 }
 
 export default async function InvitationPage({ params, searchParams }: PageProps) {
