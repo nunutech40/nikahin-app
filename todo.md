@@ -436,8 +436,8 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 #### **Phase 6.6: Analytics & Dashboard Polish (Optional)**
 - [x] **T6.6.1** - Add "Recent Activity" (Latest Users & Invitations) to Admin Home
 - [x] **T6.6.2** - Implement Search/Filter in User Management
-- [ ] **T6.6.3** - Show total statistics count labels
-- [ ] **T6.6.4** - Show RSVP statistics tracking
+- [x] **T6.6.3** - Show total statistics count labels (Implemented in RSVP Breakdown)
+- [x] **T6.6.4** - Show RSVP statistics tracking (Implemented RSVPBreakdown)
 - [ ] **T6.6.5** - Add simple charts (optional)
 
 ### 📊 Status: ✅ **COMPLETED** (98%)
