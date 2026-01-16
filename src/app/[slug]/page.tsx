@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getInvitationBySlug } from "@/lib/queries";
 import { getThemeComponent } from "@/lib/themeRegistry";
 import { BasicTheme } from "@/components/themes/BasicTheme";
+import { trackVisit } from "@/lib/analytics";
 
 /**
  * ============================================
@@ -76,6 +77,9 @@ export default async function InvitationPage({ params, searchParams }: PageProps
     }
 
     const { data, themeId, invitationId, guests } = result;
+
+    // 2.5. Track Analytics (Internal)
+    trackVisit(invitationId);
 
     // 3. Dynamic theme loading via registry
     const ThemeComponent = getThemeComponent(themeId);

@@ -9,7 +9,8 @@ import {
     Users,
     FileText,
     Palette,
-    Settings
+    Settings,
+    BarChart3
 } from "lucide-react";
 
 export default function SidebarNav() {
@@ -19,6 +20,7 @@ export default function SidebarNav() {
         { label: "Dashboard", icon: LayoutDashboard, href: "/admin" },
         { label: "Manajemen User", icon: Users, href: "/admin/users" },
         { label: "Semua Undangan", icon: FileText, href: "/admin/invitations" },
+        { label: "Traffic Insights", icon: BarChart3, href: "/admin/traffic" },
         { label: "Tema & Template", icon: Palette, href: "/admin/themes" },
         { label: "Pengaturan Sistem", icon: Settings, href: "/admin/settings" },
     ];
@@ -33,8 +35,8 @@ export default function SidebarNav() {
                         key={item.label}
                         href={item.href}
                         className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all group ${isActive
-                                ? "bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20 font-bold"
-                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                            ? "bg-amber-500 text-slate-900 shadow-lg shadow-amber-500/20 font-bold"
+                            : "text-slate-400 hover:bg-slate-800 hover:text-white"
                             }`}
                     >
                         <div className="flex items-center gap-3">

@@ -206,3 +206,26 @@ export const guestsRelations = relations(guests, ({ one }) => ({
     references: [invitations.id],
   }),
 }));
+
+// ============================================
+// VISITOR_LOGS TABLE (Analytics)
+// ============================================
+
+export const visitorLogs = pgTable("visitor_logs", {
+  id: serial("id").primaryKey(),
+  invitationId: integer("invitation_id")
+    .references(() => invitations.id, { onDelete: "cascade" })
+    .notNull(),
+  device: varchar("device", { length: 50 }),
+  browser: varchar("browser", { length: 50 }),
+  os: varchar("os", { length: 50 }),
+  ipHash: varchar("ip_hash", { length: 64 }), // For unique visitor tracking (Privacy focused)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const visitorLogsRelations = relations(visitorLogs, ({ one }) => ({
+  invitation: one(invitations, {
+    fields: [visitorLogs.invitationId],
+    references: [invitations.id],
+  }),
+}));

@@ -1,8 +1,8 @@
 import React from "react";
 import { db } from "@/db";
-import { users, invitations, guests } from "@/db/schema";
+import { users, invitations, guests, visitorLogs } from "@/db/schema";
 import { count, desc, eq } from "drizzle-orm";
-import { Users, FileText, Heart, Activity, TrendingUp, Calendar, ArrowRight, Mail, Globe } from "lucide-react";
+import { Users, FileText, Heart, Activity, TrendingUp, Calendar, ArrowRight, Mail, Globe, BarChart3 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -15,6 +15,7 @@ export default async function AdminDashboardPage() {
     const usersCount = await db.select({ value: count() }).from(users);
     const invitationsCount = await db.select({ value: count() }).from(invitations);
     const guestsCount = await db.select({ value: count() }).from(guests);
+    const viewsCount = await db.select({ value: count() }).from(visitorLogs);
 
     // Fetch System Distribution
     const publishedCount = await db.select({ value: count() }).from(invitations).where(eq(invitations.isPublished, true));
@@ -38,7 +39,7 @@ export default async function AdminDashboardPage() {
         { label: "Total Pengguna", value: String(usersCount[0].value), icon: Users, gradient: "from-blue-600 to-indigo-700", shadow: "shadow-blue-200" },
         { label: "Undangan Dibuat", value: String(invitationsCount[0].value), icon: FileText, gradient: "from-[#D4AF37] to-[#B8860B]", shadow: "shadow-amber-200" },
         { label: "Guest Interactions", value: String(guestsCount[0].value), icon: Heart, gradient: "from-rose-500 to-pink-600", shadow: "shadow-rose-200" },
-        { label: "Server Status", value: "Online", icon: Activity, gradient: "from-emerald-500 to-teal-600", shadow: "shadow-emerald-200" },
+        { label: "Platform Views", value: String(viewsCount[0].value), icon: BarChart3, gradient: "from-emerald-500 to-teal-600", shadow: "shadow-emerald-200" },
     ];
 
     return (
