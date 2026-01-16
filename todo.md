@@ -290,13 +290,19 @@ Connect the application to PostgreSQL database using Drizzle ORM. Implement data
 #### **Phase 4.7: Dashboard Data Persistence**
 - [x] **T4.7.1** - Create `/src/app/actions/invitation.ts`
 - [x] **T4.7.2** - Implement `saveInvitation()` Server Action
-- [ ] **T4.7.3** - Update dashboard to save to database
-- [ ] **T4.7.4** - Implement `updateInvitation()` for edits
-- [ ] **T4.7.5** - Test: Dashboard save/update works
+- [x] **T4.7.3** - Update dashboard to save to database
+- [x] **T4.7.4** - Implement `updateInvitation()` for edits
+- [x] **T4.7.5** - Test: Dashboard save/update works
 
-**Rollback Point:** Dashboard can use local state only
+#### **Phase 4.8: RSVP Inbox & Notifications (NEW)**
+- [ ] **T4.8.1** - Create `/src/app/dashboard/rsvp/page.tsx`
+- [ ] **T4.8.2** - Fetch guest list for current user's invitations
+- [ ] **T4.8.3** - Implement RSVP Management UI (Table with filtering)
+- [ ] **T4.8.4** - Setup Resend/Nodemailer for Email Notifications
+- [ ] **T4.8.5** - Integrate email trigger into `submitRSVP` action
+- [ ] **T4.8.6** - Test: End-to-end RSVP & Notification flow
 
-### 📊 Status: ✅ **COMPLETED** (90%)
+### 📊 Status: ✅ **COMPLETED** (95%)
 
 ### 8. Performance Standards & Techniques
 To maintain a premium user experience, the following techniques are enforced:
@@ -481,7 +487,11 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **T7.2** - Implement Data Isolation (Agencies only see their own Customers)
 - [x] **T7.3** - Super Admin: "Manajemen Seller" (Monitor all Agency accounts)
 - [x] **T7.4** - Implementation of "Direct Selling" context for Super Admin (Hybrid Access)
-- [ ] **T7.5** - Agency-specific analytics (Commisions, Traffic, Users)
+- [x] **T7.5** - Agency-specific analytics (Commisions, Traffic, Users)
+- [x] **T7.6** - Seller Registration Page (`/register/seller`)
+- [x] **T7.7** - Smart Login Redirection (Role-based)
+
+### 📊 Status: ✅ **COMPLETED** (100%)
 
 ### 🧪 Testing
 - [ ] **TT.1** - Setup testing framework (Jest + React Testing Library)

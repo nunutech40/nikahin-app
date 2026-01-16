@@ -36,7 +36,12 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 5.  **User Dashboard** (🔄 In Progress)
     -   Split-screen editor with live preview (✅)
     -   Live Save/Update to Database (✅)
-6.  **SaaS Gating System** (⏳ Planned)
+    -   RSVP Inbox & Guest Management (⏳ Planned)
+6.  **Agency Portal & Seller Management** (✅ Completed)
+    -   Dedicated Agency Dashboard (✅)
+    -   Seller Provisioning for Super Admin (✅)
+    -   Role-based Login Redirection (✅)
+7.  **SaaS Gating System** (⏳ Planned)
 *   Setiap tema memiliki estetika, animasi, dan tata letak yang berbeda-beda.
 
 ### 3.2. Manajemen Konten Undangan
@@ -53,6 +58,8 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 ### 3.4. Interaksi Tamu (RSVP & Buku Tamu)
 *   Form konfirmasi kehadiran bagi tamu.
 *   Kolom ucapan dan doa yang akan tampil di halaman undangan.
+*   **RSVP Inbox (MVP):** Halaman khusus di dashboard user untuk melihat data kehadiran tamu secara detail & mengunduh daftar tamu.
+*   **Email Notifications (MVP):** Notifikasi otomatis ke email user setiap kali ada tamu yang mengisi RSVP, mendorong user untuk kembali membuka platform (Retention).
 *   Statistik kehadiran tamu yang dapat dipantau oleh user di dashboard.
 
 ---

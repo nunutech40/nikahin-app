@@ -1,9 +1,11 @@
 "use server";
 
 import { db } from "@/db";
-import { guests } from "@/db/schema";
+import { guests, invitations, users } from "@/db/schema";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
+import { sendRSVPNotification } from "@/lib/mail";
 
 const rsvpSchema = z.object({
     invitationId: z.number(),
@@ -16,6 +18,7 @@ export async function submitRSVP(formData: z.infer<typeof rsvpSchema>) {
     try {
         const validated = rsvpSchema.parse(formData);
 
+        // 1. Insert RSVP
         await db.insert(guests).values({
             invitationId: validated.invitationId,
             name: validated.name,
@@ -23,9 +26,25 @@ export async function submitRSVP(formData: z.infer<typeof rsvpSchema>) {
             message: validated.message,
         });
 
-        // Revalidate the invitation page to show updated guestbook
-        // We'll need the slug for this, let's assume we pass it or just use revalidatePath
-        // Since we don't have the slug here easily, we can just return success
+        // 2. Fetch User/Owner info for notification
+        const invitation = await db.query.invitations.findFirst({
+            where: eq(invitations.id, validated.invitationId),
+            with: {
+                user: true
+            }
+        });
+
+        if (invitation && invitation.user) {
+            // Trigger email notification (don't await to keep RSVP fast, or await for reliability)
+            await sendRSVPNotification({
+                to: invitation.user.email,
+                customerName: invitation.user.name || "User",
+                guestName: validated.name,
+                attendance: validated.attendance,
+                message: validated.message,
+                invitationSlug: invitation.slug
+            });
+        }
 
         return { success: true };
     } catch (error) {

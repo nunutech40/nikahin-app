@@ -8,7 +8,7 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, AlertCircle, LogOut, User, ShieldCheck
+    Lock, AlertCircle, LogOut, User, ShieldCheck, Mail
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -338,6 +338,17 @@ export default function DashboardPage({
                     </div>
 
                     <div className="flex items-center gap-2">
+                        <Link
+                            href="/dashboard/rsvp"
+                            className="bg-slate-100 p-2 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-all relative group flex items-center gap-2"
+                            title="RSVP Inbox"
+                        >
+                            <Mail className="w-5 h-5" />
+                            <span className="text-[10px] font-black uppercase tracking-widest pr-1 hidden sm:inline">RSVP Inbox</span>
+                            {/* Simple dot indicator for NEW RSVPs could go here later */}
+                            <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+                        </Link>
+
                         <Link
                             href="/dashboard/profile"
                             className="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors hidden sm:flex"

@@ -2,7 +2,9 @@
 
 > **Undangan pernikahan digital yang elegan, modern, dan mudah dikustomisasi**
 
-Nikahin adalah platform SaaS untuk membuat undangan pernikahan digital dengan berbagai pilihan tema. Dibangun dengan teknologi modern untuk memberikan pengalaman terbaik bagi pengguna dan tamu undangan.
+Nikahin adalah platform **SaaS (Software as a Service)** untuk pembuatan undangan pernikahan digital berbasis tema yang elegan, modern, dan mudah digunakan. Dengan fokus pada pemisahan Konten dan Tampilan, Nikahin memungkinkan pasangan mengganti tema instan tanpa repot.
+
+**Update Terbaru:** Platform kini mendukung **Multi-tier Agency System**, memungkinkan partner bisnis (Seller) untuk mengelola klien mereka sendiri di bawah ekosistem Nikahin.
 
 ## ✨ Features
 
@@ -84,7 +86,7 @@ pnpm dev
 npm run dev
 ```
 
-4. Open [http://localhost:3000/rizka-ayu?to=YourName](http://localhost:3000/rizka-ayu?to=YourName) in your browser
+4. Open [http://localhost:3000/rizka-ayu?to=YourName](http://localhost/rizka-ayu?to=YourName) in your browser
 
 ### Environment Variables
 
@@ -107,6 +109,13 @@ NEXTAUTH_URL=http://localhost:3000
 -   [x] Iterasi 4: Database Integration (PostgreSQL, Drizzle ORM, Live RSVP)
 -   [x] Iterasi 5: Auth & User Management (NextAuth, Secure Routes, Data Isolation)
 -   [x] Iterasi 6: Super Admin Panel (User Control, Global Monitoring, Analytics)
+-   [x] **Super Admin Dashboard**: Kendali penuh aktivasi user, moderasi undangan, dan monitoring agensi.
+-   [x] **Agency Portal (Seller)**: Portal khusus partner agensi untuk mengelola klien, monitoring profit, dan insight penjualan.
+-   [x] **Role-based Experience**: Alur login pintar yang mengarahkan user langsung ke dashboard sesuai perannya (Admin, Agency, Customer).
+-   [x] **Premium Renderer Engine**: Animasi halus dengan Framer Motion dan visual 'Royal Gold' premium.
+-   [x] **Privacy-First Analytics**: Tracking visitor undangan tanpa melanggar privasi tamu.
+-   [x] **Live Preview Editor**: Edit data undangan langsung liat hasilnya di frame mobile secara real-time.
+-   [ ] **RSVP Inbox & Email Client Alert**: (Upcoming) Notifikasi email & manajemen tamu terpusat.
 
 ---
 

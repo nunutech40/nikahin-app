@@ -4,6 +4,14 @@ Dokumen ini adalah spesifikasi teknis yang menerjemahkan kebutuhan produk (PRD) 
 
 ---
 
+## 🔗 Global Strategy & Links
+Aplikasi ini dikembangkan berdasarkan panduan strategis berikut:
+- **Product Roadmap:** [todo.md](./todo.md) (Tracking Progres per Iterasi)
+- **Product Requirements:** [PRD.md](./PRD.md) (Definisi Fitur & Value)
+- **Backfill History:** [inject-user-data.ts](./inject-user-data.ts) (Maintenance Script)
+
+---
+
 ## 1. Technical Stack (The "Elite" Stack)
 
 Sesuai dengan `rekapstack.md`, aplikasi dibangun dengan fokus pada performa, type-safety, dan efisiensi resource:
@@ -132,8 +140,9 @@ The application uses a premium "Royal Gold" design system for the administrative
 5.  **Dashboard Editor:** Split-screen layout with real-time preview and dynamic feature gating.
 
 ### ⏳ Fitur yang Direncanakan (Planned)
-1.  **RSVP Dashboard:** Detailed analytics for guest responses.
-2.  **Theme Marketplace:** UI for admins to manage themes and templates.
+1.  **RSVP Dashboard:** Detailed analytics for guest responses using Server Components and `inArray` filtering for multi-invitation support.
+2.  **Email Notification Trigger:** Integration with `submitRSVP` action to fire asynchronous email alerts via **Resend API** or **Nodemailer**, containing the guest details and a CTA to view in-app.
+3.  **Theme Marketplace:** UI for admins to manage themes and templates.
 
 ---
 
