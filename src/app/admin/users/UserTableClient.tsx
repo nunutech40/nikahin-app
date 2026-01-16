@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search } from "lucide-react";
-import { toggleUserStatus } from "@/app/actions/admin";
+import { toggleUserStatus, updateUserRole } from "@/app/actions/admin";
 import { toast } from "sonner";
 import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
 import RoyalBadge from "@/components/ui/RoyalBadge";
@@ -15,6 +15,7 @@ interface UserTableClientProps {
 
 export default function UserTableClient({ initialUsers }: UserTableClientProps) {
     const [loadingId, setLoadingId] = useState<number | null>(null);
+    const [roleLoadingId, setRoleLoadingId] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
 
     const filteredUsers = initialUsers.filter(user =>
@@ -34,6 +35,23 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
             toast.error("Terjadi kesalahan sistem.");
         } finally {
             setLoadingId(null);
+        }
+    };
+
+    const handleToggleRole = async (userId: number, currentRole: string) => {
+        const newRole = currentRole === "agency" ? "customer" : "agency";
+        setRoleLoadingId(userId);
+        try {
+            const result = await updateUserRole(userId, newRole);
+            if (result.success) {
+                toast.success(`User berhasil diubah menjadi ${newRole.toUpperCase()}`);
+            } else {
+                toast.error(result.error || "Gagal mengubah role");
+            }
+        } catch (err) {
+            toast.error("Terjadi kesalahan sistem.");
+        } finally {
+            setRoleLoadingId(null);
         }
     };
 
@@ -58,7 +76,7 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-100">
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Informasi User</th>
-                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Role</th>
+                            <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Role & Access</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Status</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Terdaftar</th>
                             <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">Aksi</th>
@@ -82,9 +100,20 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                                     </div>
                                 </td>
                                 <td className="px-6 py-5 text-center">
-                                    <RoyalBadge variant={user.role === 'admin' ? "gold" : "info"} icon={Shield}>
-                                        {user.role}
-                                    </RoyalBadge>
+                                    <button
+                                        onClick={() => user.role !== 'admin' && handleToggleRole(user.id, user.role)}
+                                        disabled={roleLoadingId === user.id || user.role === 'admin'}
+                                        className={`transition-transform active:scale-95 ${user.role !== 'admin' ? 'cursor-pointer' : 'cursor-default'}`}
+                                        title={user.role !== 'admin' ? "Klik untuk ganti Role" : "Admin role cannot be changed"}
+                                    >
+                                        <RoyalBadge
+                                            variant={user.role === 'admin' ? "gold" : user.role === 'agency' ? "success" : "info"}
+                                            icon={Shield}
+                                            className={roleLoadingId === user.id ? "animate-pulse" : ""}
+                                        >
+                                            {user.role === 'agency' ? 'Seller (Agency)' : user.role}
+                                        </RoyalBadge>
+                                    </button>
                                 </td>
                                 <td className="px-6 py-5 text-center">
                                     <RoyalBadge variant={user.isActive ? "success" : "neutral"} icon={user.isActive ? CheckCircle2 : XCircle}>

@@ -52,3 +52,28 @@ export async function deleteInvitation(invitationId: number) {
         return { success: false, error: "Failed to delete invitation." };
     }
 }
+
+/**
+ * Update user role (Super Admin only)
+ */
+export async function updateUserRole(userId: number, newRole: "admin" | "customer" | "agency") {
+    const session = await getServerSession(authOptions);
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        await db
+            .update(users)
+            .set({ role: newRole })
+            .where(eq(users.id, userId));
+
+        revalidatePath("/admin/users");
+        revalidatePath("/admin/sellers");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating user role:", error);
+        return { success: false, error: "Database error occurred." };
+    }
+}
