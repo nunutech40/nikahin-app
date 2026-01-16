@@ -7,6 +7,8 @@ import { FileText, User, Palette, ExternalLink, Trash2, Globe, Lock, RefreshCcw,
 import Link from "next/link";
 import { deleteInvitation } from "@/app/actions/admin";
 import { toast } from "sonner";
+import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
+import RoyalBadge from "@/components/ui/RoyalBadge";
 
 interface InvitationTableClientProps {
     initialInvitations: any[];
@@ -96,21 +98,14 @@ export default function InvitationTableClient({ initialInvitations }: Invitation
                                     </div>
                                 </td>
                                 <td className="px-6 py-5 text-center">
-                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[10px] font-bold uppercase tracking-wider">
-                                        <Palette className="w-3 h-3 text-[#D4AF37]" />
+                                    <RoyalBadge variant="neutral" icon={Palette}>
                                         {inv.theme?.name || 'Basic'}
-                                    </span>
+                                    </RoyalBadge>
                                 </td>
                                 <td className="px-6 py-5 text-center">
-                                    <div className={`inline-flex items-center gap-1.5 font-bold text-[10px] uppercase tracking-widest ${inv.isPublished ? 'text-emerald-600' : 'text-slate-400'
-                                        }`}>
-                                        {inv.isPublished ? (
-                                            <Globe className="w-3.5 h-3.5" />
-                                        ) : (
-                                            <Lock className="w-3.5 h-3.5" />
-                                        )}
+                                    <RoyalBadge variant={inv.isPublished ? "gold" : "neutral"} icon={inv.isPublished ? Globe : Lock}>
                                         {inv.isPublished ? 'Live' : 'Draft'}
-                                    </div>
+                                    </RoyalBadge>
                                 </td>
                                 <td className="px-6 py-5 text-right">
                                     <div className="flex items-center justify-end gap-2 text-right">
@@ -139,11 +134,11 @@ export default function InvitationTableClient({ initialInvitations }: Invitation
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-20 text-center">
-                                    <div className="flex flex-col items-center gap-3 text-slate-400">
-                                        <Search className="w-10 h-10 opacity-20" />
-                                        <p className="text-sm font-medium">Undangan tidak ditemukan</p>
-                                    </div>
+                                <td colSpan={5}>
+                                    <RoyalEmptyState
+                                        title="Undangan tidak ditemukan"
+                                        description="Slug atau email pemilik yang kamu cari tidak terdaftar di sistem."
+                                    />
                                 </td>
                             </tr>
                         )}

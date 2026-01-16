@@ -6,6 +6,8 @@ import { id } from "date-fns/locale";
 import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search } from "lucide-react";
 import { toggleUserStatus } from "@/app/actions/admin";
 import { toast } from "sonner";
+import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
+import RoyalBadge from "@/components/ui/RoyalBadge";
 
 interface UserTableClientProps {
     initialUsers: any[];
@@ -80,23 +82,14 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                                     </div>
                                 </td>
                                 <td className="px-6 py-5 text-center">
-                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${user.role === 'admin'
-                                        ? 'bg-amber-50 text-amber-700 border-amber-100'
-                                        : 'bg-indigo-50 text-indigo-700 border-indigo-100'
-                                        }`}>
-                                        <Shield className="w-3 h-3" />
+                                    <RoyalBadge variant={user.role === 'admin' ? "gold" : "info"} icon={Shield}>
                                         {user.role}
-                                    </span>
+                                    </RoyalBadge>
                                 </td>
                                 <td className="px-6 py-5 text-center">
-                                    <div className={`inline-flex items-center gap-1.5 font-semibold text-xs ${user.isActive ? 'text-emerald-600' : 'text-slate-400'
-                                        }`}>
-                                        {user.isActive ? (
-                                            <><CheckCircle2 className="w-4 h-4" /> Aktif</>
-                                        ) : (
-                                            <><XCircle className="w-4 h-4" /> Nonaktif</>
-                                        )}
-                                    </div>
+                                    <RoyalBadge variant={user.isActive ? "success" : "neutral"} icon={user.isActive ? CheckCircle2 : XCircle}>
+                                        {user.isActive ? 'Aktif' : 'Nonaktif'}
+                                    </RoyalBadge>
                                 </td>
                                 <td className="px-6 py-5 text-center text-sm text-slate-500 font-medium">
                                     {format(new Date(user.createdAt), "d MMM yyyy", { locale: id })}
@@ -121,11 +114,11 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan={5} className="px-6 py-20 text-center">
-                                    <div className="flex flex-col items-center gap-3 text-slate-400">
-                                        <Search className="w-10 h-10 opacity-20" />
-                                        <p className="text-sm font-medium">User tidak ditemukan</p>
-                                    </div>
+                                <td colSpan={5}>
+                                    <RoyalEmptyState
+                                        title="User tidak ditemukan"
+                                        description="Coba gunakan email lain atau hapus filter pencarian kamu."
+                                    />
                                 </td>
                             </tr>
                         )}
