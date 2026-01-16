@@ -493,18 +493,13 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **TP.7** - Add favicon and app icons (Implemented Royal Logo)
 - [x] **TP.8** - Optimize Performance (Implemented Suspense Streaming)
 
-### 🏢 Phase 7: Mode Agensi (Multi-tier Management)
-- [x] **T7.1** - Create `/agency` route and Dashboard Layout (Implemented Seller Portal)
-- [x] **T7.2** - Implement Data Isolation (Agencies only see their own Customers)
-- [x] **T7.3** - Super Admin: "Manajemen Seller" (Monitor all Agency accounts)
-- [x] **T7.4** - Implementation of "Direct Selling" context for Super Admin (Hybrid Access)
-- [x] **T7.5** - Agency-specific analytics (Commisions, Traffic, Users)
-- [x] **T7.6** - Seller Registration Page (`/register/seller`)
-- [x] **T7.7** - Smart Login Redirection (Role-based)
-- [x] **T7.8** - **Commission Logic**: Replace hardcoded Rp 0 with dynamic % calculation
-- [x] **T7.9** - **Automated Referral Link**: Generate shareable seller link (e.g., `?ref=ID`)
-
-### 📊 Status: ✅ **COMPLETED** (100%)
+### 🚀 Phase 7: Commercial Launch & Go-to-Market (In Progress)
+- [ ] **T7.1** - **Landing Page (Sales Page)**: Implement High-Conversion Homepage (Hero, Features, Pricing Table).
+- [ ] **T7.2** - **SEO Infrastructure**: Sitemap.xml, Robots.txt, and Schema.org Structured Data.
+- [ ] **T7.3** - **Payment Gateway**: Integrate Midtrans Snap (Dummy -> Sandbox).
+- [ ] **T7.4** - **Order Logic**: Checkout Flow (Select Package -> Pay -> Auto-Activate).
+- [ ] **T7.5** - **Admin Feature Matrix**: UI for Admin to toggle features per package (Checkbox Grid).
+- [ ] **T7.6** - **Package Seeder**: Seed DB with Bronze (Free), Silver, Gold tiers.
 
 ### 🧪 Testing
 - [ ] **TT.1** - Setup testing framework (Jest + React Testing Library)

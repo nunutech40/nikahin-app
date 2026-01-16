@@ -32,9 +32,9 @@ Untuk detail teknis mengenai cara kerja sistem tema dan panduan pengembangan tem
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **Animations:** Framer Motion
-- **Database:** PostgreSQL (via Drizzle ORM) - *Coming Soon*
-- **Authentication:** NextAuth.js - *Coming Soon*
-- **Deployment:** Vercel - *Coming Soon*
+- **Database:** PostgreSQL (via Drizzle ORM) - *(Implemented)*
+- **Authentication:** NextAuth.js - *(Implemented)*
+- **Deployment:** Vercel - *(Ready)*
 
 ## 📁 Project Structure
 
@@ -115,7 +115,7 @@ NEXTAUTH_URL=http://localhost:3000
 -   [x] **Premium Renderer Engine**: Animasi halus dengan Framer Motion dan visual 'Royal Gold' premium.
 -   [x] **Privacy-First Analytics**: Tracking visitor undangan tanpa melanggar privasi tamu.
 -   [x] **Live Preview Editor**: Edit data undangan langsung liat hasilnya di frame mobile secara real-time.
--   [ ] **RSVP Inbox & Email Client Alert**: (Upcoming) Notifikasi email & manajemen tamu terpusat.
+-   [x] **RSVP Inbox & Email Client Alert**: (✅ Done) Notifikasi email & manajemen tamu terpusat dengan Export CSV.
 
 ---
 

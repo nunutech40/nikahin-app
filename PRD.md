@@ -1,103 +1,132 @@
-# 💍 PRD: Nikahin - Digital Wedding Invitation SaaS
+# 💍 PRD: Nikahin - Wedding SaaS Platform
+> **Status:** Commercial Launch Preparation  
+> **Version:** 2.0 (Commercial Focus)  
+> **Last Updated:** Jan 2026
 
-## 1. Project Overview & Value Proposition
+## 1. Vision & Objective
 
-Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan pernikahan digital berbasis tema yang elegan, modern, dan mudah digunakan.
+### 1.1. Definisi Produk
+**Nikahin** adalah platform SaaS (Software as a Service) yang memungkinkan calon pengantin membuat undangan pernikahan digital premium secara mandiri (self-service).
+*   **USP (Unique Selling Point):** Pemisahan total antara *Data* dan *Visual*. User input data sekali, bisa ganti tema berkali-kali tanpa re-entry.
+*   **Target Market:** Pasangan muda (Gen-Z/Millennial) yang menginginkan undangan *aesthetic*, cepat (instan), dan harga terjangkau.
 
-*   **Core Value:** Pemisahan antara **Konten** dan **Tampilan**. Pengguna cukup mengisi data satu kali, namun bebas mengganti tema kapan saja tanpa perlu menginput ulang data.
-*   **Target:** Memberikan solusi undangan digital yang profesional bagi pasangan pengantin dengan biaya terjangkau dan waktu pembuatan yang instan.
-
----
-
-## 2. User Personas & Flows
-
-### A. Super Admin (Owner Platform)
-*   **Goal:** Mengelola bisnis, aktivasi akun, dan katalog tema.
-*   **Flow:** Login → Dashboard Admin → Monitoring User → Validasi Pembayaran & Aktivasi Akun → Kelola Katalog Tema.
-
-### B. User (Pasangan Pengantin)
-*   **Goal:** Membuat undangan digital yang unik dan membagikannya ke tamu.
-*   **Flow:** Registrasi → Akses Dashboard → Pilih Paket/Pilih Tema → Input Data Undangan (Mempelai, Acara, Galeri, dll) → Preview → Publish → Bagikan link unik (slug).
-
-### C. Guest (Tamu Undangan)
-*   **Goal:** Mendapatkan informasi detail acara dan merespons undangan.
-*   **Flow:** Buka Link → Animasi Pembuka → Lihat Detail Acara & Lokasi → Isi Buku Tamu & Konfirmasi Kehadiran (RSVP).
+### 1.2. Strategi Bisnis (Immediate Goal)
+Fokus saat ini adalah **Go-to-Market** secepatnya untuk memvalidasi *revenue stream*.
+*   **Goal:** Publish ke production, index di Google (SEO), dan mendapatkan transaksi pertama.
+*   **Monetisasi:** Penjualan langsung paket undangan (One-time purchase atau Subscription aktif 3/6/12 bulan).
 
 ---
 
-### 1. Functional Requirements
-1.  **Renderer Engine** (✅ Completed)
-2.  **Theme Registry & Dynamic Styles** (✅ Completed)
-3.  **RSVP & Data Persistence** (✅ Completed)
-4.  **User Authentication & Authorization** (✅ Completed)
-    -   Secure registration & login.
-    -   Data isolation (User only sees their own data).
-    -   Protected dashboard area.
-5.  **User Dashboard** (🔄 In Progress)
-    -   Split-screen editor with live preview (✅)
-    -   Live Save/Update to Database (✅)
-    -   RSVP Inbox & Guest Management (⏳ Planned)
-6.  **Agency Portal & Seller Management** (✅ Completed)
-    -   Dedicated Agency Dashboard (✅)
-    -   Seller Provisioning for Super Admin (✅)
-    -   Role-based Login Redirection (✅)
-7.  **SaaS Gating System** (⏳ Planned)
-*   Setiap tema memiliki estetika, animasi, dan tata letak yang berbeda-beda.
+## 2. Current Status: MVP Features (✅ Ready)
 
-### 3.2. Manajemen Konten Undangan
-*   **Data Mempelai:** Nama lengkap, nama panggilan, foto, dan informasi orang tua.
-*   **Detail Acara:** Nama acara (Akad/Resepsi/Unduh Mantu), waktu, lokasi fisik, dan navigasi (Google Maps).
-*   **Galeri Foto:** Unggah foto-foto momen spesial.
-*   **Kutipan & Doa:** Menambahkan ayat suci atau kata-kata mutiara.
-*   **Musik Latar:** Pilihan musik yang akan diputar saat undangan dibuka.
+Fitur-fitur berikut **SUDAH SELESAI** dikembangkan dan siap digunakan:
 
-### 3.3. Dashboard Editor & Preview
-*   Halaman editor bagi user untuk mengelola seluruh data undangan.
-*   **Live Preview:** User dapat melihat perubahan tampilan secara *real-time* saat mengedit data atau mengganti pengaturan warna/font sebelum memutuskan untuk mempublish.
-
-### 3.4. Interaksi Tamu (RSVP & Buku Tamu)
-*   Form konfirmasi kehadiran bagi tamu.
-*   Kolom ucapan dan doa yang akan tampil di halaman undangan.
-*   **RSVP Inbox (MVP):** Halaman khusus di dashboard user untuk melihat data kehadiran tamu secara detail & mengunduh daftar tamu.
-*   **Email Notifications (MVP):** Notifikasi otomatis ke email user setiap kali ada tamu yang mengisi RSVP, mendorong user untuk kembali membuka platform (Retention).
-*   Statistik kehadiran tamu yang dapat dipantau oleh user di dashboard.
+| Kategori | Fitur Ready |
+| :--- | :--- |
+| **Renderer Engine** | Dynamic Theme Loading, Mobile-First View, Premium Animations (Framer Motion). |
+| **Data Management** | Input Mempelai, Acara, Love Story, Galeri, Quote, Music. |
+| **Interactive** | Live Preview Editor (Split Screen), RSVP System, RSVP Inbox (Export CSV). |
+| **Gating System** | Server-side protection (Backend menolak data fitur premium jika paket User Free). |
+| **Admin Ops** | Verifikasi Pembayaran Manual, Aktivasi User, Dashboard Statistik. |
+| **Sharing** | Dynamic OG Tags (SEO Friendly Links for WhatsApp). |
 
 ---
 
-## 4. Non-Functional Requirements (Kualitas Layanan)
+## 3. Phase 7: Commercial Launch Strategy (🚀 The Next Focus)
 
-*   **Visual Excellence:** Tampilan undangan harus terasa premium, modern, dan eksklusif.
-*   **Mobile-First:** Prioritas utama pada tampilan perangkat mobile (Smartphone), karena mayoritas tamu membuka link via WhatsApp/Media Sosial.
-*   **Kecepatan Akses:** Undangan harus dimuat dengan cepat meskipun memiliki banyak foto dan animasi.
-*   **SEO & Social Sharing:** Saat link dibagikan, harus muncul preview (Thumbnail, Judul, Pesan Personal) yang menarik di aplikasi chat.
+Ini adalah prioritas pengembangan berikutnya untuk mengejar target "Jualan & Rank 1 Google".
+
+### 3.1. Landing Page & Sales Funnel
+Halaman depan publik (`/`) yang berfungsi sebagai *Sales Page*.
+1.  **Hero Section:** Headline memikat ("Buat Undangan Pernikahan Impian dalam 5 Menit").
+2.  **Theme Showcase:** Carousel/Grid yang menampilkan *screenshot* tema premium.
+3.  **Features Grid:** Penjelasan keunggulan (Musik, Galeri, RSVP WA).
+4.  **Pricing Table:** Perbandingan 3 Paket (Bronze, Silver, Gold).
+5.  **CTA (Call to Action):** Tombol "Buat Undangan Sekarang" yang mengarah ke Register/Login.
+
+### 3.2. SEO & Organic Traffic Strategy
+Target: Masuk pencarian Google untuk keyword "undangan digital", "undangan nikah online".
+1.  **Sitemap & Robots.txt:** Generate otomatis agar Google bisa crawl semua halaman tema.
+2.  **Structured Data (LD+JSON):** Schema `Product` dan `Event` agar muncul rich snippet di Google.
+3.  **Performance (Core Web Vitals):** Halaman harus load < 2 detik (sudah tercover oleh Next.js + Optimasi gambar).
+4.  **Dynamic Slug Indexing:** Halaman contoh tema (`/demo/tema-a`, `/demo/tema-b`) harus bisa diakses publik untuk SEO.
+
+### 3.3. Payment & Order Integration
+Berahlih dari verifikasi manual Admin ke Otomatisasi.
+1.  **Payment Gateway:** Integrasi **Midtrans Snap** (QRIS, VA, E-Wallet).
+2.  **Order Flow:** 
+    *   User pilih Paket di Dashboard -> Checkout -> Muncul Popup Payment -> Bayar -> Webhook Midtrans -> Auto Active.
+
+### 3.4. Super Admin: Feature Matrix Configuration
+Admin membutuhkan kontrol penuh untuk menentukan "Mana Fitur Gratis, Mana Fitur Berbayar" tanpa koding ulang.
+*   **UI Matrix:** Tabel di Admin Panel berisi baris (Fitur) dan kolom (Paket).
+*   **Flow:** Admin mencentang checkbox.
+    *   *Global/Core Features:* Dicentang di semua paket (Wajib ada).
+    *   *Premium Features:* Hanya dicentang di Paket Silver/Gold.
 
 ---
 
-## 5. Fitur SaaS & Roadmap Masa Depan
+## 4. Packaging Structure
 
-### 5.1. Kustomisasi Lanjutan (Appearance)
-*   User diberikan kontrol untuk menyesuaikan palet warna hiasan dan jenis tipografi (font) agar sesuai dengan selera mereka, di luar desain standar dari tema yang dipilih.
+Platform akan diluncurkan dengan **3 Tier Paket** sederhana:
 
-### 5.2. Katalog & Marketplace Tema
-*   Sistem katalog tema yang dikelompokkan berdasarkan kategori (Elegant, Modern, Floral, Vintage, dll).
+### 🥉 Paket Bronze (Basic/Free Trial)
+*   **Target:** User yang ingin mencoba sistem / Budget minim.
+*   **Fitur:**
+    *   Info Mempelai & Orang Tua
+    *   1 Detail Acara (Akad saja)
+    *   Tema Basic (Terbatas 1-2 opsi)
+    *   RSVP Basic (Tanpa Export)
+    *   Masa Aktif: 3 Hari / Watermarked (TBD)
 
-### 5.3. Manajemen Bisnis & Dynamic Feature Gating (SaaS)
-*   **Concept:** Setiap fitur dalam aplikasi bersifat independen dan dapat dikunci/dibuka berdasarkan paket yang dipilih.
-*   **Feature Categories:**
-    *   **Core Features:** Fitur wajib yang didapatkan oleh semua pengguna (misal: Data Mempelai, 1 Detail Acara Utama).
-    *   **Add-on/Modular Features:** Fitur tambahan yang bisa ditugaskan ke paket tertentu oleh Admin (misal: Galeri Foto > 5, Musik kustom, RSVP, Google Maps, Font khusus).
-*   **Admin Control:** Admin memiliki dashboard untuk menentukan secara manual fitur mana saja yang masuk ke Paket A, B, atau C.
-*   **User Experience:** User akan melihat indikator "Locked" pada fitur yang tidak tersedia di paket mereka, dengan opsi untuk melakukan Upgrade.
+### 🥈 Paket Silver (Best Value)
+*   **Target:** Mayoritas pengguna.
+*   **Fitur:**
+    *   *Semua fitur Bronze*
+    *   **Unlimited Acara** (Akad + Resepsi)
+    *   **Petunjuk Peta** (Google Maps & Link)
+    *   **Galeri Foto** (Max 10 Foto)
+    *   **Musik Latar** (Pilihan Library)
+    *   **Quote & Doa**
+    *   Tema Premium (Akses semua tema standar)
 
-### 5.4. Mode Agensi & Multi-tier Admin
-Sistem manajemen berjenjang untuk mendukung skalabilitas bisnis melalui reseller atau vendor partner.
-*   **Super Admin (Master):** Memiliki kontrol penuh atas seluruh platform, dapat melihat performa seluruh Agensi/Seller, mengelola tema global, dan mengatur konfigurasi sistem.
-*   **Agency / Seller Role:** 
-    *   Memiliki dashboard admin khusus yang terisolasi.
-    *   Hanya dapat mengelola Customer yang terdaftar di bawah Agensi mereka.
-    *   Dapat melihat statistik spesifik (Traffic, RSVP) untuk klien mereka sendiri.
-*   **Customer Role:** Pengguna akhir yang membuat undangan, bisa berada di bawah pengelolaan Agensi tertentu atau langsung di bawah Super Admin.
-*   **Self-Selling Super Admin:** Super Admin juga dapat bertindak sebagai Seller untuk mengelola portofolio penjualan langsung mereka sendiri dalam konteks yang sama dengan Agensi lain.
+### 🥇 Paket Gold (Exclusive)
+*   **Target:** Pengguna yang ingin undangan sangat personal.
+*   **Fitur:**
+    *   *Semua fitur Silver*
+    *   **Love Story Timeline**
+    *   **Gift Registry** (Amplop Digital)
+    *   **Custom Colors & Fonts** (Theme Config)
+    *   **Gallery Unlimited** (Max 20/30)
+    *   **Prioritas Support**
+    *   **Remove "Powered By" Branding**
 
-### 5.5. Referral & Afiliasi
-*   Sistem bagi hasil bagi pengguna yang mempromosikan platform Nikahin kepada orang lain.
+---
+
+## 5. User Flows (Revised)
+
+### 5.1. Customer Flow
+1.  **Visit Landing Page** -> Liat Harga -> Klik "Buat Sekarang".
+2.  **Register/Login**.
+3.  **Dashboard Onboarding**:
+    *   User diminta input "Slug" dan nama pasangan.
+    *   Sistem membuat Undangan Draft (Paket Bronze/Free secara default).
+4.  **Editing**: User mengisi data. Jika mencoba mengisi fitur Premium (misal upload musik), UI memberitahu "Ups, ini fitur Silver/Gold".
+5.  **Upgrade**: Klik tombol "Upgrade Paket" -> Pilih Silver/Gold -> Bayar.
+6.  **Activation**: Setelah bayar sukses -> Fitur Premium terbuka -> User bisa Simpan & Publish.
+
+### 5.2. Super Admin Flow (Configuration)
+1.  **Manage Features**: Admin melihat list fitur (`code`: `gallery`, `music`, etc).
+2.  **Manage Packages**: Admin membuat paket baru atau mengedit harga paket.
+3.  **Feature Assignment**: Admin mengatur pemetaan fitur ke paket via checkbox.
+4.  **Transaction Monitor**: Admin melihat pemasukan real-time dari Payment Gateway.
+
+---
+
+## 6. Future Roadmap (Post-Launch)
+
+Fitur ini disimpan untuk pengembangan fase berikutnya (v2.1+):
+*   **Agency System Advanced:** White-label domain untuk reseller.
+*   **Marketplace Tema:** Desainer luar bisa upload tema dan bagi hasil.
+*   **Guest Blast:** Kirim link undangan ke banyak nomor WA sekaligus (WhatsApp API).
+*   **Check-in System:** Scan QR Code tamu saat hari-H.
