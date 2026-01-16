@@ -1,14 +1,14 @@
 "use server";
 
 import { db } from "@/db";
-import { invitations } from "@/db/schema";
+import { invitations, packages, packageFeatures, features } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 /**
- * Save/Update an invitation with ownership check
+ * Save/Update an invitation with ownership and feature access checks
  */
 export async function saveInvitation(invitationId: number, content: any) {
     try {
@@ -20,22 +20,68 @@ export async function saveInvitation(invitationId: number, content: any) {
 
         const userId = Number((session.user as any).id);
 
-        // Update with ownership check in WHERE clause
-        const result = await db.update(invitations)
-            .set({
-                content,
-                updatedAt: new Date(),
-            })
-            .where(
-                and(
-                    eq(invitations.id, invitationId),
-                    eq(invitations.userId, userId)
-                )
-            );
+        // 1. Fetch invitation with package entitlements
+        const invitation = await db.query.invitations.findFirst({
+            where: and(eq(invitations.id, invitationId), eq(invitations.userId, userId)),
+            with: {
+                package: {
+                    with: {
+                        features: {
+                            with: {
+                                feature: true
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
-        if (result.rowCount === 0) {
+        if (!invitation) {
             return { success: false, error: "Invitation not found or unauthorized" };
         }
+
+        // 2. Extract allowed feature codes
+        // @ts-ignore - Drizzle relation typing can be tricky here
+        const allowedFeatures = invitation.package?.features.map((pf: any) => pf.feature.code) || [];
+
+        // 3. Sanitize content based on entitlements
+        const sanitizedContent = { ...content };
+
+        if (!allowedFeatures.includes('gallery')) {
+            sanitizedContent.gallery = [];
+        }
+
+        if (!allowedFeatures.includes('love-story')) {
+            sanitizedContent.loveStory = [];
+        }
+
+        if (!allowedFeatures.includes('background-music')) {
+            sanitizedContent.musicUrl = "";
+        }
+
+        if (!allowedFeatures.includes('gift-registry')) {
+            sanitizedContent.giftOptions = [];
+            sanitizedContent.shippingAddress = null;
+        }
+
+        if (!allowedFeatures.includes('custom-theme')) {
+            // Reset to default/null so renderer uses default theme values
+            if (sanitizedContent.themeConfig) {
+                delete sanitizedContent.themeConfig;
+            }
+        }
+
+        if (!allowedFeatures.includes('multi-event') && sanitizedContent.events && sanitizedContent.events.length > 1) {
+            sanitizedContent.events = [sanitizedContent.events[0]];
+        }
+
+        // 4. Update with sanitized content
+        await db.update(invitations)
+            .set({
+                content: sanitizedContent,
+                updatedAt: new Date(),
+            })
+            .where(eq(invitations.id, invitationId));
 
         return { success: true };
     } catch (error) {

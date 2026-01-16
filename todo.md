@@ -303,12 +303,12 @@ Connect the application to PostgreSQL database using Drizzle ORM. Implement data
 - [x] **T4.8.6** - Test: End-to-end RSVP & Notification flow
 
 #### **Phase 4.9: Launch Readiness (MVP Gaps)**
-- [ ] **T4.9.1** - **Gallery Upload**: Implement image upload/URL management in dashboard
+- [x] **T4.9.1** - **Gallery Upload**: Implement image upload/URL management in dashboard (URL Mode MVP)
 - [x] **T4.9.2** - **Share Center**: Add Copy Link & Share to WA buttons in dashboard
 - [x] **T4.9.3** - **Package Status**: Show current package & locked feature indicators
-- [ ] **T4.9.4** - **Referral System**: Implement automatic referral tracking via link/slug
+- [x] **T4.9.4** - **Referral System**: Implement automatic referral tracking via link/slug
 
-### 📊 Status: ✅ **COMPLETED** (99%)
+### 📊 Status: ✅ **COMPLETED** (100%)
 
 ### 8. Performance Standards & Techniques
 To maintain a premium user experience, the following techniques are enforced:
@@ -443,12 +443,12 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **T6.3.6** - Test: User activation works
 
 #### **Phase 6.4: Admin Billing & Catalog (MVP)**
-- [ ] **T6.4.1** - **Billing Hub**: Create dashboard for verifying payment proofs
-- [ ] **T6.4.2** - **Transaction Approval**: Implement one-click account activation from billing list
-- [ ] **T6.4.3** - **Theme CRUD**: Admin interface to add/edit theme metadata
-- [ ] **T6.4.4** - **Global Stats**: Add Revenue tracking to admin dashboard
+- [x] **T6.4.1** - **Billing Hub**: Create dashboard for verifying payment proofs
+- [x] **T6.4.2** - **Transaction Approval**: Implement one-click account activation from billing list
+- [x] **T6.4.3** - **Theme CRUD**: Admin interface to add/edit theme metadata (Foundational)
+- [x] **T6.4.4** - **Global Stats**: Add Revenue tracking to admin dashboard
 
-### 📊 Status: 🔄 **IN PROGRESS** (Admin Wave 2) (90%)
+### 📊 Status: ✅ **COMPLETED** (100%)
 
 #### **Phase 6.4: Invitation Management**
 - [x] **T6.4.1** - Create `/src/app/admin/invitations/page.tsx`
@@ -472,8 +472,12 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **T6.6.3** - Show total statistics count labels (Optimized with Streaming)
 - [x] **T6.6.4** - Show RSVP statistics tracking (Pivoted to System Analytics)
 - [x] **T6.6.5** - Implement Real-time Traffic Log (Visitor Tracking)
+- [x] **T6.6.6** - **Strict Feature Gating**: Server-side validation for package limits
+- [x] **T6.6.7** - **Export RSVP**: Download functionality for guest attendance
+- [x] **T6.6.8** - **Music Library**: Curated song selection
+- [x] **T6.6.9** - **Dynamic OG Tags**: SEO optimization for share links
 
-### 📊 Status: ✅ **COMPLETED** (98%)
+### 📊 Status: ✅ **COMPLETED** (100%)
 
 ---
 

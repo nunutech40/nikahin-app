@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const title = `The Wedding of ${bride} & ${groom} | Nikahin`;
     const description = `Buka undangan digital pernikahan ${bride} & ${groom}. Bergabunglah dalam kebahagiaan kami.`;
 
+    // Priority: Cover Image -> First Gallery Image -> Default System Image
+    const ogImage = data.coverImage || (data.gallery && data.gallery.length > 0 ? data.gallery[0] : "/favicon.png");
+
     return {
         title,
         description,
@@ -45,7 +48,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             siteName: "Nikahin",
             images: [
                 {
-                    url: "/favicon.png", // Fallback ke logo premium kita sementara
+                    url: ogImage,
                     width: 1200,
                     height: 630,
                     alt: title,
@@ -56,7 +59,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             card: "summary_large_image",
             title,
             description,
-            images: ["/favicon.png"],
+            images: [ogImage],
         },
     };
 }

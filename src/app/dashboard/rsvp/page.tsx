@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import RoyalCard from "@/components/ui/RoyalCard";
 import RoyalBadge from "@/components/ui/RoyalBadge";
+import ExportRSVPButton from "./ExportRSVPButton";
 
 export default async function RSVPInboxPage() {
     const session = await getServerSession(authOptions);
@@ -126,9 +127,7 @@ export default async function RSVPInboxPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="font-serif font-black text-xl text-slate-800">Daftar Konfirmasi Terbaru</h2>
-                    <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all">
-                        <Download className="w-4 h-4" /> Export Excel
-                    </button>
+                    <ExportRSVPButton data={allRSVPs} />
                 </div>
 
                 {allRSVPs.length === 0 ? (
