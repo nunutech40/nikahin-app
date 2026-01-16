@@ -4,7 +4,7 @@ import { useState } from "react";
 import { registerUser } from "@/app/actions/auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Store, Mail, Lock, User, ArrowRight, Phone, ShieldCheck } from "lucide-react";
+import { Store, Mail, Lock, User, ArrowRight, Phone, ShieldCheck, Eye, EyeOff } from "lucide-react";
 
 export default function AgencyRegisterPage() {
     const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ export default function AgencyRegisterPage() {
         password: "",
         role: "agency" as const, // Force agency role
     });
+    const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -127,13 +128,20 @@ export default function AgencyRegisterPage() {
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-600 group-focus-within:text-emerald-400 transition-colors" />
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         placeholder="Min. 6 karakter"
                                         required
                                         value={formData.password}
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-800/50 border border-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-600 font-medium text-white"
+                                        className="w-full pl-12 pr-12 py-3.5 rounded-2xl bg-slate-800/50 border border-slate-700 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all placeholder:text-slate-600 font-medium text-white"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-emerald-400 transition-colors"
+                                    >
+                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
                                 </div>
                             </div>
 
