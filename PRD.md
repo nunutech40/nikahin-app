@@ -82,8 +82,15 @@ Membangun platform **SaaS (Software as a Service)** untuk pembuatan undangan per
 *   **Admin Control:** Admin memiliki dashboard untuk menentukan secara manual fitur mana saja yang masuk ke Paket A, B, atau C.
 *   **User Experience:** User akan melihat indikator "Locked" pada fitur yang tidak tersedia di paket mereka, dengan opsi untuk melakukan Upgrade.
 
-### 5.4. Mode Agensi (White Label)
-*   Fitur bagi vendor undangan fisik atau perencana pernikahan untuk mengelola banyak klien sekaligus di bawah satu akun agensi.
+### 5.4. Mode Agensi & Multi-tier Admin
+Sistem manajemen berjenjang untuk mendukung skalabilitas bisnis melalui reseller atau vendor partner.
+*   **Super Admin (Master):** Memiliki kontrol penuh atas seluruh platform, dapat melihat performa seluruh Agensi/Seller, mengelola tema global, dan mengatur konfigurasi sistem.
+*   **Agency / Seller Role:** 
+    *   Memiliki dashboard admin khusus yang terisolasi.
+    *   Hanya dapat mengelola Customer yang terdaftar di bawah Agensi mereka.
+    *   Dapat melihat statistik spesifik (Traffic, RSVP) untuk klien mereka sendiri.
+*   **Customer Role:** Pengguna akhir yang membuat undangan, bisa berada di bawah pengelolaan Agensi tertentu atau langsung di bawah Super Admin.
+*   **Self-Selling Super Admin:** Super Admin juga dapat bertindak sebagai Seller untuk mengelola portofolio penjualan langsung mereka sendiri dalam konteks yang sama dengan Agensi lain.
 
 ### 5.5. Referral & Afiliasi
 *   Sistem bagi hasil bagi pengguna yang mempromosikan platform Nikahin kepada orang lain.
