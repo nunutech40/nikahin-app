@@ -22,6 +22,7 @@ import AddGuestModal from "./AddGuestModal";
 import GuestListTable from "./GuestListTable";
 import GuestWrapper from "./GuestWrapper";
 import GuestToolbar from "./GuestToolbar";
+import StatCard from "../StatCard";
 
 
 export default async function GuestManagementPage({
@@ -138,49 +139,34 @@ export default async function GuestManagementPage({
                     </div>
 
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        <RoyalCard variant="glass" className="p-6 relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                                <Users className="w-12 h-12" />
-                            </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Total Daftar Tamu</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-black text-slate-900">{stats.total}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase">Kontak</span>
-                            </div>
-                        </RoyalCard>
-
-                        <RoyalCard variant="glass" className="p-6 border-l-4 border-l-[#B48C5E] relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                                <MessageCircle className="w-12 h-12" />
-                            </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">WA Terkirim</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-black text-slate-900">{stats.invited}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase">/ {stats.total}</span>
-                            </div>
-                        </RoyalCard>
-
-                        <RoyalCard variant="glass" className="p-6 border-l-4 border-l-emerald-500 relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                                <UserCircle className="w-12 h-12" />
-                            </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Telah Respon</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-black text-slate-900">{stats.responded}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase">RSVP</span>
-                            </div>
-                        </RoyalCard>
-
-                        <RoyalCard variant="glass" className="p-6 border-l-4 border-l-indigo-500 relative group overflow-hidden">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
-                                <Smartphone className="w-12 h-12" />
-                            </div>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Total Pax (Orang)</p>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-3xl font-black text-slate-900">{stats.totalPax}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase">Estimasi</span>
-                            </div>
-                        </RoyalCard>
+                        <StatCard
+                            title="Total Tamu"
+                            value={stats.total}
+                            subtext="Kontak"
+                            icon={Users}
+                            variant="default"
+                        />
+                        <StatCard
+                            title="WA Terkirim"
+                            value={stats.invited}
+                            subtext={`/ ${stats.total}`}
+                            icon={MessageCircle}
+                            variant="warning"
+                        />
+                        <StatCard
+                            title="Telah Respon"
+                            value={stats.responded}
+                            subtext="RSVP"
+                            icon={UserCircle}
+                            variant="success"
+                        />
+                        <StatCard
+                            title="Total Pax"
+                            value={stats.totalPax}
+                            subtext="Estimasi"
+                            icon={Smartphone}
+                            variant="info"
+                        />
                     </div>
                 </div>
             </div>

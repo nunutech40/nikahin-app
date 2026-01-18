@@ -21,6 +21,7 @@ import Link from "next/link";
 import RoyalCard from "@/components/ui/RoyalCard";
 import RoyalBadge from "@/components/ui/RoyalBadge";
 import ExportRSVPButton from "./ExportRSVPButton";
+import StatCard from "../StatCard";
 
 export default async function RSVPInboxPage() {
     const session = await getServerSession(authOptions);
@@ -75,50 +76,30 @@ export default async function RSVPInboxPage() {
                     </div>
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-                        <RoyalCard variant="glass" className="p-4 md:p-6">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
-                                    <Users className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total RSVP</p>
-                                    <p className="text-xl font-black text-slate-900">{stats.total}</p>
-                                </div>
-                            </div>
-                        </RoyalCard>
-                        <RoyalCard variant="glass" className="p-4 md:p-6 border-l-4 border-l-emerald-500">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                    <CheckCircle2 className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hadir</p>
-                                    <p className="text-xl font-black text-slate-900">{stats.hadir}</p>
-                                </div>
-                            </div>
-                        </RoyalCard>
-                        <RoyalCard variant="glass" className="p-4 md:p-6 border-l-4 border-l-rose-500">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
-                                    <XCircle className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tidak Hadir</p>
-                                    <p className="text-xl font-black text-slate-900">{stats.tidak}</p>
-                                </div>
-                            </div>
-                        </RoyalCard>
-                        <RoyalCard variant="glass" className="p-4 md:p-6 border-l-4 border-l-amber-500">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600">
-                                    <HelpCircle className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Ragu-ragu</p>
-                                    <p className="text-xl font-black text-slate-900">{stats.ragu}</p>
-                                </div>
-                            </div>
-                        </RoyalCard>
+                        <StatCard
+                            title="Total RSVP"
+                            value={stats.total}
+                            icon={Users}
+                            variant="info"
+                        />
+                        <StatCard
+                            title="Hadir"
+                            value={stats.hadir}
+                            icon={CheckCircle2}
+                            variant="success"
+                        />
+                        <StatCard
+                            title="Tidak Hadir"
+                            value={stats.tidak}
+                            icon={XCircle}
+                            variant="danger"
+                        />
+                        <StatCard
+                            title="Ragu-ragu"
+                            value={stats.ragu}
+                            icon={HelpCircle}
+                            variant="warning"
+                        />
                     </div>
                 </div>
             </div>
