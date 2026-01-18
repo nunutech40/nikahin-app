@@ -27,6 +27,7 @@ Fitur-fitur berikut **SUDAH SELESAI** dikembangkan dan siap digunakan:
 | **Data Management** | Input Mempelai, Acara, Love Story, Galeri, Quote, Music. |
 | **Interactive** | Live Preview Editor (Split Screen), RSVP System, RSVP Inbox (Export CSV). |
 | **Gating System** | Dynamic Feature Matrix (Admin can toggle features per package), `lib/featureGating` helper for backend/frontend restriction. |
+| **Guest Ops** | Full Guest Management (Add/Edit/Delete), Import Excel, WhatsApp Status Tracking, RSVP Inbox & Stats. |
 | **Admin Ops** | User Management (Paket View), Feature Matrix Configuration UI, Activation User. |
 | **Sharing** | Dynamic OG Tags (SEO Friendly Links for WhatsApp). |
 

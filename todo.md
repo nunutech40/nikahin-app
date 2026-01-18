@@ -563,6 +563,14 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
   - [ ] Dynamic OG tags for invitation pages
   - [ ] Share to WhatsApp button
 
+#### **Phase 8.1: Guest Management & UX Polish (Refinements)**
+- [x] **T8.1.1** - **Guest Toolbar**: Implement top toolbar for search/sort (Removing sidebar).
+- [x] **T8.1.2** - **Guest Stats**: Implement premium status cards (Total, WA Sent, RSVP).
+- [x] **T8.1.3** - **Add Guest Modal**: Fix portal stacking issues & UI polish.
+- [x] **T8.1.4** - **Excel Import**: Implement `xlsx` import functionality.
+- [x] **T8.1.5** - **Navigation**: Move Guest/RSVP links to top dashboard header.
+- [x] **T8.1.6** - **Landing Page**: Fix hydration issues (`suppressHydrationWarning`).
+
 ### 🧪 Testing
 - [ ] **TT.1** - Setup testing framework (Jest + React Testing Library)
 - [ ] **TT.2** - Write unit tests for components

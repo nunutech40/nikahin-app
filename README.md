@@ -12,7 +12,7 @@ Nikahin hadir dengan sistem paket modular yang fleksibel:
 
 - 🥉 **Bronze (Free)**: Undangan dasar, 10 foto galeri, RSVP basic, dan tema standar.
 - 🥈 **Silver (Best Value)**: Semua fitur Bronze + Love Story, Musik Latar, Kutipan Doa, dan Multi-acara.
-- 🥇 **Gold (Premium)**: Semua fitur Silver + Hadiah Digital, Custom Tema (Warna/Font), Galeri Tanpa Batas, dan Hapus Branding.
+- 🥇 **Gold (Premium)**: Semua fitur Silver + Hadiah Digital, Custom Tema (Warna/Font), **Guest Management (Import Excel)**, Galeri Tanpa Batas, dan Hapus Branding.
 - 💎 **Platinum (Elite)**: Semua fitur Gold + Custom Domain, Video Background, Live Streaming, dan WhatsApp Blast.
 - 🧪 **Demo Mode**: Mencoba seluruh fitur Platinum secara gratis dengan data demo yang cantik.
 
