@@ -4,6 +4,19 @@ import { getInvitationBySlug } from "@/lib/queries";
 import { getThemeComponent } from "@/lib/themeRegistry";
 import { BasicTheme } from "@/components/themes/BasicTheme";
 import { trackVisit } from "@/lib/analytics";
+import DemoMarker from "@/components/DemoMarker";
+import { DEMO_DATA } from "@/data/demoData";
+import {
+    canEditGiftRegistry,
+    canEditThemeConfig,
+    canEditLoveStory,
+    canEditGallery,
+    canEditQuotes,
+    canEditMusic,
+    canChangeCover
+} from "@/lib/demoRestrictions";
+
+export const dynamic = "force-dynamic";
 
 /**
  * ============================================
@@ -79,10 +92,36 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         return notFound();
     }
 
-    const { data, themeId, invitationId, guests } = result;
+    const { data, themeId, invitationId, guests, packageSlug } = result;
 
     // 2.5. Track Analytics (Internal)
     trackVisit(invitationId);
+
+    const isDemo = packageSlug === "demo";
+
+    // 2.6. FORCE PLATINUM FEATURES FOR DEMO PREVIEW
+    const previewData = isDemo ? {
+        ...DEMO_DATA,
+        ...data,
+        // For features that are LOCKED in demo, we force the beautiful DEMO_DATA
+        // For features that are OPEN in demo, we use the user's edits (data)
+        giftOptions: canEditGiftRegistry(packageSlug) ? data.giftOptions : DEMO_DATA.giftOptions,
+        themeConfig: canEditThemeConfig(packageSlug) ? data.themeConfig : DEMO_DATA.themeConfig,
+
+        // Ensure sections take priority
+        loveStory: canEditLoveStory(packageSlug) ? (data.loveStory || DEMO_DATA.loveStory) : DEMO_DATA.loveStory,
+        gallery: canEditGallery(packageSlug) ? (data.gallery || DEMO_DATA.gallery) : DEMO_DATA.gallery,
+        quotes: canEditQuotes(packageSlug) ? (data.quotes || DEMO_DATA.quotes) : DEMO_DATA.quotes,
+        musicUrl: canEditMusic(packageSlug) ? (data.musicUrl || DEMO_DATA.musicUrl) : DEMO_DATA.musicUrl,
+        coverImage: canChangeCover(packageSlug) ? (data.coverImage || DEMO_DATA.coverImage) : DEMO_DATA.coverImage,
+
+        features: [
+            'love_story', 'gallery_10', 'gallery_unlimited', 'gift_registry',
+            'background_music', 'custom_theme', 'rsvp_basic', 'rsvp_export',
+            'quotes', 'unlimited_events', 'remove_branding', 'cover_image',
+            'video_background', 'live_streaming'
+        ]
+    } : data;
 
     // 3. Dynamic theme loading via registry
     const ThemeComponent = getThemeComponent(themeId);
@@ -93,22 +132,28 @@ export default async function InvitationPage({ params, searchParams }: PageProps
             `Theme "${themeId}" not found in registry. Falling back to BasicTheme.`
         );
         return (
-            <BasicTheme
-                data={data}
-                guestName={guestName}
-                invitationId={invitationId}
-                guests={guests}
-            />
+            <div className="relative min-h-screen">
+                <BasicTheme
+                    data={previewData}
+                    guestName={guestName}
+                    invitationId={invitationId}
+                    guests={guests}
+                />
+                {isDemo && <DemoMarker />}
+            </div>
         );
     }
 
     // 5. Render the selected theme
     return (
-        <ThemeComponent
-            data={data}
-            guestName={guestName}
-            invitationId={invitationId}
-            guests={guests}
-        />
+        <div className="relative min-h-screen">
+            <ThemeComponent
+                data={previewData}
+                guestName={guestName}
+                invitationId={invitationId}
+                guests={guests}
+            />
+            {isDemo && <DemoMarker />}
+        </div>
     );
 }

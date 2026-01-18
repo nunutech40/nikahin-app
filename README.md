@@ -6,18 +6,15 @@ Nikahin adalah platform **SaaS (Software as a Service)** untuk pembuatan undanga
 
 **Update Terbaru:** Platform kini mendukung **Multi-tier Agency System**, memungkinkan partner bisnis (Seller) untuk mengelola klien mereka sendiri di bawah ekosistem Nikahin.
 
-## ✨ Features
+## ✨ Features & Packages
 
-- 🎨 **Multiple Themes** - Berbagai pilihan tema yang dapat disesuaikan
-- 📱 **Mobile-First Design** - Optimized untuk semua ukuran layar
-- 🎵 **Background Music** - Musik latar yang dapat dikustomisasi
-- 📸 **Photo Gallery** - Galeri foto dengan layout yang menarik
-- 💌 **RSVP System** - Sistem konfirmasi kehadiran tamu
-- 📝 **Guestbook** - Buku tamu digital untuk ucapan
-- 🎁 **Gift Registry** - Informasi rekening untuk hadiah
-- ⏱️ **Countdown Timer** - Hitung mundur menuju hari pernikahan
-- 🌐 **Personalized URL** - URL unik untuk setiap undangan
-- 👤 **Guest Personalization** - Sapaan personal untuk setiap tamu
+Nikahin hadir dengan sistem paket modular yang fleksibel:
+
+- 🥉 **Bronze (Free)**: Undangan dasar, 10 foto galeri, RSVP basic, dan tema standar.
+- 🥈 **Silver (Best Value)**: Semua fitur Bronze + Love Story, Musik Latar, Kutipan Doa, dan Multi-acara.
+- 🥇 **Gold (Premium)**: Semua fitur Silver + Hadiah Digital, Custom Tema (Warna/Font), Galeri Tanpa Batas, dan Hapus Branding.
+- 💎 **Platinum (Elite)**: Semua fitur Gold + Custom Domain, Video Background, Live Streaming, dan WhatsApp Blast.
+- 🧪 **Demo Mode**: Mencoba seluruh fitur Platinum secara gratis dengan data demo yang cantik.
 
 ## 🏗️ Architecture & Theme System
 
@@ -28,33 +25,31 @@ Untuk detail teknis mengenai cara kerja sistem tema dan panduan pengembangan tem
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **Animations:** Framer Motion
-- **Database:** PostgreSQL (via Drizzle ORM) - *(Implemented)*
-- **Authentication:** NextAuth.js - *(Implemented)*
-- **Deployment:** Vercel - *(Ready)*
+- **Framework:** Next.js 14+ (App Router)
+- **Language:** TypeScript (Strict Mode)
+- **Styling:** Tailwind CSS + Framer Motion
+- **Database:** PostgreSQL via Drizzle ORM (**Implemented**)
+- **Authentication:** NextAuth.js (JWT Strategy) (**Implemented**)
+- **Deployment:** Vercel / Docker Container (**Ready**)
 
 ## 📁 Project Structure
 
 ```
 src/
 ├── app/
-│   ├── [slug]/
-│   │   └── page.tsx              # Invitation page controller
-│   └── dashboard/                # User dashboard (Coming Soon)
+│   ├── [slug]/                   # Public invitation pages
+│   ├── dashboard/                # User editor & analytics
+│   ├── admin/                    # Super Admin management
+│   └── api/                      # Auth & API endpoints
 ├── components/
-│   ├── themes/
-│   │   └── BasicTheme.tsx        # Theme components
-│   ├── BottomNavigation.tsx      # Shared components
-│   └── MusicToggle.tsx
+│   ├── themes/                   # Theme implementations (BasicTheme, etc.)
+│   ├── dashboard/                # Editor components
+│   └── ui/                       # Reusable Royal UI components
 ├── lib/
-│   └── themeRegistry.ts          # Theme registration system
-├── types/
-│   └── invitation.ts             # TypeScript type definitions
-└── data/
-    └── mockData.ts               # Mock data for development
+│   ├── features.ts               # Feature gating logic
+│   └── themeRegistry.ts          # Theme loader system
+└── db/
+    └── schema.ts                 # Database definitions
 ```
 
 ## 🚀 Getting Started
@@ -62,60 +57,40 @@ src/
 ### Prerequisites
 
 - Node.js 18+ or Bun
-- pnpm (recommended) or npm
+- pnpm (recommended)
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository and install dependencies:
 ```bash
 git clone <repository-url>
-cd nikahin-app
+pnpm install
 ```
 
-2. Install dependencies:
+2. Setup Database:
 ```bash
-pnpm install
-# or
-npm install
+# Push schema to your PostgreSQL
+pnpm db:push
+# Seed initial data (Packages, Themes, Admin)
+pnpm db:seed
 ```
 
 3. Run the development server:
 ```bash
 pnpm dev
-# or
-npm run dev
-```
-
-4. Open [http://localhost:3000/rizka-ayu?to=YourName](http://localhost/rizka-ayu?to=YourName) in your browser
-
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-# Database (Coming Soon)
-DATABASE_URL=postgresql://user:password@localhost:5432/nikahin
-
-# NextAuth (Coming Soon)
-NEXTAUTH_SECRET=your-secret-key
-NEXTAUTH_URL=http://localhost:3000
 ```
 
 ## 📋 Development Roadmap
 
--   [x] Iterasi 1: Renderer Dasar (Hero, Guest Greeting, Music)
--   [x] Iterasi 2: Theme Engine (Theme Registry, Dynamic Color/Font)
--   [x] Iterasi 3: User Dashboard - Data Entry (Form components, Live Preview)
--   [x] Iterasi 4: Database Integration (PostgreSQL, Drizzle ORM, Live RSVP)
--   [x] Iterasi 5: Auth & User Management (NextAuth, Secure Routes, Data Isolation)
--   [x] Iterasi 6: Super Admin Panel (User Control, Global Monitoring, Analytics)
--   [x] **Super Admin Dashboard**: Kendali penuh aktivasi user, moderasi undangan, dan monitoring agensi.
--   [x] **Agency Portal (Seller)**: Portal khusus partner agensi untuk mengelola klien, monitoring profit, dan insight penjualan.
--   [x] **Role-based Experience**: Alur login pintar yang mengarahkan user langsung ke dashboard sesuai perannya (Admin, Agency, Customer).
--   [x] **Premium Renderer Engine**: Animasi halus dengan Framer Motion dan visual 'Royal Gold' premium.
--   [x] **Privacy-First Analytics**: Tracking visitor undangan tanpa melanggar privasi tamu.
--   [x] **Live Preview Editor**: Edit data undangan langsung liat hasilnya di frame mobile secara real-time.
--   [x] **RSVP Inbox & Email Client Alert**: (✅ Done) Notifikasi email & manajemen tamu terpusat dengan Export CSV.
+- [x] **Iteration 1**: Core Renderer (Hero, Couple, Events)
+- [x] **Iteration 2**: Theme Engine (Decoupling Content from UI)
+- [x] **Iteration 3**: Real-time Editor Dashboard (Live Preview)
+- [x] **Iteration 4**: Database Integration (Persistence & RSVP)
+- [x] **Iteration 5**: Authentication & Data Isolation
+- [x] **Iteration 6**: Super Admin & Agency Management
+- [x] **Iteration 7**: Multi-tier Package System & Feature Gating
+- [x] **Iteration 8**: Commercial Launch Readiness (Pricing, SEO, Analytics)
+- [ ] **Iteration 9**: Automated Payment & WhatsApp Integration (Planned)
 
 ---
 

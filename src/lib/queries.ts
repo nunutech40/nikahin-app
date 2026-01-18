@@ -33,6 +33,7 @@ export async function getInvitationBySlug(slug: string) {
         return {
             invitationId: result.id,
             themeId: result.theme?.slug || "basic",
+            packageSlug: result.package?.slug || "bronze",
             data: result.content as InvitationData,
             features: result.package.features.map(pf => pf.feature.code),
             guests: result.guests,

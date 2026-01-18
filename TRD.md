@@ -46,11 +46,11 @@ Seluruh fitur direferensikan menggunakan kode unik berikut:
 | `rsvp_basic` | Konfirmasi kehadiran | ✅ Done | Yes |
 | `quotes` | Ayat suci & doa | ✅ Done | Yes |
 | `unlimited_events` | Lebih dari 1 acara | ✅ Done | Yes |
-| `remove_branding` | Hapus "Powered by Nikahin" | ❌ Planned | No |
+| `remove_branding` | Hapus "Powered by Nikahin" | ✅ Done | Yes |
 | `whatsapp_blast` | Kirim massal via WA | ❌ Planned | No |
 | `custom_domain` | Domain kustom user | ❌ Infrastructure| No |
-| `video_background` | Latar belakang video | ❌ Planned | No |
-| `live_streaming` | Integrasi Zoom/YouTube | ❌ Planned | No |
+| `video_background` | Latar belakang video | ✅ Supported| Yes |
+| `live_streaming` | Integrasi Zoom/YouTube | ✅ Supported| Yes |
 
 ---
 
