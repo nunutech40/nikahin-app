@@ -7,15 +7,32 @@ async function seed() {
     console.log("🌱 Seeding database...");
 
     try {
-        // 1. Seed Features
+        // 1. Seed Features (Comprehensive)
         console.log("  - Seeding features...");
         const featureList = [
-            { code: "rsvp_system", name: "RSVP System", description: "Tamu dapat melakukan konfirmasi kehadiran", isCore: false },
-            { code: "gallery_unlimited", name: "Unlimited Gallery", description: "Unggah foto tanpa batasan", isCore: false },
-            { code: "background_music", name: "Custom Background Music", description: "Pilih musik latar sendiri", isCore: false },
-            { code: "google_maps", name: "Google Maps Integration", description: "Integrasi lokasi dengan Google Maps", isCore: true },
+            // Core Features (Available to all packages)
+            { code: "basic_info", name: "Info Mempelai & Orang Tua", description: "Informasi dasar pengantin", isCore: true },
             { code: "countdown", name: "Countdown Timer", description: "Hitung mundur hari pernikahan", isCore: true },
+            { code: "google_maps", name: "Google Maps Integration", description: "Integrasi lokasi dengan Google Maps", isCore: true },
             { code: "guestbook", name: "Digital Guestbook", description: "Ucapan dan doa dari tamu", isCore: true },
+
+            // Bronze+ Features
+            { code: "rsvp_basic", name: "RSVP Basic", description: "Konfirmasi kehadiran tanpa export", isCore: false },
+            { code: "single_event", name: "Single Event", description: "1 detail acara (Akad saja)", isCore: false },
+
+            // Silver+ Features
+            { code: "rsvp_export", name: "RSVP Export CSV", description: "Export data tamu ke CSV", isCore: false },
+            { code: "unlimited_events", name: "Unlimited Events", description: "Akad + Resepsi + acara lainnya", isCore: false },
+            { code: "gallery_10", name: "Gallery 10 Photos", description: "Upload hingga 10 foto", isCore: false },
+            { code: "background_music", name: "Background Music", description: "Musik latar dari library", isCore: false },
+            { code: "quotes", name: "Quote & Doa", description: "Ayat suci dan doa", isCore: false },
+
+            // Gold+ Features
+            { code: "love_story", name: "Love Story Timeline", description: "Timeline perjalanan cinta", isCore: false },
+            { code: "gift_registry", name: "Gift Registry", description: "Amplop digital", isCore: false },
+            { code: "custom_theme", name: "Custom Colors & Fonts", description: "Kustomisasi tema", isCore: false },
+            { code: "gallery_unlimited", name: "Gallery Unlimited", description: "Upload hingga 30 foto", isCore: false },
+            { code: "remove_branding", name: "Remove Branding", description: "Hapus 'Powered by Nikahin'", isCore: false },
         ];
 
         for (const f of featureList) {
@@ -25,12 +42,12 @@ async function seed() {
             });
         }
 
-        // 2. Seed Packages
+        // 2. Seed Packages (Updated Pricing)
         console.log("  - Seeding packages...");
         const packageList = [
-            { slug: "bronze", name: "Bronze Package", description: "Paket dasar hemat", price: 50000 },
-            { slug: "gold", name: "Gold Package", description: "Paket paling populer", price: 150000 },
-            { slug: "platinum", name: "Platinum Package", description: "Paket lengkap eksklusif", price: 300000 },
+            { slug: "bronze", name: "Bronze", description: "Paket Free Trial - Coba dulu sebelum bayar", price: 0 },
+            { slug: "silver", name: "Silver", description: "Paket Best Value - Paling populer", price: 150000 },
+            { slug: "gold", name: "Gold", description: "Paket Premium - Fitur lengkap eksklusif", price: 300000 },
         ];
 
         for (const p of packageList) {
@@ -40,16 +57,65 @@ async function seed() {
             });
         }
 
-        // 3. Link Features to Packages (Simplified)
+        // 3. Link Features to Packages (Comprehensive Mapping)
         console.log("  - Linking features to packages...");
-        const goldPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "gold") });
-        const rsvpFeature = await db.query.features.findFirst({ where: eq(schema.features.code, "rsvp_system") });
 
-        if (goldPkg && rsvpFeature) {
-            await db.insert(schema.packageFeatures).values({
-                packageId: goldPkg.id,
-                featureId: rsvpFeature.id
-            }).onConflictDoNothing();
+        // Get all packages
+        const bronzePkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "bronze") });
+        const silverPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "silver") });
+        const goldPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "gold") });
+
+        // Get all features
+        const allFeatures = await db.query.features.findMany();
+        const featureMap = new Map(allFeatures.map(f => [f.code, f.id]));
+
+        // Bronze Package Features
+        if (bronzePkg) {
+            const bronzeFeatures = ["rsvp_basic", "single_event"];
+            for (const code of bronzeFeatures) {
+                const featureId = featureMap.get(code);
+                if (featureId) {
+                    await db.insert(schema.packageFeatures).values({
+                        packageId: bronzePkg.id,
+                        featureId: featureId
+                    }).onConflictDoNothing();
+                }
+            }
+        }
+
+        // Silver Package Features (Bronze + Silver features)
+        if (silverPkg) {
+            const silverFeatures = [
+                "rsvp_basic", "single_event", // Bronze features
+                "rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes" // Silver features
+            ];
+            for (const code of silverFeatures) {
+                const featureId = featureMap.get(code);
+                if (featureId) {
+                    await db.insert(schema.packageFeatures).values({
+                        packageId: silverPkg.id,
+                        featureId: featureId
+                    }).onConflictDoNothing();
+                }
+            }
+        }
+
+        // Gold Package Features (Bronze + Silver + Gold features)
+        if (goldPkg) {
+            const goldFeatures = [
+                "rsvp_basic", "single_event", // Bronze features
+                "rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", // Silver features
+                "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding" // Gold features
+            ];
+            for (const code of goldFeatures) {
+                const featureId = featureMap.get(code);
+                if (featureId) {
+                    await db.insert(schema.packageFeatures).values({
+                        packageId: goldPkg.id,
+                        featureId: featureId
+                    }).onConflictDoNothing();
+                }
+            }
         }
 
         // 4. Seed Themes
@@ -81,7 +147,7 @@ async function seed() {
         // 6. Seed Invitation
         console.log("  - Seeding sample invitation...");
         const theme = await db.query.themes.findFirst({ where: eq(schema.themes.slug, "basic") });
-        const pkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "gold") });
+        const pkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "silver") });
 
         if (user[0] && theme && pkg) {
             await db.insert(schema.invitations).values({

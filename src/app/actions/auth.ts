@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, packages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -13,6 +13,7 @@ const registerSchema = z.object({
     phone: z.string().min(10, "Nomor WhatsApp tidak valid"),
     role: z.enum(["customer", "agency"]).optional().default("customer"),
     referredByCode: z.string().optional(),
+    selectedPackage: z.string().optional().default("bronze"), // Package selection
 });
 
 export async function registerUser(formData: any) {
@@ -42,19 +43,29 @@ export async function registerUser(formData: any) {
             }
         }
 
-        // 4. Generate referral code for agencies
+        // 4. Find selected package
+        const selectedPkg = await db.query.packages.findFirst({
+            where: eq(packages.slug, validated.selectedPackage),
+        });
+
+        if (!selectedPkg) {
+            return { success: false, error: "Paket tidak ditemukan" };
+        }
+
+        // 5. Generate referral code for agencies
         const referralCode = validated.role === 'agency'
             ? `REF-${Math.random().toString(36).substring(2, 8).toUpperCase()}`
             : null;
 
-        // 5. Insert user
+        // 6. Insert user with package assignment
         await db.insert(users).values({
             email: validated.email,
             password: hashedPassword,
             name: validated.name,
             phone: validated.phone,
             role: validated.role as "customer" | "agency" | "admin",
-            isActive: true, // Default to true for now
+            packageId: selectedPkg.id, // Assign selected package
+            isActive: false, // Testing Mode: User needs to pay to publish
             referralCode: referralCode,
             referredBy: referrerId,
         });

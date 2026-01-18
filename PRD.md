@@ -103,17 +103,47 @@ Platform akan diluncurkan dengan **3 Tier Paket** sederhana:
 
 ---
 
+### 🧪 Testing Mode Strategy (MVP Conversion Booster)
+
+Untuk meningkatkan konversi dan mengurangi friction, platform menggunakan strategi **"Try Before You Buy"**:
+
+#### Konsep:
+*   **User bisa pilih paket** (Bronze/Silver/Gold) **saat registrasi**.
+*   Setelah register, user **langsung dapat akses PENUH** ke semua fitur sesuai paket yang dipilih.
+*   User bisa **edit, preview, test** semua fungsi tanpa batasan.
+*   **TIDAK BISA PUBLISH** sampai melakukan pembayaran (`isActive = false`).
+
+#### Benefit:
+*   ✅ User bisa **merasakan value** sebelum bayar (mengurangi keraguan).
+*   ✅ Mengurangi **buyer's remorse** (sudah tahu persis apa yang didapat).
+*   ✅ Meningkatkan **conversion rate** (user sudah invest waktu untuk setup).
+*   ✅ Admin bisa **verifikasi payment** manual sebelum aktivasi.
+
+#### Implementation:
+*   Field `users.isActive` sebagai gate untuk publish.
+*   Feature gating **TIDAK BERLAKU** di editor (semua fitur terbuka).
+*   Publish button check: `if (!user.isActive) { showPaymentModal() }`
+
+---
+
 ## 5. User Flows (Revised)
 
-### 5.1. Customer Flow
-1.  **Visit Landing Page** -> Liat Harga -> Klik "Buat Sekarang".
-2.  **Register/Login**.
-3.  **Dashboard Onboarding**:
+### 5.1. Customer Flow (Package-First Registration)
+1.  **Visit Landing Page** -> Lihat **Pricing Table** (Bronze, Silver, Gold).
+2.  **Pilih Paket** -> Klik "Pilih Paket [Silver]" -> Redirect ke `/register?package=silver`.
+3.  **Register/Login** -> Form register sudah tahu package yang dipilih, tampilkan badge "Paket Terpilih: Silver".
+4.  **Dashboard Onboarding**:
     *   User diminta input "Slug" dan nama pasangan.
-    *   Sistem membuat Undangan Draft (Paket Bronze/Free secara default).
-4.  **Editing**: User mengisi data. Jika mencoba mengisi fitur Premium (misal upload musik), UI memberitahu "Ups, ini fitur Silver/Gold".
-5.  **Upgrade**: Klik tombol "Upgrade Paket" -> Pilih Silver/Gold -> Bayar.
-6.  **Activation**: Setelah bayar sukses -> Fitur Premium terbuka -> User bisa Simpan & Publish.
+    *   Sistem membuat Undangan Draft dengan package yang dipilih saat register.
+5.  **Testing Mode (Unpaid User)**:
+    *   User bisa **akses SEMUA fitur** sesuai package yang dipilih (termasuk premium features).
+    *   User bisa **edit, preview, dan test** semua fungsi.
+    *   **TIDAK BISA PUBLISH** -> Tombol "Publish" disabled dengan pesan "Bayar dulu untuk publish".
+6.  **Payment & Activation**:
+    *   Klik tombol "Bayar Sekarang" -> Pilih metode pembayaran -> Upload bukti/Midtrans.
+    *   Setelah Admin approve (atau webhook Midtrans) -> `isActive = true`.
+    *   Tombol "Publish" terbuka -> User bisa publish undangan.
+7.  **Upgrade Flow (Optional)**: User dengan Bronze bisa upgrade ke Silver/Gold kapan saja.
 
 ### 5.2. Super Admin Flow (Configuration)
 1.  **Manage Features**: Admin melihat list fitur (`code`: `gallery`, `music`, etc).

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Heart, Stars, Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { PricingCard } from "@/components/PricingCard";
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions);
@@ -102,6 +103,96 @@ export default async function HomePage() {
           </div>
         </div>
       </main>
+
+      {/* Pricing Section */}
+      <section className="py-24 bg-gradient-to-b from-white to-amber-50/30 relative overflow-hidden">
+        {/* Background Decor */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-amber-100 rounded-full blur-3xl opacity-20 pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-[#D4AF37] text-sm font-semibold mb-6 border border-amber-100 shadow-lg">
+              <Sparkles className="w-4 h-4" />
+              Pilih Paket Terbaik untuk Anda
+            </div>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-gray-900 mb-4">
+              Harga yang <span className="text-[#D4AF37] italic">Transparan</span>
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Test semua fitur gratis, bayar hanya saat publish. Tanpa biaya tersembunyi!
+            </p>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Bronze Package */}
+            <PricingCard
+              name="Bronze"
+              slug="bronze"
+              price={0}
+              description="Coba dulu sebelum bayar"
+              isFree={true}
+              features={[
+                "Info Mempelai & Orang Tua",
+                "1 Detail Acara (Akad)",
+                "Tema Basic",
+                "RSVP Basic",
+                "Google Maps",
+                "Countdown Timer",
+                "Buku Tamu Digital",
+              ]}
+            />
+
+            {/* Silver Package */}
+            <PricingCard
+              name="Silver"
+              slug="silver"
+              price={150000}
+              description="Paling populer & best value"
+              isPopular={true}
+              features={[
+                "Semua fitur Bronze",
+                "Unlimited Acara (Akad + Resepsi)",
+                "Galeri Foto (10 foto)",
+                "Musik Latar",
+                "Quote & Doa",
+                "RSVP Export CSV",
+                "Tema Premium",
+              ]}
+            />
+
+            {/* Gold Package */}
+            <PricingCard
+              name="Gold"
+              slug="gold"
+              price={300000}
+              description="Fitur lengkap eksklusif"
+              features={[
+                "Semua fitur Silver",
+                "Love Story Timeline",
+                "Gift Registry (Amplop Digital)",
+                "Custom Colors & Fonts",
+                "Gallery Unlimited (30 foto)",
+                "Remove Branding",
+                "Prioritas Support",
+              ]}
+            />
+          </div>
+
+          {/* Trust Badge */}
+          <div className="mt-16 text-center">
+            <p className="text-sm text-gray-500 font-semibold mb-4">
+              ✨ Semua paket: Test full features gratis, bayar hanya saat publish
+            </p>
+            <div className="flex items-center justify-center gap-8 text-gray-400 text-xs">
+              <span>✓ Tanpa Biaya Tersembunyi</span>
+              <span>✓ Refund 100% Jika Tidak Puas</span>
+              <span>✓ Support 24/7</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Trust Section */}
       <section className="bg-slate-50 py-20 border-y border-gray-100">

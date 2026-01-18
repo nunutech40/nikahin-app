@@ -6,5 +6,6 @@
 5. baca rekapstack.md
 6. baca todo.md
 7. baca docs/THEME_DEVELOPMENT.md
+8. baca seluruh kodenya
 
 jangan lakukan apapun bila tidak ada perintah tambahan, cukup dapetin konteksnya dulu

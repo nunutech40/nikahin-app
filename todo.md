@@ -494,13 +494,70 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [x] **TP.7** - Add favicon and app icons (Implemented Royal Logo)
 - [x] **TP.8** - Optimize Performance (Implemented Suspense Streaming)
 
-### 🚀 Phase 7: Commercial Launch & Go-to-Market (In Progress)
-- [ ] **T7.1** - **Landing Page (Sales Page)**: Implement High-Conversion Homepage (Hero, Features, Pricing Table).
-- [ ] **T7.2** - **SEO Infrastructure**: Sitemap.xml, Robots.txt, and Schema.org Structured Data.
-- [ ] **T7.3** - **Payment Gateway**: Integrate Midtrans Snap (Dummy -> Sandbox).
-- [ ] **T7.4** - **Order Logic**: Checkout Flow (Select Package -> Pay -> Auto-Activate).
-- [ ] **T7.5** - **Admin Feature Matrix**: UI for Admin to toggle features per package (Checkbox Grid).
-- [ ] **T7.6** - **Package Seeder**: Seed DB with Bronze (Free), Silver, Gold tiers.
+### 🚀 Phase 7: Commercial Launch & Go-to-Market (Package-First Registration)
+
+#### **Phase 7.1: Pricing Table & Package Selection**
+- [ ] **T7.1.1** - Add Pricing Section to Landing Page (`/`)
+  - [ ] Create pricing card component (Bronze, Silver, Gold)
+  - [ ] Add feature comparison table
+  - [ ] Add "Pilih Paket" CTA button per package
+  - [ ] Link to `/register?package=bronze|silver|gold`
+- [ ] **T7.1.2** - Update Package Seeder
+  - [ ] Seed Bronze (Free Trial - Rp 0)
+  - [ ] Seed Silver (Best Value - Rp 150k)
+  - [ ] Seed Gold (Premium - Rp 300k)
+  - [ ] Seed package_features mapping
+
+#### **Phase 7.2: Package-Based Registration Flow**
+- [ ] **T7.2.1** - Update Register Page
+  - [ ] Read `?package=` query param from URL
+  - [ ] Display selected package badge in form
+  - [ ] Pass package selection to register action
+- [ ] **T7.2.2** - Update Register Server Action
+  - [ ] Accept `selectedPackage` parameter
+  - [ ] Auto-assign package to user on registration
+  - [ ] Set `isActive = false` by default (unpaid)
+  - [ ] Create default invitation draft with selected package
+
+#### **Phase 7.3: Testing Mode (Full Features, No Publish)**
+- [ ] **T7.3.1** - Implement Feature Access Logic
+  - [ ] User can access ALL features based on their package
+  - [ ] No feature gating in editor (semua fitur terbuka)
+  - [ ] Preview works normally
+- [ ] **T7.3.2** - Implement Publish Restriction
+  - [ ] Check `user.isActive` before allowing publish
+  - [ ] Disable "Publish" button if `isActive = false`
+  - [ ] Show "Bayar untuk Publish" message/modal
+  - [ ] Add "Bayar Sekarang" CTA button
+
+#### **Phase 7.4: Payment & Activation Flow**
+- [ ] **T7.4.1** - Create Payment Page/Modal
+  - [ ] Show package details & price
+  - [ ] Payment method selection (Transfer/Midtrans)
+  - [ ] Upload payment proof (for manual verification)
+- [ ] **T7.4.2** - Admin Payment Verification
+  - [ ] Add "Pending Payments" section in Admin
+  - [ ] Show payment proof images
+  - [ ] One-click "Approve" button -> set `isActive = true`
+- [ ] **T7.4.3** - Midtrans Integration (Optional/Future)
+  - [ ] Setup Midtrans Snap
+  - [ ] Webhook handler for auto-activation
+  - [ ] Transaction logging
+
+#### **Phase 7.5: Admin Feature Matrix UI**
+- [ ] **T7.5.1** - Create Feature Matrix Page (`/admin/features`)
+  - [ ] Table with features (rows) x packages (columns)
+  - [ ] Checkbox grid for feature assignment
+  - [ ] Save changes to `package_features` table
+
+#### **Phase 7.6: SEO & Marketing**
+- [ ] **T7.6.1** - SEO Infrastructure
+  - [ ] Generate sitemap.xml
+  - [ ] Create robots.txt
+  - [ ] Add Schema.org structured data
+- [ ] **T7.6.2** - Social Sharing
+  - [ ] Dynamic OG tags for invitation pages
+  - [ ] Share to WhatsApp button
 
 ### 🧪 Testing
 - [ ] **TT.1** - Setup testing framework (Jest + React Testing Library)
@@ -558,15 +615,27 @@ Each phase has a **Rollback Point** that explains how to undo changes if issues 
 
 ## 📊 Overall Project Status
 
-**Current Phase:** Phase 7 - Commercial Launch & SEO
+**Current Phase:** Phase 7 - Package-First Registration & Testing Mode
 
-**Overall Progress:** ~95% Complete
+**Overall Progress:** ~95% Complete (Planning: 100%, Implementation: 0%)
 
-**Next Milestone:** Landing Page & Payment Gateway
+**Phase 7 Planning Status:** ✅ **COMPLETED**
+- ✅ PRD updated with Testing Mode strategy
+- ✅ Todo.md updated with detailed task breakdown
+- ✅ Implementation guide created (docs/PHASE7_IMPLEMENTATION.md)
+- ✅ Visual flow diagram created (docs/PHASE7_VISUAL_FLOW.md)
+
+**Next Milestone:** 
+- **Priority 1**: Pricing Table + Package Registration (T7.1 & T7.2)
+- **Priority 2**: Testing Mode Implementation (T7.3)
+- **Priority 3**: Payment Flow (T7.4)
 
 **Estimated Completion:** 
-- Landing Page: 1 day
-- Payment Integration: 2 days
+- Pricing Table: 1 day
+- Package Registration: 1 day
+- Testing Mode: 1 day
+- Payment Flow: 2 days
+- **Total**: ~5 days for MVP launch readiness
 
 ---
 

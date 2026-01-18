@@ -4,11 +4,19 @@ import { useState } from "react";
 import { registerUser } from "@/app/actions/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Heart, Mail, Lock, User, ArrowRight, Phone, Calendar, Eye, EyeOff } from "lucide-react";
+import { Heart, Mail, Lock, User, ArrowRight, Phone, Calendar, Eye, EyeOff, Package } from "lucide-react";
 
 export default function RegisterPage() {
     const searchParams = useSearchParams();
     const refCode = searchParams.get("ref");
+    const selectedPackage = searchParams.get("package") || "bronze"; // Default to bronze
+
+    // Package display names
+    const packageNames: Record<string, { name: string; emoji: string; color: string }> = {
+        bronze: { name: "Bronze", emoji: "🥉", color: "bg-amber-100 text-amber-700 border-amber-200" },
+        silver: { name: "Silver", emoji: "🥈", color: "bg-gray-100 text-gray-700 border-gray-200" },
+        gold: { name: "Gold", emoji: "🥇", color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+    };
 
     const [formData, setFormData] = useState({
         name: "",
@@ -28,7 +36,8 @@ export default function RegisterPage() {
 
         const result = await registerUser({
             ...formData,
-            referredByCode: refCode || undefined
+            referredByCode: refCode || undefined,
+            selectedPackage: selectedPackage
         });
 
         if (result.success) {
@@ -57,9 +66,17 @@ export default function RegisterPage() {
                     <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 blur-3xl rounded-full -mr-16 -mt-16 pointer-events-none" />
 
                     <div className="relative z-10">
-                        <h2 className="text-2xl font-black text-slate-800 mb-8 text-center uppercase tracking-widest">
+                        <h2 className="text-2xl font-black text-slate-800 mb-4 text-center uppercase tracking-widest">
                             Create Account
                         </h2>
+
+                        {/* Selected Package Badge */}
+                        <div className="mb-8 flex items-center justify-center">
+                            <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 font-bold text-sm ${packageNames[selectedPackage]?.color || packageNames.bronze.color}`}>
+                                <Package className="w-4 h-4" />
+                                Paket Terpilih: {packageNames[selectedPackage]?.emoji} {packageNames[selectedPackage]?.name || "Bronze"}
+                            </div>
+                        </div>
 
                         {error && (
                             <div className="mb-8 p-4 rounded-2xl bg-rose-50 text-rose-600 text-sm border border-rose-100 text-center font-bold">
