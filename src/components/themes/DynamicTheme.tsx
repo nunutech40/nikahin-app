@@ -33,9 +33,10 @@ interface DynamicThemeProps {
     isMobile?: boolean; // For dashboard preview forcing
     invitationId?: number;
     guests?: any[]; // For Guestbook/RSVP messages if passed down
+    dynamicConfig?: DynamicThemeConfig; // Added for passing pre-resolved config
 }
 
-export function DynamicTheme({ data, guestName, isPreview = false, isMobile = false, invitationId, guests }: DynamicThemeProps) {
+export function DynamicTheme({ data, guestName, isPreview = false, isMobile = false, invitationId, guests, dynamicConfig }: DynamicThemeProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isMusicPlaying, setIsMusicPlaying] = useState(false);
 
@@ -72,7 +73,10 @@ export function DynamicTheme({ data, guestName, isPreview = false, isMobile = fa
     // For now, I'll assume we default to MASTER_THEME_CONFIG if input is missing.
 
     // LIVE PREVIEW STATE
-    const [activeConfig, setActiveConfig] = useState<DynamicThemeConfig>(MASTER_THEME_CONFIG);
+    const [activeConfig, setActiveConfig] = useState<DynamicThemeConfig>(() => {
+        if (dynamicConfig) return dynamicConfig;
+        return MASTER_THEME_CONFIG;
+    });
 
     // Listen for config updates from Admin Builder (Iframe Parent)
     useEffect(() => {

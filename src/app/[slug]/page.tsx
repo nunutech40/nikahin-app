@@ -158,6 +158,7 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         <div className="relative min-h-screen">
             <ThemeComponent
                 data={previewData}
+                dynamicConfig={result.themeConfig}
                 guestName={guestName}
                 invitationId={invitationId}
                 guests={guests}

@@ -428,6 +428,7 @@ export default function DashboardClient({
                                 return (
                                     <ThemeComponent
                                         data={previewData}
+                                        dynamicConfig={initialData.theme?.config}
                                         guestName="Bpk. Fulan & Kel."
                                         isPreview={true}
                                         isMobile={previewMode === "mobile"}

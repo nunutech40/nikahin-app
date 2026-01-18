@@ -35,6 +35,8 @@ export interface ThemeProps {
     guests?: any[];
     isPreview?: boolean;
     isMobile?: boolean;
+    /** For builder-based themes: the layout configuration */
+    dynamicConfig?: any;
 }
 
 /**
@@ -168,7 +170,11 @@ export function getThemeComponent(
     themeId: string
 ): ComponentType<ThemeProps> | null {
     const registration = THEME_REGISTRY[themeId];
-    return registration ? registration.component : null;
+    if (registration) return registration.component;
+
+    // Fallback for Dynamic Themes (Builder-based)
+    // If it's not in our hardcoded registry, we treat it as a dynamic theme
+    return DynamicTheme as any;
 }
 
 /**
