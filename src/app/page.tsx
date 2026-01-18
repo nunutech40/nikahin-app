@@ -29,10 +29,10 @@ export default async function HomePage() {
             <Link href="/login" className="text-sm font-bold text-gray-600 hover:text-[#D4AF37] transition-colors">Login</Link>
           </div>
           <Link
-            href="/register"
+            href="/demo-register"
             className="px-6 py-2.5 bg-[#D4AF37] text-white rounded-xl font-bold text-sm hover:shadow-lg hover:shadow-amber-200 transition-all active:scale-95"
           >
-            Mulai Sekarang
+            Coba Demo Gratis
           </Link>
         </div>
       </nav>
@@ -316,10 +316,10 @@ export default async function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
-              href="/register"
+              href="/demo-register"
               className="px-12 py-6 bg-[#D4AF37] text-white rounded-2xl font-black text-xl hover:shadow-2xl hover:shadow-amber-500/20 hover:-translate-y-1 transition-all"
             >
-              Coba Gratis Sekarang
+              Coba Demo Sekarang
             </Link>
             <a href="https://wa.me/your-number" target="_blank" className="px-10 py-6 bg-white/10 text-white rounded-2xl font-black text-xl backdrop-blur-md hover:bg-white/20 transition-all">
               Hubungi Sales
