@@ -127,7 +127,12 @@ export default function RegisterPage() {
                                             placeholder="0812xxxx"
                                             required
                                             value={formData.phone}
-                                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                            onChange={(e) => {
+                                                const value = e.target.value.replace(/[^0-9]/g, '');
+                                                setFormData({ ...formData, phone: value });
+                                            }}
+                                            pattern="[0-9]*"
+                                            inputMode="numeric"
                                             className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-50 border border-slate-100 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all placeholder:text-gray-300 font-medium text-slate-700"
                                         />
                                     </div>

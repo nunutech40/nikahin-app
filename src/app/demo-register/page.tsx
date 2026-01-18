@@ -120,7 +120,12 @@ export default function DemoRegisterPage() {
                                         type="tel"
                                         required
                                         value={formData.phone}
-                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/[^0-9]/g, '');
+                                            setFormData({ ...formData, phone: value });
+                                        }}
+                                        pattern="[0-9]*"
+                                        inputMode="numeric"
                                         placeholder="08123456789"
                                         className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 outline-none transition-all placeholder:text-slate-300"
                                     />
