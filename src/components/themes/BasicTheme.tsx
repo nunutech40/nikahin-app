@@ -1312,6 +1312,23 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Footer Branding - Can be removed in Gold/Platinum */}
+            {!canUseFeature(data, 'remove_branding') && (
+                <div className="py-8 bg-white text-center">
+                    <p className="text-xs text-slate-400 font-medium tracking-widest uppercase">
+                        Create your own wedding invitation at
+                    </p>
+                    <a
+                        href="https://nikahin.app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-bold text-slate-900 mt-1 block hover:text-[var(--color-primary)] transition-colors"
+                    >
+                        NIKAHIN.APP
+                    </a>
+                </div>
+            )}
         </div>
     );
 }

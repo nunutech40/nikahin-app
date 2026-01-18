@@ -123,6 +123,10 @@ export interface InvitationData {
     };
     /** Cover Image URL (Optional) */
     coverImage?: string;
+    /** Video Background URL (Optional - Platinum) */
+    videoBackgroundUrl?: string;
+    /** Live Streaming URL (Optional - Platinum) */
+    liveStreamingUrl?: string;
     /** Theme Configuration */
     themeConfig?: ThemeConfig;
     /** Package ID (linked to Feature Gating) */

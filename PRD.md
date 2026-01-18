@@ -88,18 +88,27 @@ Platform akan diluncurkan dengan **3 Tier Paket** sederhana:
     *   **Galeri Foto** (Max 10 Foto)
     *   **Musik Latar** (Pilihan Library)
     *   **Quote & Doa**
+    *   **Love Story Timeline**
     *   Tema Premium (Akses semua tema standar)
 
 ### 🥇 Paket Gold (Exclusive)
 *   **Target:** Pengguna yang ingin undangan sangat personal.
 *   **Fitur:**
     *   *Semua fitur Silver*
-    *   **Love Story Timeline**
     *   **Gift Registry** (Amplop Digital)
     *   **Custom Colors & Fonts** (Theme Config)
     *   **Gallery Unlimited** (Max 20/30)
-    *   **Prioritas Support**
     *   **Remove "Powered By" Branding**
+
+### 💎 Paket Platinum (Ultra Premium)
+*   **Target:** Pengguna yang menginginkan segalanya.
+*   **Fitur:**
+    *   *Semua fitur Gold*
+    *   **Custom Domain** (andi-siti.com)
+    *   **WhatsApp Blast / RSVP Manager**
+    *   **Video Background**
+    *   **Live Streaming Integration**
+    *   **Prioritas Support**
 
 ---
 

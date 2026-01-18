@@ -30,6 +30,16 @@ export function canUseFeature(data: InvitationData, code: FeatureCode | string):
         return userFeatures.includes('unlimited_events');
     }
 
+    // Video Background check
+    if (code === 'video_background') {
+        return userFeatures.includes('video_background');
+    }
+
+    // Live Streaming check
+    if (code === 'live_streaming') {
+        return userFeatures.includes('live_streaming');
+    }
+
     // Check if feature is explicitly enabled in the invitation's features list
     return userFeatures.includes(code);
 }
@@ -85,5 +95,13 @@ export const FEATURE_METADATA: Record<string, { name: string; description: strin
     'cover_image': {
         name: 'Foto Sampul Premium',
         description: 'Gunakan foto sampul kustom untuk mempercantik pembukaan undangan.'
+    },
+    'video_background': {
+        name: 'Video Background',
+        description: 'Latar belakang video yang elegan untuk kesan lebih dramatis.'
+    },
+    'live_streaming': {
+        name: 'Live Streaming',
+        description: 'Integrasi link Zoom/YouTube untuk tamu yang tidak bisa hadir.'
     }
 };
