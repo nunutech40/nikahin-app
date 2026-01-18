@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import {
     Palette,
     Plus,
@@ -33,7 +33,7 @@ export default function ThemesPage() {
                     <p className="text-slate-400">Atur koleksi tema undangan dan buat template baru.</p>
                 </div>
                 <Link
-                    href="/admin/themes/builder/new"
+                    href="/admin/themes/builder/custom_default"
                     className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 px-4 py-2 rounded-lg font-bold hover:shadow-lg hover:shadow-amber-500/20 transition-all"
                 >
                     <Plus className="w-5 h-5" />
@@ -62,18 +62,20 @@ export default function ThemesPage() {
             </div>
 
             {/* Themes Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredThemes.map((theme) => (
-                    <ThemeCard key={theme.id} theme={theme} />
-                ))}
-            </div>
-
-            {filteredThemes.length === 0 && (
-                <div className="text-center py-12 text-slate-500">
-                    <Palette className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Tidak ada tema yang ditemukan.</p>
+            <Suspense fallback={<div className="text-center py-12 text-slate-500">Loading themes...</div>}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredThemes.map((theme) => (
+                        <ThemeCard key={theme.id} theme={theme} />
+                    ))}
                 </div>
-            )}
+
+                {filteredThemes.length === 0 && (
+                    <div className="text-center py-12 text-slate-500">
+                        <Palette className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                        <p>Tidak ada tema yang ditemukan.</p>
+                    </div>
+                )}
+            </Suspense>
         </div>
     );
 }

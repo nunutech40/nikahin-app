@@ -2,6 +2,7 @@ import { db } from "./index";
 import * as schema from "./schema";
 import { eq } from "drizzle-orm";
 import { MOCK_DATA } from "../data/mockData";
+import { MASTER_THEME_CONFIG } from "@/components/themes/masterConfig";
 
 async function seed() {
     console.log("🌱 Seeding database...");
@@ -143,6 +144,14 @@ async function seed() {
         const themeList = [
             { slug: "basic", name: "Basic Theme", description: "Theme bawaan yang elegan", category: "elegant", isFree: true },
             { slug: "modern", name: "Modern Dark", description: "Nuansa gelap yang mewah", category: "modern", isFree: false },
+            {
+                slug: "custom_default",
+                name: "Custom Theme (Builder)",
+                description: "Tema dinamis yang dibuat dengan No-Code Builder",
+                category: "dynamic",
+                isFree: false,
+                config: MASTER_THEME_CONFIG
+            },
         ];
 
         for (const t of themeList) {

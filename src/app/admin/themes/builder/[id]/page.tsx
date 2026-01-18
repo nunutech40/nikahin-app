@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import { saveThemeConfig, getThemeConfig } from "@/app/actions/theme";
+import React, { useState, useEffect } from "react";
 import {
     Layout,
     Type,
@@ -9,22 +10,47 @@ import {
     ArrowLeft,
     Smartphone,
     Monitor,
-    Layers
+    Layers,
+    ArrowUp,
+    ArrowDown,
+    Eye,
+    EyeOff,
+    Check,
+    Loader2,
+    Trash2
 } from "lucide-react";
 import Link from "next/link";
 import { MASTER_THEME_CONFIG } from "@/components/themes/masterConfig";
-import { DynamicThemeConfig } from "@/types/invitation";
+import { DynamicThemeConfig, SectionBlock } from "@/types/invitation";
 
-export default function ThemeBuilderPage({ params }: { params: { id: string } }) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id } = params; // In future, use ID to fetch specific theme config from DB
+export default function ThemeBuilderPage({ params }: { params: Promise<{ id: string }> }) {
+    // Unwrap async params (Next.js 15+)
+    const { id } = React.use(params);
 
     // State for the configuration being edited
-    // Initialize with MASTER Config for now
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [config, setConfig] = useState<DynamicThemeConfig>(MASTER_THEME_CONFIG);
     const [activeTab, setActiveTab] = useState<'global' | 'sections'>('global');
     const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
+    const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [showAddMenu, setShowAddMenu] = useState(false);
+
+    // Fetch initial config from DB
+    useEffect(() => {
+        async function loadConfig() {
+            try {
+                const result = await getThemeConfig(id);
+                if (result.success && result.config) {
+                    setConfig(result.config);
+                }
+            } catch (error) {
+                console.error("Failed to load theme config:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        loadConfig();
+    }, [id]);
 
     // Send live updates to iframe whenever config changes
     React.useEffect(() => {
@@ -37,6 +63,24 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
         }
     }, [config]);
 
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            // Using 'id' from params as slug
+            const result = await saveThemeConfig(id, config);
+            if (result.success) {
+                alert("Theme configuration saved successfully!");
+            } else {
+                alert("Failed to save: " + result.error);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred while saving.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     const updateGlobalConfig = (key: keyof DynamicThemeConfig['global'], value: string) => {
         setConfig(prev => ({
             ...prev,
@@ -46,6 +90,99 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
             }
         }));
     };
+
+    // --- Section Helpers ---
+
+    const moveSection = (id: string, direction: 'up' | 'down') => {
+        setConfig(prev => {
+            const sections = [...prev.sections].sort((a, b) => a.order - b.order);
+            const index = sections.findIndex(s => s.id === id);
+            if (index === -1) return prev;
+
+            if (direction === 'up' && index > 0) {
+                // Swap orders
+                const temp = sections[index - 1].order;
+                sections[index - 1].order = sections[index].order;
+                sections[index].order = temp;
+            } else if (direction === 'down' && index < sections.length - 1) {
+                // Swap orders
+                const temp = sections[index + 1].order;
+                sections[index + 1].order = sections[index].order;
+                sections[index].order = temp;
+            }
+
+            return { ...prev, sections };
+        });
+    };
+
+    const toggleSectionVisibility = (id: string) => {
+        setConfig(prev => ({
+            ...prev,
+            sections: prev.sections.map(s =>
+                s.id === id ? { ...s, isVisible: !s.isVisible } : s
+            )
+        }));
+    };
+
+    const removeSection = (id: string) => {
+        if (!confirm("Are you sure you want to remove this section?")) return;
+        setConfig(prev => ({
+            ...prev,
+            sections: prev.sections.filter(s => s.id !== id)
+        }));
+    };
+
+    const updateSectionVariant = (id: string, variant: string) => {
+        setConfig(prev => ({
+            ...prev,
+            sections: prev.sections.map(s =>
+                s.id === id ? { ...s, variant } : s
+            )
+        }));
+    };
+
+    const addSection = (type: SectionBlock['type']) => {
+        const newId = `${type}_${Date.now()}`;
+        const variants = getVariantsForType(type);
+
+        const newSection: SectionBlock = {
+            id: newId,
+            type: type,
+            variant: variants[0] || 'default',
+            order: config.sections.length,
+            isVisible: true
+        };
+
+        setConfig(prev => ({
+            ...prev,
+            sections: [...prev.sections, newSection]
+        }));
+    };
+
+    const getVariantsForType = (type: string) => {
+        // This is a naive mapping. Ideally this comes from a central registry or section component
+        const variants: Record<string, string[]> = {
+            'hero': ['fullscreen_center', 'fullscreen_simple', 'split_screen'],
+            'couple': ['classic_circle', 'modern_card', 'minimal_split'],
+            'event': ['timeline_vertical', 'grid_cards', 'classic_list'],
+            'gallery': ['grid_masonry', 'carousel', 'grid_bento'],
+            'quote': ['simple_centered', 'card_w_icon', 'parallax_bg'],
+            'love_story': ['timeline_zigzag', 'story_cards'],
+            'gift': ['bank_cards', 'simple_list', 'qr_popup'],
+            'rsvp': ['simple_form', 'card_style'],
+            'closing': ['simple_centered', 'image_bg_overlay']
+        };
+        return variants[type] || ['default'];
+    };
+
+    if (isLoading) {
+        return (
+            <div className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-[100]">
+                <Loader2 className="w-12 h-12 text-amber-500 animate-spin mb-4" />
+                <p className="text-slate-400 font-serif italic">Loading Theme Configuration...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="fixed inset-0 bg-slate-950 flex flex-col z-50">
@@ -78,9 +215,19 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
                     </button>
                 </div>
 
-                <button className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-900 px-4 py-2 rounded-lg font-bold transition-colors">
-                    <Save className="w-4 h-4" />
-                    Save Changes
+                <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-600 disabled:text-slate-400 text-slate-900 px-4 py-2 rounded-lg font-bold transition-colors"
+                >
+                    {isSaving ? (
+                        <>Saving...</>
+                    ) : (
+                        <>
+                            <Save className="w-4 h-4" />
+                            Save Changes
+                        </>
+                    )}
                 </button>
             </header>
 
@@ -190,12 +337,14 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
                                         <label className="text-sm text-slate-300 block mb-1">Heading Font</label>
                                         <select
                                             value={config.global.fontHeading}
-                                            disabled
+                                            onChange={(e) => updateGlobalConfig('fontHeading', e.target.value)}
                                             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
                                         >
                                             <option value="Playfair Display">Playfair Display</option>
                                             <option value="Cinzel">Cinzel</option>
                                             <option value="Great Vibes">Great Vibes</option>
+                                            <option value="Dancing Script">Dancing Script</option>
+                                            <option value="Prata">Prata</option>
                                         </select>
                                     </div>
 
@@ -203,12 +352,14 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
                                         <label className="text-sm text-slate-300 block mb-1">Body Font</label>
                                         <select
                                             value={config.global.fontBody}
-                                            disabled
+                                            onChange={(e) => updateGlobalConfig('fontBody', e.target.value)}
                                             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
                                         >
                                             <option value="Inter">Inter</option>
                                             <option value="Lato">Lato</option>
                                             <option value="Montserrat">Montserrat</option>
+                                            <option value="Open Sans">Open Sans</option>
+                                            <option value="Spectral">Spectral</option>
                                         </select>
                                     </div>
                                 </div>
@@ -216,35 +367,113 @@ export default function ThemeBuilderPage({ params }: { params: { id: string } })
                         ) : (
                             <div className="space-y-2">
                                 <p className="text-xs text-slate-500 mb-4 px-1">
-                                    Drag and drop to reorder sections. Click to edit variants.
+                                    Use arrows to reorder sections. Manage visibility and variants.
                                 </p>
 
                                 <div className="space-y-2">
-                                    {config.sections.sort((a, b) => a.order - b.order).map((section) => (
+                                    {config.sections.sort((a, b) => a.order - b.order).map((section, index) => (
                                         <div
                                             key={section.id}
-                                            className="bg-slate-800 border border-slate-700 rounded-lg p-3 flex items-center justify-between group hover:border-amber-500/50 transition-all cursor-move"
+                                            className={`bg-slate-800 border ${section.isVisible ? 'border-slate-700' : 'border-slate-800 opacity-60'} rounded-lg p-3 transition-all`}
                                         >
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-slate-700 rounded text-slate-400">
-                                                    <Layout className="w-4 h-4" />
+                                            {/* Header Row */}
+                                            <div className="flex items-center justify-between mb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-slate-700 rounded text-slate-400">
+                                                        <Layout className="w-4 h-4" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-200 capitalize">{section.type.replace('_', ' ')}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="text-sm font-bold text-slate-200 capitalize">{section.type.replace('_', ' ')}</p>
-                                                    <p className="text-xs text-slate-500 capitalize">{section.variant.replace('_', ' ')}</p>
+
+                                                {/* Actions */}
+                                                <div className="flex items-center gap-1 bg-slate-900 rounded p-1">
+                                                    <button
+                                                        disabled={index === 0}
+                                                        onClick={() => moveSection(section.id, 'up')}
+                                                        className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                                                        title="Move Up"
+                                                    >
+                                                        <ArrowUp className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        disabled={index === config.sections.length - 1}
+                                                        onClick={() => moveSection(section.id, 'down')}
+                                                        className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
+                                                        title="Move Down"
+                                                    >
+                                                        <ArrowDown className="w-4 h-4" />
+                                                    </button>
+                                                    <div className="w-px h-4 bg-slate-800 mx-1"></div>
+                                                    <button
+                                                        onClick={() => toggleSectionVisibility(section.id)}
+                                                        className={`p-1 ${section.isVisible ? 'text-amber-500' : 'text-slate-600'} hover:text-white`}
+                                                        title={section.isVisible ? "Hide Section" : "Show Section"}
+                                                    >
+                                                        {section.isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                                    </button>
+                                                    <div className="w-px h-4 bg-slate-800 mx-1"></div>
+                                                    <button
+                                                        onClick={() => removeSection(section.id)}
+                                                        className="p-1 text-slate-600 hover:text-rose-500 transition-colors"
+                                                        title="Remove Section"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
                                                 </div>
                                             </div>
-                                            {/* Visibility Toggle */}
-                                            <div className="flex items-center gap-2">
-                                                {/* Placeholder for Edit/Hide */}
-                                            </div>
+
+                                            {/* Variant Selector */}
+                                            {section.isVisible && (
+                                                <div className="bg-slate-900/50 rounded p-2">
+                                                    <label className="text-xs text-slate-500 block mb-1 uppercase font-bold">Layout Variant</label>
+                                                    <select
+                                                        value={section.variant}
+                                                        onChange={(e) => updateSectionVariant(section.id, e.target.value)}
+                                                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                                    >
+                                                        {getVariantsForType(section.type).map(v => (
+                                                            <option key={v} value={v}>{v.replace('_', ' ')}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            )}
                                         </div>
                                     ))}
                                 </div>
 
-                                <button className="w-full mt-4 flex items-center justify-center gap-2 border border-dashed border-slate-700 rounded-lg py-3 text-slate-500 hover:text-amber-500 hover:border-amber-500/50 hover:bg-slate-800/50 transition-all text-sm font-medium">
-                                    <Plus className="w-4 h-4" /> Add Section (Coming Soon)
-                                </button>
+                                <div className="mt-4">
+                                    {showAddMenu ? (
+                                        <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 space-y-2 animate-in fade-in slide-in-from-bottom-2">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Section Type</h4>
+                                                <button onClick={() => setShowAddMenu(false)} className="text-slate-500 hover:text-white text-xs">Cancel</button>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                {['quote', 'couple', 'event', 'love_story', 'gallery', 'gift', 'rsvp', 'closing'].map((type) => (
+                                                    <button
+                                                        key={type}
+                                                        onClick={() => {
+                                                            addSection(type as SectionBlock['type']);
+                                                            setShowAddMenu(false);
+                                                        }}
+                                                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300 capitalize text-left transition-colors flex items-center gap-2"
+                                                    >
+                                                        <Plus className="w-3 h-3" /> {type.replace('_', ' ')}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <button
+                                            onClick={() => setShowAddMenu(true)}
+                                            className="w-full flex items-center justify-center gap-2 border border-dashed border-slate-700 rounded-lg py-3 text-slate-500 hover:text-amber-500 hover:border-amber-500/50 hover:bg-slate-800/50 transition-all text-sm font-medium"
+                                        >
+                                            <Plus className="w-4 h-4" /> Add New Section
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>

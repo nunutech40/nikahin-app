@@ -33,6 +33,8 @@ export interface ThemeProps {
     guestName?: string;
     invitationId?: number;
     guests?: any[];
+    isPreview?: boolean;
+    isMobile?: boolean;
 }
 
 /**
