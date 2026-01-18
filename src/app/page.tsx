@@ -63,7 +63,8 @@ export default function HomePage() {
             </Link>
 
             <Link
-              href="#preview"
+              href="/rizka-ayu"
+              target="_blank"
               className="w-full sm:w-auto px-10 py-5 bg-white text-gray-700 border-2 border-gray-200 rounded-2xl font-bold text-lg hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center justify-center gap-3"
             >
               <Play className="w-6 h-6" />
