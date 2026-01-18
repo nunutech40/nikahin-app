@@ -13,10 +13,35 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getAllThemes, ThemeMetadata } from "@/lib/themeRegistry";
+import { listThemes } from "@/app/actions/theme";
 
 export default function ThemesPage() {
     const [searchTerm, setSearchTerm] = useState("");
-    const themes = getAllThemes().map(t => t.metadata);
+    const [themes, setThemes] = useState<ThemeMetadata[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const fetchThemes = async () => {
+        setIsLoading(true);
+        const result = await listThemes();
+        if (result.success && result.themes) {
+            // Map DB themes to ThemeMetadata format
+            const dbThemes: ThemeMetadata[] = result.themes.map(t => ({
+                id: t.slug,
+                name: t.name || "",
+                description: t.description || "",
+                isFree: t.isFree || false,
+                category: t.category || "dynamic",
+                previewImage: (t as any).previewImage || undefined,
+                isDynamic: !!t.config // Mark if it can be edited via builder
+            }));
+            setThemes(dbThemes);
+        }
+        setIsLoading(false);
+    };
+
+    React.useEffect(() => {
+        fetchThemes();
+    }, []);
 
     const filteredThemes = themes.filter(theme =>
         theme.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -152,15 +177,15 @@ function ThemeCard({ theme }: { theme: ThemeMetadata }) {
                 </p>
 
                 <div className="flex items-center gap-2 pt-4 border-t border-slate-800">
-                    {theme.id === 'custom' ? (
+                    {theme.isDynamic ? (
                         <Link
-                            href={`/admin/themes/builder/custom_default`}
-                            className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-sm font-medium transition-colors"
+                            href={`/admin/themes/builder/${theme.id}`}
+                            className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700"
                         >
                             <Edit className="w-4 h-4" /> Edit Config
                         </Link>
                     ) : (
-                        <button disabled className="flex-1 flex items-center justify-center gap-2 bg-slate-800/50 text-slate-500 cursor-not-allowed py-2 rounded-lg text-sm font-medium">
+                        <button disabled className="flex-1 flex items-center justify-center gap-2 bg-transparent text-slate-600 cursor-not-allowed py-2 rounded-lg text-sm font-medium italic">
                             Hardcoded
                         </button>
                     )}

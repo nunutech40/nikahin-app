@@ -53,6 +53,8 @@ export interface ThemeMetadata {
     previewImage?: string;
     /** Theme category (e.g., 'modern', 'classic', 'elegant') */
     category?: string;
+    /** Whether this theme can be edited via the dynamic builder */
+    isDynamic?: boolean;
 }
 
 /**

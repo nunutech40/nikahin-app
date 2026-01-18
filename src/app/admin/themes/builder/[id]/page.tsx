@@ -17,7 +17,8 @@ import {
     EyeOff,
     Check,
     Loader2,
-    Trash2
+    Trash2,
+    Settings
 } from "lucide-react";
 import Link from "next/link";
 import { MASTER_THEME_CONFIG } from "@/components/themes/masterConfig";
@@ -30,7 +31,12 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
 
     // State for the configuration being edited
     const [config, setConfig] = useState<DynamicThemeConfig>(MASTER_THEME_CONFIG);
-    const [activeTab, setActiveTab] = useState<'global' | 'sections'>('global');
+    const [activeTab, setActiveTab] = useState<'global' | 'sections' | 'settings'>('global');
+    const [metadata, setMetadata] = useState({
+        name: "",
+        description: "",
+        category: "dynamic"
+    });
     const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
     const [isSaving, setIsSaving] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,6 +68,13 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                 const result = await getThemeConfig(id);
                 if (result.success && result.config) {
                     setConfig(result.config);
+                    if (result.metadata) {
+                        setMetadata({
+                            name: result.metadata.name,
+                            description: result.metadata.description,
+                            category: result.metadata.category
+                        });
+                    }
                 }
             } catch (error) {
                 console.error("Failed to load theme config:", error);
@@ -86,9 +99,12 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
         setIsSaving(true);
         try {
             // Using 'id' from params as slug
-            const result = await saveThemeConfig(id, config);
+            const result = await saveThemeConfig(id, config, {
+                ...metadata,
+                isFree: false
+            });
             if (result.success) {
-                alert("Theme configuration saved successfully!");
+                alert("Tema berhasil disimpan!");
             } else {
                 alert("Failed to save: " + result.error);
             }
@@ -226,8 +242,8 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="font-bold text-slate-100">Builder Tema</h1>
-                        <p className="text-xs text-slate-400">Mengedit: Tema Kustom</p>
+                        <h1 className="font-bold text-slate-100">{metadata.name || "Tema Baru"}</h1>
+                        <p className="text-xs text-slate-400">Slug: {id}</p>
                     </div>
                 </div>
 
@@ -283,11 +299,68 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                         >
                             <Layers className="w-4 h-4" /> Bagian
                         </button>
+                        <button
+                            onClick={() => setActiveTab('settings')}
+                            className={`flex-1 flex items-center justify-center gap-2 text-sm font-bold transition-colors ${activeTab === 'settings' ? 'text-amber-500 border-b-2 border-amber-500 bg-slate-800/50' : 'text-slate-400 hover:text-slate-200'}`}
+                        >
+                            <Settings className="w-4 h-4" /> Pengaturan
+                        </button>
                     </div>
 
                     {/* Controls Content */}
                     <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                        {activeTab === 'global' ? (
+                        {activeTab === 'settings' ? (
+                            <div className="space-y-6">
+                                <div className="space-y-4">
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Informasi Tema</h3>
+
+                                    <div>
+                                        <label className="text-sm text-slate-300 block mb-1">Nama Tema</label>
+                                        <input
+                                            type="text"
+                                            value={metadata.name}
+                                            placeholder="Contoh: Royal Gold Elegant"
+                                            onChange={(e) => setMetadata(prev => ({ ...prev, name: e.target.value }))}
+                                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="text-sm text-slate-300 block mb-1">Kategori</label>
+                                        <select
+                                            value={metadata.category}
+                                            onChange={(e) => setMetadata(prev => ({ ...prev, category: e.target.value }))}
+                                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                        >
+                                            <option value="elegant">Elegant</option>
+                                            <option value="modern">Modern</option>
+                                            <option value="minimalist">Minimalist</option>
+                                            <option value="floral">Floral</option>
+                                            <option value="dynamic">Dynamic</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-sm text-slate-300 block mb-1">Deskripsi Singkat</label>
+                                        <textarea
+                                            value={metadata.description}
+                                            rows={3}
+                                            placeholder="Jelaskan karakteristik tema ini..."
+                                            onChange={(e) => setMetadata(prev => ({ ...prev, description: e.target.value }))}
+                                            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="pt-6 border-t border-slate-800">
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Identitas Unik (ID)</h3>
+                                    <div className="bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                                        <code className="text-xs text-amber-500 break-all">{id}</code>
+                                        <p className="text-[10px] text-slate-500 mt-2 italic">ID ini digunakan sebagai identitas teknis di database.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : activeTab === 'global' ? (
                             <div className="space-y-6">
                                 {/* Colors */}
                                 <div className="space-y-4">
