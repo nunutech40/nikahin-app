@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search, Phone, Package } from "lucide-react";
-import { toggleUserStatus, updateUserRole } from "@/app/actions/admin";
+import { User, Mail, Shield, CheckCircle2, XCircle, RefreshCcw, Search, Phone, Package, Trash2 } from "lucide-react";
+import { toggleUserStatus, updateUserRole, deleteUser } from "@/app/actions/admin";
 import { toast } from "sonner";
 import RoyalEmptyState from "@/components/ui/RoyalEmptyState";
 import RoyalBadge from "@/components/ui/RoyalBadge";
@@ -52,6 +52,28 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
             toast.error("Terjadi kesalahan sistem.");
         } finally {
             setRoleLoadingId(null);
+        }
+    };
+
+    const handleDeleteUser = async (userId: number, userEmail: string) => {
+        if (!confirm(`⚠️ PERINGATAN!\n\nAnda yakin ingin menghapus user:\n${userEmail}\n\nSemua undangan user ini juga akan dihapus!\n\nTindakan ini TIDAK BISA dibatalkan!`)) {
+            return;
+        }
+
+        setLoadingId(userId);
+        try {
+            const result = await deleteUser(userId);
+            if (result.success) {
+                toast.success(result.message || "User berhasil dihapus");
+                // Refresh page to update list
+                window.location.reload();
+            } else {
+                toast.error(result.error || "Gagal menghapus user");
+            }
+        } catch (err) {
+            toast.error("Terjadi kesalahan sistem.");
+        } finally {
+            setLoadingId(null);
         }
     };
 
@@ -157,21 +179,36 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                                     {format(new Date(user.createdAt), "d MMM yyyy", { locale: id })}
                                 </td>
                                 <td className="px-6 py-5 text-right">
-                                    <button
-                                        onClick={() => handleToggleStatus(user.id, user.isActive)}
-                                        disabled={loadingId === user.id}
-                                        className={`
+                                    <div className="flex items-center justify-end gap-2">
+                                        <button
+                                            onClick={() => handleToggleStatus(user.id, user.isActive)}
+                                            disabled={loadingId === user.id}
+                                            className={`
                     inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all
                     ${user.isActive
-                                                ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                                                : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}
+                                                    ? 'bg-red-50 text-red-600 hover:bg-red-100'
+                                                    : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100'}
                     disabled:opacity-50
                   `}
-                                    >
-                                        {loadingId === user.id ? (
-                                            <RefreshCcw className="w-4 h-4 animate-spin" />
-                                        ) : user.isActive ? 'Nonaktifkan' : 'Aktifkan Akun'}
-                                    </button>
+                                        >
+                                            {loadingId === user.id ? (
+                                                <RefreshCcw className="w-4 h-4 animate-spin" />
+                                            ) : user.isActive ? 'Nonaktifkan' : 'Aktifkan Akun'}
+                                        </button>
+
+                                        {/* Delete Button (only for non-admin users) */}
+                                        {user.role !== 'admin' && (
+                                            <button
+                                                onClick={() => handleDeleteUser(user.id, user.email)}
+                                                disabled={loadingId === user.id}
+                                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all bg-rose-50 text-rose-600 hover:bg-rose-100 disabled:opacity-50"
+                                                title="Hapus user & semua undangannya"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                Hapus
+                                            </button>
+                                        )}
+                                    </div>
                                 </td>
                             </tr>
                         )) : (

@@ -172,3 +172,63 @@ export async function toggleFeatureCoreStatus(featureId: number, currentStatus: 
         return { success: false, error: "Failed to update feature status." };
     }
 }
+
+/**
+ * Delete User (Super Admin only)
+ * Also deletes all user's invitations
+ */
+export async function deleteUser(userId: number) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        // Check if user is authenticated
+        if (!session?.user) {
+            return { success: false, error: "Authentication required" };
+        }
+
+        const currentUserRole = (session.user as any).role;
+
+        // Only super admin can delete users
+        if (currentUserRole !== "admin") {
+            return { success: false, error: "Unauthorized. Only super admin can delete users." };
+        }
+
+        // Prevent self-deletion
+        const currentUserId = Number((session.user as any).id);
+        if (currentUserId === userId) {
+            return { success: false, error: "You cannot delete your own account." };
+        }
+
+        // Check if user exists
+        const userToDelete = await db.query.users.findFirst({
+            where: eq(users.id, userId)
+        });
+
+        if (!userToDelete) {
+            return { success: false, error: "User not found" };
+        }
+
+        // Prevent deleting other admins
+        if (userToDelete.role === "admin") {
+            return { success: false, error: "Cannot delete other admin accounts." };
+        }
+
+        // Delete user's invitations first (foreign key constraint)
+        const { invitations } = await import("@/db/schema");
+        await db.delete(invitations).where(eq(invitations.userId, userId));
+
+        // Delete user
+        await db.delete(users).where(eq(users.id, userId));
+
+        revalidatePath("/admin");
+        revalidatePath("/admin/users");
+
+        return {
+            success: true,
+            message: `User ${userToDelete.email} and all their invitations have been deleted.`
+        };
+    } catch (error) {
+        console.error("❌ Delete User Error:", error);
+        return { success: false, error: "Failed to delete user" };
+    }
+}
