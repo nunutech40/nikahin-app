@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, UserPlus, Phone, Tag, Users as UsersIcon, Loader2 } from "lucide-react";
 import RoyalCard from "@/components/ui/RoyalCard";
 import { addGuest } from "@/app/actions/guests";
@@ -13,6 +14,13 @@ interface AddGuestModalProps {
 }
 
 export default function AddGuestModal({ invitationId, isOpen, onClose }: AddGuestModalProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+        return () => setMounted(false);
+    }, []);
+
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -21,7 +29,7 @@ export default function AddGuestModal({ invitationId, isOpen, onClose }: AddGues
         pax: 1
     });
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,8 +54,8 @@ export default function AddGuestModal({ invitationId, isOpen, onClose }: AddGues
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    const modalContent = (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
             <div className="relative w-full max-w-lg animate-in fade-in zoom-in duration-300">
                 <RoyalCard className="p-8">
@@ -142,4 +150,6 @@ export default function AddGuestModal({ invitationId, isOpen, onClose }: AddGues
             </div>
         </div>
     );
+
+    return createPortal(modalContent, document.body);
 }
