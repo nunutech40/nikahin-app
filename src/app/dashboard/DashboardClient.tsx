@@ -76,13 +76,14 @@ export default function DashboardClient({
         return {
             ...baseData,
             ...data,
-            slug: data?.slug || initialData?.slug || baseData.slug
+            // PRIORITIZE DB SLUG! The content.slug might be stale/mocked.
+            slug: initialData?.slug || data?.slug || baseData.slug
         } as InvitationData;
     });
 
     const [invitationId, setInvitationId] = useState<number | null>(() => {
         if (initialData?.id !== undefined) return initialData.id;
-        return userPackageSlug === "demo" ? 0 : null;
+        return null;
     });
 
     const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");

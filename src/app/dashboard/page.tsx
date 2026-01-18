@@ -74,15 +74,9 @@ export default async function DashboardPage() {
     // Determine initial data
     let initialData = userInvitations.length > 0 ? userInvitations[0] : null;
 
-    // Fallback for special Demo Package static check
-    if (userPackageSlug === "demo" && userInvitations.length === 0) {
-        initialData = {
-            id: 0,
-            slug: "demo-preview",
-            content: DEMO_DATA,
-            isPublished: false,
-        } as any;
-    }
+    // REMOVED: Fallback for special Demo Package static check
+    // We want demo users to Create Invitation first so they have a real slug and DB record.
+    // This ensures the Preview Link works correctly for them.
 
     // Prepare content with injected features for the client
     let dashboardInitialData = initialData;

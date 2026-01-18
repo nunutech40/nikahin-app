@@ -1129,6 +1129,11 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
         setShowConfetti(true);
         setShowWelcome(true);
 
+        // RESET SCROLL to top when opening content
+        if (typeof window !== "undefined") {
+            window.scrollTo({ top: 0, behavior: "instant" });
+        }
+
         setTimeout(() => setShowConfetti(false), 4000);
         setTimeout(() => setShowWelcome(false), 3500);
     };
