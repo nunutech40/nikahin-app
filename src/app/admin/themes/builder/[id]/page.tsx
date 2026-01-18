@@ -32,10 +32,18 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
     // State for the configuration being edited
     const [config, setConfig] = useState<DynamicThemeConfig>(MASTER_THEME_CONFIG);
     const [activeTab, setActiveTab] = useState<'global' | 'sections' | 'settings'>('global');
-    const [metadata, setMetadata] = useState({
+    const [metadata, setMetadata] = useState<{
+        name: string;
+        description: string;
+        category: string;
+        tier: 'free' | 'gold' | 'platinum';
+        isActive: boolean;
+    }>({
         name: "",
         description: "",
-        category: "dynamic"
+        category: "dynamic",
+        tier: "free",
+        isActive: true
     });
     const [previewMode, setPreviewMode] = useState<'mobile' | 'desktop'>('mobile');
     const [isSaving, setIsSaving] = useState(false);
@@ -72,7 +80,9 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                         setMetadata({
                             name: result.metadata.name,
                             description: result.metadata.description,
-                            category: result.metadata.category
+                            category: result.metadata.category,
+                            tier: result.metadata.tier as any,
+                            isActive: result.metadata.isActive
                         });
                     }
                 }
@@ -99,10 +109,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
         setIsSaving(true);
         try {
             // Using 'id' from params as slug
-            const result = await saveThemeConfig(id, config, {
-                ...metadata,
-                isFree: false
-            });
+            const result = await saveThemeConfig(id, config, metadata);
             if (result.success) {
                 alert("Tema berhasil disimpan!");
             } else {
@@ -344,11 +351,44 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                         <label className="text-sm text-slate-300 block mb-1">Deskripsi Singkat</label>
                                         <textarea
                                             value={metadata.description}
-                                            rows={3}
+                                            rows={2}
                                             placeholder="Jelaskan karakteristik tema ini..."
                                             onChange={(e) => setMetadata(prev => ({ ...prev, description: e.target.value }))}
                                             className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 resize-none"
                                         />
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-sm text-slate-300 block mb-1">Akses Tier</label>
+                                            <select
+                                                value={metadata.tier}
+                                                onChange={(e) => setMetadata(prev => ({ ...prev, tier: e.target.value as any }))}
+                                                className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                            >
+                                                <option value="free">Free</option>
+                                                <option value="gold">Gold</option>
+                                                <option value="platinum">Platinum</option>
+                                            </select>
+                                            <p className="text-[10px] text-slate-500 mt-1 italic">
+                                                * Gold: muncul di paket Gold & Platinum. Platinum: hanya di Platinum.
+                                            </p>
+                                        </div>
+
+                                        <div>
+                                            <label className="text-sm text-slate-300 block mb-1">Status</label>
+                                            <div className="h-[38px] flex items-center">
+                                                <button
+                                                    onClick={() => setMetadata(prev => ({ ...prev, isActive: !prev.isActive }))}
+                                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${metadata.isActive ? 'bg-amber-500' : 'bg-slate-700'}`}
+                                                >
+                                                    <span
+                                                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${metadata.isActive ? 'translate-x-6' : 'translate-x-1'}`}
+                                                    />
+                                                </button>
+                                                <span className="ml-3 text-sm text-slate-400">{metadata.isActive ? 'Aktif' : 'Non-aktif'}</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

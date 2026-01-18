@@ -55,6 +55,10 @@ export interface ThemeMetadata {
     category?: string;
     /** Whether this theme can be edited via the dynamic builder */
     isDynamic?: boolean;
+    /** Access Tier: 'free', 'gold', 'platinum' */
+    tier: 'free' | 'gold' | 'platinum';
+    /** Whether the theme is visible and can be used */
+    isActive: boolean;
 }
 
 /**
@@ -94,6 +98,8 @@ const THEME_REGISTRY: Record<string, ThemeRegistration> = {
             description:
                 "Undangan pernikahan dengan desain modern dan elegan. Cocok untuk berbagai jenis acara pernikahan.",
             isFree: true,
+            tier: "free",
+            isActive: true,
             category: "modern",
             previewImage: "/images/themes/basic-preview.png",
         },
@@ -105,6 +111,8 @@ const THEME_REGISTRY: Record<string, ThemeRegistration> = {
             name: "Standard Elegant",
             description: "Desain klasik rizka-ayu yang elegan dan bersih. Pilihan terbaik untuk pernikahan formal.",
             isFree: true,
+            tier: "free",
+            isActive: true,
             category: "elegant",
             previewImage: "/images/themes/basic-preview.png",
         },
@@ -116,6 +124,8 @@ const THEME_REGISTRY: Record<string, ThemeRegistration> = {
             name: "Custom Theme (Builder)",
             description: "Tema dinamis yang dibuat dengan No-Code Builder",
             isFree: false,
+            tier: "gold",
+            isActive: true,
             category: "dynamic",
             previewImage: "/images/themes/custom-preview.png",
         },

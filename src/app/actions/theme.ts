@@ -9,7 +9,14 @@ import { revalidatePath } from "next/cache";
 export async function saveThemeConfig(
     slug: string,
     config: DynamicThemeConfig,
-    metadata?: { name: string; description?: string; category?: string; isFree?: boolean }
+    metadata?: {
+        name: string;
+        description?: string;
+        category?: string;
+        isFree?: boolean;
+        tier?: 'free' | 'gold' | 'platinum';
+        isActive?: boolean;
+    }
 ) {
     try {
         // 1. Check if theme exists
@@ -24,6 +31,8 @@ export async function saveThemeConfig(
             ...(metadata?.description && { description: metadata.description }),
             ...(metadata?.category && { category: metadata.category }),
             ...(metadata?.isFree !== undefined && { isFree: metadata.isFree }),
+            ...(metadata?.tier && { tier: metadata.tier }),
+            ...(metadata?.isActive !== undefined && { isActive: metadata.isActive }),
         };
 
         if (existingTheme) {
@@ -39,7 +48,9 @@ export async function saveThemeConfig(
                 description: metadata?.description || "Tema dinamis yang dibuat dengan No-Code Builder",
                 config: config,
                 category: metadata?.category || "dynamic",
-                isFree: metadata?.isFree || false
+                isFree: metadata?.isFree || false,
+                tier: metadata?.tier || "free",
+                isActive: metadata?.isActive ?? true
             });
         }
 
@@ -70,7 +81,9 @@ export async function getThemeConfig(slug: string) {
                 name: theme.name || "",
                 description: theme.description || "",
                 category: theme.category || "dynamic",
-                isFree: theme.isFree || false
+                isFree: theme.isFree || false,
+                tier: theme.tier as any,
+                isActive: theme.isActive
             }
         };
     } catch (error) {
@@ -88,5 +101,16 @@ export async function listThemes() {
     } catch (error) {
         console.error("Failed to fetch themes:", error);
         return { success: false, error: "Failed to fetch themes" };
+    }
+}
+
+export async function deleteTheme(slug: string) {
+    try {
+        await db.delete(themes).where(eq(themes.slug, slug));
+        revalidatePath("/admin/themes");
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete theme:", error);
+        return { success: false, error: "Failed to delete theme" };
     }
 }

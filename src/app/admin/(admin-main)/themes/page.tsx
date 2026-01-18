@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getAllThemes, ThemeMetadata } from "@/lib/themeRegistry";
-import { listThemes } from "@/app/actions/theme";
+import { listThemes, deleteTheme } from "@/app/actions/theme";
 
 export default function ThemesPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -31,12 +31,25 @@ export default function ThemesPage() {
                 description: t.description || "",
                 isFree: t.isFree || false,
                 category: t.category || "dynamic",
+                tier: (t as any).tier || "free",
+                isActive: (t as any).isActive ?? true,
                 previewImage: (t as any).previewImage || undefined,
                 isDynamic: !!t.config // Mark if it can be edited via builder
             }));
             setThemes(dbThemes);
         }
         setIsLoading(false);
+    };
+
+    const handleDelete = async (slug: string) => {
+        if (!confirm("Apakah Anda yakin ingin menghapus tema ini?")) return;
+
+        const result = await deleteTheme(slug);
+        if (result.success) {
+            fetchThemes();
+        } else {
+            alert("Gagal menghapus tema");
+        }
     };
 
     React.useEffect(() => {
@@ -117,12 +130,97 @@ export default function ThemesPage() {
                 </select>
             </div>
 
-            {/* Themes Grid */}
-            <Suspense fallback={<div className="text-center py-12 text-slate-500">Loading themes...</div>}>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredThemes.map((theme) => (
-                        <ThemeCard key={theme.id} theme={theme} />
-                    ))}
+            {/* Themes List (Compact Table Style) */}
+            <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="border-b border-slate-800 bg-slate-800/50">
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 border-r border-slate-800">Preview</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 border-r border-slate-800">Nama Tema & Detail</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 border-r border-slate-800">Kategori</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 border-r border-slate-800">Tier Akses</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 border-r border-slate-800">Status</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-800">
+                            {filteredThemes.map((theme) => (
+                                <tr key={theme.id} className="hover:bg-slate-800/30 transition-colors group">
+                                    <td className="px-6 py-4 w-32 border-r border-slate-800">
+                                        <div className="aspect-video bg-slate-800 rounded-md overflow-hidden relative">
+                                            {theme.previewImage ? (
+                                                <img src={theme.previewImage} alt={theme.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full flex items-center justify-center text-slate-700">
+                                                    <Monitor className="w-6 h-6" />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 border-r border-slate-800">
+                                        <div>
+                                            <h3 className="font-bold text-slate-100">{theme.name}</h3>
+                                            <p className="text-xs text-slate-500 line-clamp-1">{theme.description}</p>
+                                            <code className="text-[10px] text-amber-500/70 mt-1 block">slug: {theme.id}</code>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 border-r border-slate-800">
+                                        <span className="text-xs text-slate-400 capitalize bg-slate-800 px-2 py-1 rounded border border-slate-700">
+                                            {theme.category}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 border-r border-slate-800">
+                                        {theme.tier === 'free' ? (
+                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20 uppercase">
+                                                <Plus className="w-3 h-3 rotate-45" /> Free
+                                            </span>
+                                        ) : theme.tier === 'gold' ? (
+                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20 uppercase">
+                                                Gold
+                                            </span>
+                                        ) : (
+                                            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/10 text-purple-400 text-[10px] font-bold border border-purple-500/20 uppercase">
+                                                Platinum
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td className="px-6 py-4 border-r border-slate-800">
+                                        <div className="flex items-center gap-2">
+                                            <div className={`w-2 h-2 rounded-full ${theme.isActive ? 'bg-green-500' : 'bg-slate-600'}`}></div>
+                                            <span className={`text-[11px] font-medium ${theme.isActive ? 'text-green-400' : 'text-slate-500'}`}>
+                                                {theme.isActive ? 'Aktif' : 'Non-aktif'}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            {theme.isDynamic ? (
+                                                <Link
+                                                    href={`/admin/themes/builder/${theme.id}`}
+                                                    className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-all"
+                                                    title="Edit Config"
+                                                >
+                                                    <Edit className="w-4 h-4" />
+                                                </Link>
+                                            ) : (
+                                                <div className="p-2 text-slate-700 cursor-not-allowed" title="Hardcoded (ReadOnly)">
+                                                    <Monitor className="w-4 h-4" />
+                                                </div>
+                                            )}
+                                            <button
+                                                onClick={() => handleDelete(theme.id)}
+                                                className="p-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white rounded-lg transition-all"
+                                                title="Hapus"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
 
                 {filteredThemes.length === 0 && (
@@ -131,70 +229,8 @@ export default function ThemesPage() {
                         <p>Tidak ada tema yang ditemukan.</p>
                     </div>
                 )}
-            </Suspense>
-        </div>
-    );
-}
-
-function ThemeCard({ theme }: { theme: ThemeMetadata }) {
-    return (
-        <div className="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-amber-500/50 transition-all group">
-            {/* Preview Image */}
-            <div className="relative aspect-video bg-slate-800">
-                {theme.previewImage ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                        src={theme.previewImage}
-                        alt={theme.name}
-                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                    />
-                ) : (
-                    <div className="flex items-center justify-center w-full h-full text-slate-600">
-                        <Monitor className="w-12 h-12" />
-                    </div>
-                )}
-
-                {/* Badges */}
-                <div className="absolute top-3 left-3 flex gap-2">
-                    {theme.isFree ? (
-                        <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded font-medium border border-green-500/30">Free</span>
-                    ) : (
-                        <span className="px-2 py-1 bg-amber-500/20 text-amber-400 text-xs rounded font-medium border border-amber-500/30">Premium</span>
-                    )}
-                    <span className="px-2 py-1 bg-slate-900/80 text-slate-300 text-xs rounded font-medium border border-slate-700 capitalize">
-                        {theme.category}
-                    </span>
-                </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-lg text-slate-100">{theme.name}</h3>
-                </div>
-                <p className="text-slate-400 text-sm line-clamp-2 mb-4 h-10">
-                    {theme.description}
-                </p>
-
-                <div className="flex items-center gap-2 pt-4 border-t border-slate-800">
-                    {theme.isDynamic ? (
-                        <Link
-                            href={`/admin/themes/builder/${theme.id}`}
-                            className="flex-1 flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-700"
-                        >
-                            <Edit className="w-4 h-4" /> Edit Config
-                        </Link>
-                    ) : (
-                        <button disabled className="flex-1 flex items-center justify-center gap-2 bg-transparent text-slate-600 cursor-not-allowed py-2 rounded-lg text-sm font-medium italic">
-                            Hardcoded
-                        </button>
-                    )}
-
-                    <button className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors" title="Preview">
-                        <Eye className="w-4 h-4" />
-                    </button>
-                </div>
             </div>
         </div>
     );
 }
+

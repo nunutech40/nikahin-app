@@ -17,6 +17,7 @@ import { relations } from "drizzle-orm";
 
 export const userRoleEnum = pgEnum("user_role", ["admin", "customer", "agency"]);
 export const attendanceEnum = pgEnum("attendance", ["hadir", "tidak", "ragu"]);
+export const themeTierEnum = pgEnum("theme_tier", ["free", "gold", "platinum"]);
 
 // ============================================
 // USERS TABLE
@@ -93,6 +94,7 @@ export const themes = pgTable("themes", {
   previewImage: text("preview_image"),
   config: jsonb("config"), // For Dynamic Theme Engine (Iteration 9)
   isFree: boolean("is_free").default(true).notNull(),
+  tier: themeTierEnum("tier").default("free").notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
