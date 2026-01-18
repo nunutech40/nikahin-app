@@ -4,18 +4,36 @@ import { redirect } from "next/navigation";
 import { getUserInvitations } from "@/lib/queries";
 import { db } from "@/db";
 import DashboardClient from "./DashboardClient";
+import { MOCK_DATA } from "@/data/mockData";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
 
+    // ============================================
+    // GUEST MODE: User not logged in
+    // ============================================
     if (!session?.user) {
-        redirect("/login");
+        // Guest can access dashboard for testing
+        // But with limited functionality (no save, no publish)
+        return (
+            <DashboardClient
+                initialData={null}
+                userId={0}
+                userRole="guest"
+                availableThemes={[]}
+                availablePackages={[]}
+                guestMode={true}
+            />
+        );
     }
 
+    // ============================================
+    // LOGGED IN MODE: Normal flow
+    // ============================================
     const userId = Number((session.user as any).id);
     const userRole = (session.user as any).role;
 
-    // JIKA ADMIN & AGENCY: Lempar ke portal masing-masing, jangan ke dashboard user biasa
+    // JIKA ADMIN & AGENCY: Lempar ke portal masing-masing
     if (userRole === "admin") {
         redirect("/admin");
     }
@@ -51,6 +69,7 @@ export default async function DashboardPage() {
             userRole={userRole}
             availableThemes={availableThemes as any}
             availablePackages={availablePackages as any}
+            guestMode={false}
         />
     );
 }

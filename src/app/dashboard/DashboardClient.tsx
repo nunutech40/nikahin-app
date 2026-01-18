@@ -37,6 +37,7 @@ interface DashboardClientProps {
     userRole?: string;
     availableThemes: { id: number; slug: string; name: string }[];
     availablePackages: { id: number; slug: string; name: string }[];
+    guestMode?: boolean;
 }
 
 export default function DashboardPage({
@@ -44,7 +45,8 @@ export default function DashboardPage({
     userId,
     userRole,
     availableThemes,
-    availablePackages
+    availablePackages,
+    guestMode = false
 }: DashboardClientProps) {
     // State
     const [invitationData, setInvitationData] = useState<InvitationData>(
@@ -261,55 +263,99 @@ export default function DashboardPage({
         { id: "lainnya", label: "Lainnya", icon: Music },
     ];
 
-    if (!initialData) {
+    // Guest Mode: Show demo editor with CTA to register
+    if (guestMode || !initialData) {
         return (
             <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-4 text-center">
                 <div className="max-w-md bg-white p-12 rounded-3xl shadow-xl border border-gray-100">
                     <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <Heart className="w-10 h-10 text-amber-500 fill-current opacity-20" />
-                    </div>
-                    <h2 className="text-2xl font-serif font-bold text-gray-800 mb-4">Kamu Belum Punya Undangan</h2>
-                    <p className="text-gray-500 mb-8">Wah, mulai buat undangan pertamamu sekarang dan rayakan hari bahagiamu!</p>
-
-                    <div className="mb-6 text-left">
-                        <label className="text-sm font-medium text-gray-700 ml-1 mb-2 block">Masukkan URL Undangan</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">nikahin.com/</span>
-                            <input
-                                type="text"
-                                placeholder="misal: nunu-wedding"
-                                value={newSlug}
-                                onChange={(e) => setNewSlug(e.target.value)}
-                                className="w-full pl-[95px] pr-4 py-4 rounded-2xl border border-gray-200 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 outline-none transition-all placeholder:text-gray-300"
-                            />
-                        </div>
+                        {guestMode ? (
+                            <Lock className="w-10 h-10 text-amber-500" />
+                        ) : (
+                            <Heart className="w-10 h-10 text-amber-500 fill-current opacity-20" />
+                        )}
                     </div>
 
-                    <button
-                        onClick={handleCreateFirstInvitation}
-                        disabled={isCreating}
-                        className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
-                    >
-                        {isCreating ? "Sedang Membuat..." : "Buat Undangan Sekarang"}
-                    </button>
-                    <button
-                        onClick={() => signOut({ callbackUrl: "/login" })}
-                        className="block w-full mt-6 text-sm text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        Atau keluar dari akun
-                    </button>
+                    {guestMode ? (
+                        <>
+                            <h2 className="text-2xl font-serif font-bold text-gray-800 mb-4">
+                                Mode Demo - Guest
+                            </h2>
+                            <p className="text-gray-500 mb-8">
+                                Daftar sekarang untuk menyimpan dan mempublish undangan Anda!
+                            </p>
 
-                    {userRole === 'admin' && (
-                        <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                            <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">Administrator Access</p>
-                            <Link
-                                href="/admin"
-                                className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl shadow-slate-200 transition-all active:scale-[0.98] flex items-center justify-center gap-3 hover:bg-slate-800"
+                            <div className="space-y-3">
+                                <Link
+                                    href="/register"
+                                    className="block w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[#D4AF37]/20 transition-all"
+                                >
+                                    Daftar Gratis Sekarang
+                                </Link>
+                                <Link
+                                    href="/login"
+                                    className="block w-full text-sm text-gray-400 hover:text-gray-600 transition-colors py-2"
+                                >
+                                    Sudah punya akun? Login
+                                </Link>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <h2 className="text-2xl font-serif font-bold text-gray-800 mb-4">
+                                Kamu Belum Punya Undangan
+                            </h2>
+                            <p className="text-gray-500 mb-8">
+                                Wah, mulai buat undangan pertamamu sekarang dan rayakan hari bahagiamu!
+                            </p>
+
+                            <div className="mb-6 text-left">
+                                <label className="text-sm font-medium text-gray-700 ml-1 mb-2 block">
+                                    Masukkan URL Undangan
+                                </label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                                        nikahin.com/
+                                    </span>
+                                    <input
+                                        type="text"
+                                        placeholder="misal: nunu-wedding"
+                                        value={newSlug}
+                                        onChange={(e) => setNewSlug(e.target.value)}
+                                        className="w-full pl-[95px] pr-4 py-4 rounded-2xl border border-gray-200 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/10 outline-none transition-all placeholder:text-gray-300"
+                                    />
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleCreateFirstInvitation}
+                                disabled={isCreating}
+                                className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-semibold shadow-lg shadow-[#D4AF37]/20 transition-all active:scale-[0.98] disabled:opacity-50"
                             >
-                                <ShieldCheck className="w-5 h-5 text-amber-500" />
-                                Masuk ke Admin Panel
-                            </Link>
-                        </div>
+                                {isCreating ? "Sedang Membuat..." : "Buat Undangan Sekarang"}
+                            </button>
+                            <button
+                                onClick={() => signOut({ callbackUrl: "/login" })}
+                                className="block w-full mt-6 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                Atau keluar dari akun
+                            </button>
+
+                            {userRole === 'admin' && (
+                                <div className="mt-8 pt-8 border-t border-gray-100 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                    <p className="text-[10px] font-bold text-amber-600 uppercase tracking-[0.2em] mb-3">
+                                        Administrator Access
+                                    </p>
+                                    <Link
+                                        href="/admin"
+                                        className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-xl shadow-slate-200 transition-all active:scale-[0.98] flex items-center justify-center gap-3 hover:bg-slate-800"
+                                    >
+                                        <ShieldCheck className="w-5 h-5 text-amber-500" />
+                                        Masuk ke Admin Panel
+                                    </Link>
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

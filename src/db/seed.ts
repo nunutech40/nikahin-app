@@ -45,6 +45,7 @@ async function seed() {
         // 2. Seed Packages (Updated Pricing)
         console.log("  - Seeding packages...");
         const packageList = [
+            { slug: "demo", name: "Demo", description: "Try all features - No save, no publish", price: 0 },
             { slug: "bronze", name: "Bronze", description: "Paket Free Trial - Coba dulu sebelum bayar", price: 0 },
             { slug: "silver", name: "Silver", description: "Paket Best Value - Paling populer", price: 150000 },
             { slug: "gold", name: "Gold", description: "Paket Premium - Fitur lengkap eksklusif", price: 300000 },
@@ -61,6 +62,7 @@ async function seed() {
         console.log("  - Linking features to packages...");
 
         // Get all packages
+        const demoPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "demo") });
         const bronzePkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "bronze") });
         const silverPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "silver") });
         const goldPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "gold") });
@@ -68,6 +70,24 @@ async function seed() {
         // Get all features
         const allFeatures = await db.query.features.findMany();
         const featureMap = new Map(allFeatures.map(f => [f.code, f.id]));
+
+        // Demo Package Features (ALL FEATURES for testing)
+        if (demoPkg) {
+            const demoFeatures = [
+                "rsvp_basic", "single_event", // Bronze
+                "rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", // Silver
+                "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding" // Gold
+            ];
+            for (const code of demoFeatures) {
+                const featureId = featureMap.get(code);
+                if (featureId) {
+                    await db.insert(schema.packageFeatures).values({
+                        packageId: demoPkg.id,
+                        featureId: featureId
+                    }).onConflictDoNothing();
+                }
+            }
+        }
 
         // Bronze Package Features
         if (bronzePkg) {

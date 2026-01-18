@@ -69,7 +69,7 @@ export default async function HomePage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                href="/demo"
+                href="/demo-register"
                 className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#D4AF37] to-[#b28f1f] text-white rounded-2xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all shadow-xl shadow-[#D4AF37]/30 flex items-center justify-center gap-3 group"
               >
                 <Sparkles className="w-6 h-6" />
