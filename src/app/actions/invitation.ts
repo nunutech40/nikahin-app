@@ -109,7 +109,7 @@ export async function createInvitation(themeId: number, packageId: number, slug:
             packageId,
             slug,
             content,
-            isPublished: true,
+            isPublished: false, // Changed: Default to unpublished (Testing Mode)
         }).returning();
 
         return { success: true, data: result[0] };
@@ -118,3 +118,67 @@ export async function createInvitation(themeId: number, packageId: number, slug:
         return { success: false, error: "Gagal membuat undangan" };
     }
 }
+
+/**
+ * Publish an invitation (Testing Mode: Requires user.isActive = true)
+ */
+export async function publishInvitation(invitationId: number) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            return { success: false, error: "Authentication required" };
+        }
+
+        const userId = Number((session.user as any).id);
+
+        // 1. Check if user is active (has paid)
+        const user = await db.query.users.findFirst({
+            where: (users, { eq }) => eq(users.id, userId),
+            with: {
+                package: true
+            }
+        });
+
+        if (!user) {
+            return { success: false, error: "User not found" };
+        }
+
+        // 2. TESTING MODE CHECK: User must be active to publish
+        if (!user.isActive) {
+            return {
+                success: false,
+                error: "payment_required",
+                message: "Silakan lakukan pembayaran terlebih dahulu untuk mempublish undangan Anda",
+                packageName: user.package?.name || "Unknown",
+                packagePrice: user.package?.price || 0
+            };
+        }
+
+        // 3. Verify ownership
+        const invitation = await db.query.invitations.findFirst({
+            where: and(eq(invitations.id, invitationId), eq(invitations.userId, userId))
+        });
+
+        if (!invitation) {
+            return { success: false, error: "Invitation not found or unauthorized" };
+        }
+
+        // 4. Publish the invitation
+        await db.update(invitations)
+            .set({
+                isPublished: true,
+                updatedAt: new Date(),
+            })
+            .where(eq(invitations.id, invitationId));
+
+        revalidatePath(`/${invitation.slug}`);
+        revalidatePath("/dashboard");
+
+        return { success: true, message: "Undangan berhasil dipublish!" };
+    } catch (error) {
+        console.error("❌ Publish Invitation Error:", error);
+        return { success: false, error: "Gagal mempublish undangan" };
+    }
+}
+

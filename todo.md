@@ -497,38 +497,38 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 ### 🚀 Phase 7: Commercial Launch & Go-to-Market (Package-First Registration)
 
 #### **Phase 7.1: Pricing Table & Package Selection**
-- [ ] **T7.1.1** - Add Pricing Section to Landing Page (`/`)
-  - [ ] Create pricing card component (Bronze, Silver, Gold)
-  - [ ] Add feature comparison table
-  - [ ] Add "Pilih Paket" CTA button per package
-  - [ ] Link to `/register?package=bronze|silver|gold`
-- [ ] **T7.1.2** - Update Package Seeder
-  - [ ] Seed Bronze (Free Trial - Rp 0)
-  - [ ] Seed Silver (Best Value - Rp 150k)
-  - [ ] Seed Gold (Premium - Rp 300k)
-  - [ ] Seed package_features mapping
+- [x] **T7.1.1** - Add Pricing Section to Landing Page (`/`)
+  - [x] Create pricing card component (Bronze, Silver, Gold)
+  - [x] Add feature comparison table
+  - [x] Add "Pilih Paket" CTA button per package
+  - [x] Link to `/register?package=bronze|silver|gold`
+- [x] **T7.1.2** - Update Package Seeder
+  - [x] Seed Bronze (Free Trial - Rp 0)
+  - [x] Seed Silver (Best Value - Rp 150k)
+  - [x] Seed Gold (Premium - Rp 300k)
+  - [x] Seed package_features mapping
 
 #### **Phase 7.2: Package-Based Registration Flow**
-- [ ] **T7.2.1** - Update Register Page
-  - [ ] Read `?package=` query param from URL
-  - [ ] Display selected package badge in form
-  - [ ] Pass package selection to register action
-- [ ] **T7.2.2** - Update Register Server Action
-  - [ ] Accept `selectedPackage` parameter
-  - [ ] Auto-assign package to user on registration
-  - [ ] Set `isActive = false` by default (unpaid)
+- [x] **T7.2.1** - Update Register Page
+  - [x] Read `?package=` query param from URL
+  - [x] Display selected package badge in form
+  - [x] Pass package selection to register action
+- [x] **T7.2.2** - Update Register Server Action
+  - [x] Accept `selectedPackage` parameter
+  - [x] Auto-assign package to user on registration
+  - [x] Set `isActive = false` by default (unpaid)
   - [ ] Create default invitation draft with selected package
 
 #### **Phase 7.3: Testing Mode (Full Features, No Publish)**
-- [ ] **T7.3.1** - Implement Feature Access Logic
-  - [ ] User can access ALL features based on their package
-  - [ ] No feature gating in editor (semua fitur terbuka)
-  - [ ] Preview works normally
-- [ ] **T7.3.2** - Implement Publish Restriction
-  - [ ] Check `user.isActive` before allowing publish
-  - [ ] Disable "Publish" button if `isActive = false`
-  - [ ] Show "Bayar untuk Publish" message/modal
-  - [ ] Add "Bayar Sekarang" CTA button
+- [x] **T7.3.1** - Implement Feature Access Logic
+  - [x] User can access ALL features based on their package
+  - [x] No feature gating in editor (semua fitur terbuka)
+  - [x] Preview works normally
+- [x] **T7.3.2** - Implement Publish Restriction
+  - [x] Check `user.isActive` before allowing publish
+  - [x] Disable "Publish" button if `isActive = false`
+  - [x] Show "Bayar untuk Publish" message/modal
+  - [x] Add "Bayar Sekarang" CTA button
 
 #### **Phase 7.4: Payment & Activation Flow**
 - [ ] **T7.4.1** - Create Payment Page/Modal

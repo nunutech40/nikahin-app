@@ -67,18 +67,26 @@ export default async function HomePage() {
               Buat undangan pernikahan digital yang modern, interaktif, dan memukau hanya dalam hitungan menit. Tanpa ribet, langsung live!
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                href="/demo"
+                className="w-full sm:w-auto px-10 py-5 bg-gradient-to-r from-[#D4AF37] to-[#b28f1f] text-white rounded-2xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition-all shadow-xl shadow-[#D4AF37]/30 flex items-center justify-center gap-3 group"
+              >
+                <Sparkles className="w-6 h-6" />
+                Coba Gratis Sekarang
+              </Link>
+
               <Link
                 href="/register"
-                className="w-full sm:w-auto px-10 py-5 bg-[#D4AF37] text-white rounded-2xl font-bold text-lg hover:bg-[#b28f1f] transition-all shadow-xl shadow-[#D4AF37]/30 flex items-center justify-center gap-3 group"
+                className="w-full sm:w-auto px-10 py-5 bg-white text-gray-700 border-2 border-gray-200 rounded-2xl font-bold text-lg hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center justify-center gap-3 group"
               >
-                Buat Undangan Sekarang
+                Buat Akun
                 <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
               </Link>
 
               <Link
                 href="/rizka-ayu"
-                className="w-full sm:w-auto px-10 py-5 bg-white text-gray-700 border-2 border-gray-100 rounded-2xl font-bold text-lg hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all flex items-center justify-center gap-3"
+                className="w-full sm:w-auto px-10 py-5 bg-gray-50 text-gray-600 border border-gray-200 rounded-2xl font-semibold text-lg hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
               >
                 Lihat Contoh
               </Link>
