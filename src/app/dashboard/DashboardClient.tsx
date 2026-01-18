@@ -45,7 +45,9 @@ import GiftForm from "@/components/dashboard/forms/GiftForm";
 import QuotesForm from "@/components/dashboard/forms/QuotesForm";
 import MusicForm from "@/components/dashboard/forms/MusicForm";
 import ThemeSettingsForm from "@/components/dashboard/forms/ThemeSettingsForm";
-import { saveInvitation, createInvitation } from "@/app/actions/invitation";
+import ThemeSelectorForm from "@/components/dashboard/forms/ThemeSelectorForm";
+import { saveInvitation, createInvitation, updateInvitationTheme } from "@/app/actions/invitation";
+import { getThemeComponent } from "@/lib/themeRegistry";
 
 interface DashboardClientProps {
     initialData: any | null;
@@ -139,11 +141,12 @@ export default function DashboardClient({
     const tabs = [
         { id: 'mempelai', label: 'Mempelai', icon: Users },
         { id: 'acara', label: 'Acara', icon: Calendar },
+        { id: 'tema', label: 'Tema', icon: Palette },
+        { id: 'tampilan', label: 'Custom', icon: Sparkles },
         { id: 'cerita', label: 'Cerita', icon: Heart },
         { id: 'galeri', label: 'Galeri', icon: ImageIcon },
         { id: 'hadiah', label: 'Hadiah', icon: Gift },
-        { id: 'tampilan', label: 'Tampilan', icon: Palette },
-        { id: 'lainnya', label: 'Lainnya', icon: Sparkles },
+        { id: 'lainnya', label: 'Lainnya', icon: Menu },
     ];
 
     const isTabLocked = (tabId: string) => {
@@ -245,6 +248,24 @@ export default function DashboardClient({
     const handleCoverChange = (value: string) => {
         if (isDemo && !canChangeCover(userPackageSlug)) { setUpgradeFeature("Cover Image"); setShowUpgradeModal(true); return; }
         setInvitationData(prev => ({ ...prev, coverImage: value }));
+    };
+
+    const handleThemeChange = async (themeId: number) => {
+        if (!invitationId) return;
+        setIsSaving(true);
+        try {
+            const result = await updateInvitationTheme(invitationId, themeId);
+            if (result.success) {
+                toast.success("Tema berhasil diperbarui!");
+                // Reload to fetch new theme relation if needed, or just update UI
+                // For simplicity, we can reload to ensure server component reflects change
+                window.location.reload();
+            } else {
+                toast.error(result.error || "Gagal memperbarui tema.");
+            }
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const handleCreateFirstInvitation = async () => {
@@ -350,6 +371,14 @@ export default function DashboardClient({
                                 <GiftForm giftOptions={invitationData.giftOptions || []} shippingAddress={invitationData.shippingAddress || { recipient: '', address: '' }} onGiftOptionsChange={handleGiftOptionsChange} onAddressChange={handleAddressChange} errorSource={zodError} />
                             </FeatureGate>
                         )}
+                        {activeTab === "tema" && (
+                            <ThemeSelectorForm
+                                themes={availableThemes}
+                                currentThemeId={initialData.theme?.slug || 'basic'}
+                                onThemeChange={handleThemeChange}
+                                userPackageSlug={userPackageSlug}
+                            />
+                        )}
                         {activeTab === "tampilan" && (
                             <ThemeSettingsForm
                                 themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
@@ -393,13 +422,19 @@ export default function DashboardClient({
 
                         {/* THE THEME PREVIEW */}
                         <div className="h-full overflow-y-auto custom-scrollbar bg-white">
-                            <BasicTheme
-                                data={previewData}
-                                guestName="Bpk. Fulan & Kel."
-                                isPreview={true}
-                                isMobile={previewMode === "mobile"}
-                                invitationId={invitationId || undefined}
-                            />
+                            {(() => {
+                                const ThemeComponent = getThemeComponent(initialData.theme?.slug || 'basic');
+                                if (!ThemeComponent) return <div className="p-8 text-center text-slate-400">Theme not found</div>;
+                                return (
+                                    <ThemeComponent
+                                        data={previewData}
+                                        guestName="Bpk. Fulan & Kel."
+                                        isPreview={true}
+                                        isMobile={previewMode === "mobile"}
+                                        invitationId={invitationId || undefined}
+                                    />
+                                );
+                            })()}
                         </div>
                     </div>
 

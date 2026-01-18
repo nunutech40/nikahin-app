@@ -182,3 +182,41 @@ export async function publishInvitation(invitationId: number) {
     }
 }
 
+/**
+ * Update the theme of an invitation
+ */
+export async function updateInvitationTheme(invitationId: number, themeId: number) {
+    try {
+        const session = await getServerSession(authOptions);
+
+        if (!session?.user) {
+            return { success: false, error: "Authentication required" };
+        }
+
+        const userId = Number((session.user as any).id);
+
+        // Verify ownership
+        const invitation = await db.query.invitations.findFirst({
+            where: and(eq(invitations.id, invitationId), eq(invitations.userId, userId))
+        });
+
+        if (!invitation) {
+            return { success: false, error: "Invitation not found or unauthorized" };
+        }
+
+        await db.update(invitations)
+            .set({
+                themeId: themeId,
+                updatedAt: new Date(),
+            })
+            .where(eq(invitations.id, invitationId));
+
+        revalidatePath(`/${invitation.slug}`);
+        revalidatePath("/dashboard");
+
+        return { success: true };
+    } catch (error) {
+        console.error("❌ Update Theme Error:", error);
+        return { success: false, error: "Gagal memperbarui tema" };
+    }
+}
