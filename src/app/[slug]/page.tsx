@@ -92,14 +92,16 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         return notFound();
     }
 
-    const { data, themeId, invitationId, guests, packageSlug } = result;
+    const { data, themeId, invitationId, guests, packageSlug, features } = result;
 
     // 2.5. Track Analytics (Internal)
     trackVisit(invitationId);
 
     const isDemo = packageSlug === "demo";
 
-    // 2.6. FORCE PLATINUM FEATURES FOR DEMO PREVIEW
+    // 2.6. PREPARE DATA FOR PREVIEW
+    // For Demo: Merge with DEMO_DATA and Force Platinum Features
+    // For Others: Use user data but ensure 'features' list is up-to-date from package
     const previewData = isDemo ? {
         ...DEMO_DATA,
         ...data,
@@ -121,7 +123,10 @@ export default async function InvitationPage({ params, searchParams }: PageProps
             'quotes', 'unlimited_events', 'remove_branding', 'cover_image',
             'video_background', 'live_streaming'
         ]
-    } : data;
+    } : {
+        ...data,
+        features: features // Ensure authoritative features from DB are used
+    };
 
     // 3. Dynamic theme loading via registry
     const ThemeComponent = getThemeComponent(themeId);
