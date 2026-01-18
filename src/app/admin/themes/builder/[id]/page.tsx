@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { MASTER_THEME_CONFIG } from "@/components/themes/masterConfig";
+import { STANDARD_THEME_CONFIG, MODERN_DARK_CONFIG } from "@/components/themes/presets";
 import { DynamicThemeConfig, SectionBlock } from "@/types/invitation";
 
 export default function ThemeBuilderPage({ params }: { params: Promise<{ id: string }> }) {
@@ -35,9 +36,28 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
     const [isLoading, setIsLoading] = useState(true);
     const [showAddMenu, setShowAddMenu] = useState(false);
 
+    const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const isImport = searchParams?.get('import') === 'true';
+
     // Fetch initial config from DB
     useEffect(() => {
         async function loadConfig() {
+            // Priority 1: Check if it's an import from localStorage
+            if (isImport) {
+                const importData = localStorage.getItem(`import_${id}`);
+                if (importData) {
+                    try {
+                        setConfig(JSON.parse(importData));
+                        setIsLoading(false);
+                        // Clean up
+                        localStorage.removeItem(`import_${id}`);
+                        return;
+                    } catch (e) {
+                        console.error("Failed to parse import data", e);
+                    }
+                }
+            }
+
             try {
                 const result = await getThemeConfig(id);
                 if (result.success && result.config) {
@@ -50,8 +70,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
             }
         }
         loadConfig();
-    }, [id]);
-
+    }, [id, isImport]);
     // Send live updates to iframe whenever config changes
     React.useEffect(() => {
         const iframe = document.querySelector('iframe');
@@ -362,6 +381,57 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                             <option value="Open Sans">Open Sans</option>
                                             <option value="Spectral">Spectral</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4 pt-6 border-t border-slate-800">
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Template Tema</h3>
+                                    <div className="grid grid-cols-1 gap-2">
+                                        <button
+                                            onClick={() => {
+                                                if (confirm("Gunakan template Standard Elegant? Ini akan menimpa pengaturan saat ini.")) {
+                                                    setConfig(STANDARD_THEME_CONFIG);
+                                                }
+                                            }}
+                                            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs text-left text-slate-300 border border-slate-700 transition-colors"
+                                        >
+                                            Standard Elegant (Rizka Ayu)
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                if (confirm("Gunakan template Modern Dark? Ini akan menimpa pengaturan saat ini.")) {
+                                                    setConfig(MODERN_DARK_CONFIG);
+                                                }
+                                            }}
+                                            className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs text-left text-slate-300 border border-slate-700 transition-colors"
+                                        >
+                                            Modern Dark
+                                        </button>
+                                    </div>
+
+                                    <div className="pt-4">
+                                        <label className="text-[10px] text-slate-500 block mb-2 uppercase font-black tracking-widest">Import Struktur JSON</label>
+                                        <button
+                                            onClick={() => {
+                                                const json = prompt("Paste struktur JSON tema di sini:");
+                                                if (json) {
+                                                    try {
+                                                        const parsed = JSON.parse(json);
+                                                        if (parsed.global && parsed.sections) {
+                                                            setConfig(parsed);
+                                                            alert("Tema berhasil di-import!");
+                                                        } else {
+                                                            alert("Struktur JSON tidak valid. Pastikan ada 'global' dan 'sections'.");
+                                                        }
+                                                    } catch (e) {
+                                                        alert("Gagal membaca JSON: " + e);
+                                                    }
+                                                }
+                                            }}
+                                            className="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-400 py-2 rounded text-xs border border-dashed border-slate-600 transition-all"
+                                        >
+                                            <Layers className="w-3 h-3" /> Tempel JSON Tema
+                                        </button>
                                     </div>
                                 </div>
                             </div>

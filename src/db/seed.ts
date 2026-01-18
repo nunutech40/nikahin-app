@@ -142,8 +142,15 @@ async function seed() {
         // 4. Seed Themes
         console.log("  - Seeding themes...");
         const themeList = [
-            { slug: "basic", name: "Basic Theme", description: "Theme bawaan yang elegan", category: "elegant", isFree: true },
-            { slug: "modern", name: "Modern Dark", description: "Nuansa gelap yang mewah", category: "modern", isFree: false },
+            { slug: "basic", name: "Legacy Theme", description: "Theme bawaan lama", category: "classic", isFree: true },
+            {
+                slug: "standard",
+                name: "Standard Elegant",
+                description: "Desain klasik rizka-ayu yang elegan dan bersih.",
+                category: "elegant",
+                isFree: true,
+                config: MASTER_THEME_CONFIG
+            },
             {
                 slug: "custom_default",
                 name: "Custom Theme (Builder)",
@@ -157,7 +164,7 @@ async function seed() {
         for (const t of themeList) {
             await db.insert(schema.themes).values(t).onConflictDoUpdate({
                 target: schema.themes.slug,
-                set: { name: t.name, description: t.description, category: t.category, isFree: t.isFree }
+                set: { name: t.name, description: t.description, category: t.category, isFree: t.isFree, config: t.config }
             });
         }
 
@@ -175,7 +182,7 @@ async function seed() {
 
         // 6. Seed Invitation
         console.log("  - Seeding sample invitation...");
-        const theme = await db.query.themes.findFirst({ where: eq(schema.themes.slug, "basic") });
+        const theme = await db.query.themes.findFirst({ where: eq(schema.themes.slug, "standard") });
         const pkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "silver") });
 
         if (user[0] && theme && pkg) {

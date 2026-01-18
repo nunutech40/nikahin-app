@@ -8,7 +8,8 @@ import {
     Monitor,
     Edit,
     Trash2,
-    Eye
+    Eye,
+    Layers
 } from "lucide-react";
 import Link from "next/link";
 import { getAllThemes, ThemeMetadata } from "@/lib/themeRegistry";
@@ -32,13 +33,43 @@ export default function ThemesPage() {
                     </h1>
                     <p className="text-slate-400">Atur koleksi tema undangan dan buat template baru.</p>
                 </div>
-                <Link
-                    href={`/admin/themes/builder/theme_${Date.now()}`}
-                    className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 px-4 py-2 rounded-lg font-bold hover:shadow-lg hover:shadow-amber-500/20 transition-all"
-                >
-                    <Plus className="w-5 h-5" />
-                    Buat Tema Baru
-                </Link>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => {
+                            const json = prompt("Paste struktur JSON tema di sini:");
+                            if (json) {
+                                try {
+                                    const parsed = JSON.parse(json);
+                                    if (parsed.global && parsed.sections) {
+                                        const id = `theme_${Date.now()}`;
+                                        // We need to save it and redirect. 
+                                        // For now, let's just use localStorage to pass it to the builder
+                                        localStorage.setItem(`import_${id}`, json);
+                                        window.location.href = `/admin/themes/builder/${id}?import=true`;
+                                    } else {
+                                        alert("Struktur JSON tidak valid.");
+                                    }
+                                } catch (e) {
+                                    alert("Gagal membaca JSON: " + e);
+                                }
+                            }
+                        }}
+                        className="flex items-center gap-2 bg-slate-800 text-slate-300 px-4 py-2 rounded-lg font-bold hover:bg-slate-700 transition-all cursor-pointer border border-slate-700"
+                    >
+                        <Layers className="w-4 h-4" />
+                        Import JSON
+                    </button>
+                    <button
+                        onClick={() => {
+                            const id = `theme_${Date.now()}`;
+                            window.location.href = `/admin/themes/builder/${id}`;
+                        }}
+                        className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 px-4 py-2 rounded-lg font-bold hover:shadow-lg hover:shadow-amber-500/20 transition-all cursor-pointer"
+                    >
+                        <Plus className="w-5 h-5" />
+                        Buat Tema Baru
+                    </button>
+                </div>
             </div>
 
             {/* Filters */}

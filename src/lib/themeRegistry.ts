@@ -97,6 +97,17 @@ const THEME_REGISTRY: Record<string, ThemeRegistration> = {
         },
         component: BasicTheme,
     },
+    standard: {
+        metadata: {
+            id: "standard",
+            name: "Standard Elegant",
+            description: "Desain klasik rizka-ayu yang elegan dan bersih. Pilihan terbaik untuk pernikahan formal.",
+            isFree: true,
+            category: "elegant",
+            previewImage: "/images/themes/basic-preview.png",
+        },
+        component: DynamicTheme,
+    },
     custom: {
         metadata: {
             id: "custom",
