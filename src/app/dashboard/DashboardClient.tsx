@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { InvitationData, Person, Event, LoveStoryItem, Quotes, ThemeConfig } from "@/types/invitation";
 import { MOCK_DATA } from "@/data/mockData";
+import { DEMO_DATA } from "@/data/demoData";
 import { BasicTheme } from "@/components/themes/BasicTheme";
 import { invitationSchema } from "@/lib/validation";
 import {
@@ -20,6 +21,20 @@ import { toast } from "sonner";
 import { canUseFeature } from "@/lib/features";
 import FeatureGate from "@/components/dashboard/FeatureGate";
 
+// Demo Restrictions
+import {
+    isDemoPackage,
+    canEditGallery,
+    canEditLoveStory,
+    canEditMusic,
+    canEditQuotes,
+    canEditGiftRegistry,
+    canSaveInvitation,
+    canCopyLink,
+    canShareWhatsApp
+} from "@/lib/demoRestrictions";
+import { UpgradeModal } from "@/components/UpgradeModal";
+
 // Form Components
 import CoupleInfoForm from "@/components/dashboard/forms/CoupleInfoForm";
 import EventForm from "@/components/dashboard/forms/EventForm";
@@ -35,24 +50,32 @@ interface DashboardClientProps {
     initialData: any | null;
     userId: number;
     userRole?: string;
+    userPackageSlug: string;
     availableThemes: { id: number; slug: string; name: string }[];
     availablePackages: { id: number; slug: string; name: string }[];
     guestMode?: boolean;
 }
 
-export default function DashboardPage({
+export default function DashboardClient({
     initialData,
     userId,
     userRole,
+    userPackageSlug,
     availableThemes,
     availablePackages,
     guestMode = false
 }: DashboardClientProps) {
     // State
-    const [invitationData, setInvitationData] = useState<InvitationData>(
-        initialData?.content || MOCK_DATA
-    );
-    const [invitationId, setInvitationId] = useState<number | null>(initialData?.id || null);
+    const [invitationData, setInvitationData] = useState<InvitationData>(() => {
+        // Priority: 1. initialData.content, 2. DEMO_DATA (if demo), 3. MOCK_DATA
+        const data = initialData?.content || (userPackageSlug === "demo" ? DEMO_DATA : MOCK_DATA);
+        // Ensure some critical fields exist to prevent render crashes
+        return {
+            ...MOCK_DATA, // Base defaults
+            ...data,      // Actual data
+        } as InvitationData;
+    });
+    const [invitationId, setInvitationId] = useState<number | null>(initialData?.id || (userPackageSlug === "demo" ? 0 : null));
     const [previewMode, setPreviewMode] = useState<"mobile" | "desktop">("mobile");
     const [isSaving, setIsSaving] = useState(false);
     const [isCreating, setIsCreating] = useState(false);
@@ -61,7 +84,20 @@ export default function DashboardPage({
     const [activeTab, setActiveTab] = useState("mempelai");
     const [zodError, setZodError] = useState<z.ZodError | null>(null);
 
+    // Upgrade Modal State
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+    const [upgradeFeature, setUpgradeFeature] = useState("");
+    const [upgradeMessage, setUpgradeMessage] = useState("");
+
+    const isDemo = isDemoPackage(userPackageSlug);
+
     const handleCopyLink = () => {
+        if (isDemo && !canCopyLink(userPackageSlug)) {
+            setUpgradeFeature("Bagikan Undangan");
+            setUpgradeMessage("Bagikan link undangan kustom Anda ke teman dan keluarga sekarang dengan paket Silver atau Gold!");
+            setShowUpgradeModal(true);
+            return;
+        }
         const url = `${window.location.origin}/${invitationData.slug}`;
         navigator.clipboard.writeText(url);
         toast.success("Link undangan berhasil disalin!", {
@@ -70,6 +106,12 @@ export default function DashboardPage({
     };
 
     const handleShareWhatsApp = () => {
+        if (isDemo && !canShareWhatsApp(userPackageSlug)) {
+            setUpgradeFeature("Bagikan via WhatsApp");
+            setUpgradeMessage("Fitur share otomatis ke WhatsApp tersedia eksklusif untuk paket Silver dan Gold.");
+            setShowUpgradeModal(true);
+            return;
+        }
         const url = `${window.location.origin}/${invitationData.slug}`;
         const text = `Halo! Kami mengundang Anda ke acara pernikahan kami. Lihat detailnya di sini: ${url}`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
@@ -116,14 +158,32 @@ export default function DashboardPage({
     };
 
     const handleLoveStoryChange = (newLoveStory: LoveStoryItem[]) => {
+        if (isDemo && !canEditLoveStory(userPackageSlug)) {
+            setUpgradeFeature("Love Story");
+            setUpgradeMessage("Bagikan perjalanan cinta kalian yang indah dengan fitur Love Story timeline yang eksklusif.");
+            setShowUpgradeModal(true);
+            return;
+        }
         setInvitationData(prev => ({ ...prev, loveStory: newLoveStory }));
     };
 
     const handleGalleryChange = (newGallery: string[]) => {
+        if (isDemo && !canEditGallery(userPackageSlug)) {
+            setUpgradeFeature("Galeri Foto");
+            setUpgradeMessage("Upload hingga puluhan foto kenangan manis kalian dengan fitur Galeri Premium.");
+            setShowUpgradeModal(true);
+            return;
+        }
         setInvitationData(prev => ({ ...prev, gallery: newGallery }));
     };
 
     const handleGiftOptionsChange = (newOptions: InvitationData['giftOptions']) => {
+        if (isDemo && !canEditGiftRegistry(userPackageSlug)) {
+            setUpgradeFeature("Hadiah Digital");
+            setUpgradeMessage("Mudahkan tamu memberikan kado atau angpao secara digital dengan fitur Gift Registry.");
+            setShowUpgradeModal(true);
+            return;
+        }
         setInvitationData(prev => ({ ...prev, giftOptions: newOptions }));
     };
 
@@ -138,6 +198,12 @@ export default function DashboardPage({
     };
 
     const handleQuotesChange = (field: keyof Quotes, value: string) => {
+        if (isDemo && !canEditQuotes(userPackageSlug)) {
+            setUpgradeFeature("Quotes & Doa");
+            setUpgradeMessage("Tambahkan ayat suci atau kata-kata mutiara favorit kalian ke dalam undangan.");
+            setShowUpgradeModal(true);
+            return;
+        }
         setInvitationData(prev => ({
             ...prev,
             quotes: {
@@ -148,6 +214,12 @@ export default function DashboardPage({
     };
 
     const handleMusicChange = (value: string) => {
+        if (isDemo && !canEditMusic(userPackageSlug)) {
+            setUpgradeFeature("Musik Latar");
+            setUpgradeMessage("Pilih lagu romantis favorit kalian untuk menyambut tamu undangan.");
+            setShowUpgradeModal(true);
+            return;
+        }
         setInvitationData(prev => ({ ...prev, musicUrl: value }));
     };
 
@@ -166,6 +238,12 @@ export default function DashboardPage({
     };
 
     const handleSave = async () => {
+        if (isDemo && !canSaveInvitation(userPackageSlug)) {
+            setUpgradeFeature("Simpan Undangan");
+            setUpgradeMessage("Simpan data undangan Anda secara permanen dan kelola kapan saja dengan paket berbayar.");
+            setShowUpgradeModal(true);
+            return;
+        }
         const result = invitationSchema.safeParse(invitationData);
         if (!result.success) {
             setZodError(result.error);
@@ -362,6 +440,19 @@ export default function DashboardPage({
         );
     }
 
+    if (!invitationData) {
+        return (
+            <div className="h-screen flex items-center justify-center bg-slate-50">
+                <div className="text-center">
+                    <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+                    <h2 className="text-xl font-bold text-slate-900">Gagal Memuat Data</h2>
+                    <p className="text-slate-500 mt-2">Maaf, terjadi kesalahan saat memuat data undangan.</p>
+                    <button onClick={() => window.location.reload()} className="mt-4 px-6 py-2 bg-[#D4AF37] text-white rounded-lg">Coba Lagi</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="h-screen flex flex-col bg-slate-50">
             {/* Header */}
@@ -378,9 +469,11 @@ export default function DashboardPage({
                             <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                                 💍 <span className="hidden sm:inline">Nikahin</span>
                             </h1>
-                            <div className="hidden xs:flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-100 rounded-md">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                                <span className="text-[10px] font-black text-amber-700 uppercase tracking-widest">Free Tier</span>
+                            <div className={`hidden xs:flex items-center gap-1.5 px-2 py-1 rounded-md border ${isDemo ? 'bg-rose-50 border-rose-100' : 'bg-amber-50 border-amber-100'}`}>
+                                <span className={`w-1.5 h-1.5 rounded-full animate-pulse ${isDemo ? 'bg-rose-400' : 'bg-amber-400'}`} />
+                                <span className={`text-[10px] font-black uppercase tracking-widest ${isDemo ? 'text-rose-700' : 'text-amber-700'}`}>
+                                    {isDemo ? 'Demo Mode' : 'Free Tier'}
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -482,14 +575,26 @@ export default function DashboardPage({
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`
                                     flex flex-col items-center justify-center min-w-[70px] py-3 px-2 gap-1
-                                    text-[10px] font-medium transition-colors border-b-2
+                                    text-[10px] font-medium transition-colors border-b-2 relative
                                     ${activeTab === tab.id
-                                        ? "border-[var(--color-primary)] text-[var(--color-primary)] bg-[var(--color-primary)]/5"
+                                        ? "border-[#D4AF37] text-[#D4AF37] bg-amber-50/50"
                                         : "border-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-50"}
                                 `}
                             >
                                 <tab.icon className="w-5 h-5" />
                                 {tab.label}
+
+                                {/* Lock Icon for Demo restricted features */}
+                                {isDemo && (
+                                    (tab.id === 'cerita' && !canEditLoveStory(userPackageSlug)) ||
+                                    (tab.id === 'galeri' && !canEditGallery(userPackageSlug)) ||
+                                    (tab.id === 'hadiah' && !canEditGiftRegistry(userPackageSlug)) ||
+                                    (tab.id === 'lainnya' && (!canEditMusic(userPackageSlug) || !canEditQuotes(userPackageSlug)))
+                                ) && (
+                                        <div className="absolute top-1 right-1">
+                                            <Lock className="w-2.5 h-2.5 text-slate-400" />
+                                        </div>
+                                    )}
                             </button>
                         ))}
                     </div>
@@ -629,6 +734,14 @@ export default function DashboardPage({
                     </div>
                 </main>
             </div>
+
+            {/* Upgrade Modal */}
+            <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => setShowUpgradeModal(false)}
+                feature={upgradeFeature}
+                message={upgradeMessage}
+            />
         </div>
     );
 }

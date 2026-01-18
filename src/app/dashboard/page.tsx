@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getUserInvitations } from "@/lib/queries";
 import { db } from "@/db";
 import DashboardClient from "./DashboardClient";
-import { MOCK_DATA } from "@/data/mockData";
+import { DEMO_DATA } from "@/data/demoData";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -20,6 +20,7 @@ export default async function DashboardPage() {
                 initialData={null}
                 userId={0}
                 userRole="guest"
+                userPackageSlug="demo"
                 availableThemes={[]}
                 availablePackages={[]}
                 guestMode={true}
@@ -41,35 +42,85 @@ export default async function DashboardPage() {
         redirect("/agency");
     }
 
-    const userInvitations = await getUserInvitations(userId);
-    const { getUserFeatures } = await import("@/lib/featureGating");
-    const userFeatures = await getUserFeatures(userId);
+    let userPackageSlug = "bronze";
+    let availableThemes: any[] = [];
+    let availablePackages: any[] = [];
+    let userInvitations: any[] = [];
+    let userFeatures: string[] = [];
 
-    // Fetch available themes and packages
-    const availableThemes = await db.query.themes.findMany({
-        where: (themes, { eq }) => eq(themes.isActive, true)
-    });
-    const availablePackages = await db.query.packages.findMany({
-        where: (packages, { eq }) => eq(packages.isActive, true)
-    });
+    try {
+        // Get user with package info
+        const user = await db.query.users.findFirst({
+            where: (users, { eq }) => eq(users.id, userId),
+            with: {
+                package: true
+            }
+        });
+
+        if (user?.package) {
+            userPackageSlug = user.package.slug;
+        }
+
+        userInvitations = await getUserInvitations(userId);
+
+        const { getUserFeatures } = await import("@/lib/featureGating");
+        userFeatures = await getUserFeatures(userId);
+
+        // Fetch available themes and packages
+        availableThemes = await db.query.themes.findMany({
+            where: (themes, { eq }) => eq(themes.isActive, true)
+        });
+        availablePackages = await db.query.packages.findMany({
+            where: (packages, { eq }) => eq(packages.isActive, true)
+        });
+    } catch (error) {
+        console.error("Dashboard Data Fetch Error:", error);
+        // Fallback to defaults to prevent crash
+    }
 
     let initialData = userInvitations.length > 0
         ? userInvitations[0]
         : null;
 
-    // Inject features into content
-    if (initialData?.content) {
-        (initialData.content as any).features = userFeatures;
+    // ============================================
+    // DEMO PACKAGE: Load demo data for preview
+    // ============================================
+    if (userPackageSlug === "demo") {
+        // Demo users see full preview with DEMO_DATA
+        initialData = {
+            id: 0,
+            slug: "demo-preview",
+            content: DEMO_DATA,
+            isPublished: false,
+        } as any;
     }
+
+    // Inject features into content safely (Avoid mutation)
+    let dashboardInitialData = initialData;
+    if (initialData?.content) {
+        dashboardInitialData = {
+            ...initialData,
+            content: {
+                ...(initialData.content as any),
+                features: userFeatures
+            }
+        };
+    }
+
+    console.log(`[Dashboard] Loading for User ${userId} (${userRole}) with package ${userPackageSlug}`);
+    console.log(`[Dashboard] InitialData status: ${initialData ? 'FOUND' : 'NOT FOUND'}`);
+    if (initialData) console.log(`[Dashboard] InitialData Slug: ${initialData.slug}`);
 
     return (
         <DashboardClient
-            initialData={initialData}
+            initialData={dashboardInitialData}
             userId={userId}
             userRole={userRole}
+            userPackageSlug={userPackageSlug}
             availableThemes={availableThemes as any}
             availablePackages={availablePackages as any}
             guestMode={false}
         />
     );
 }
+

@@ -102,6 +102,7 @@ export default function FeatureMatrixClient({
             case "bronze": return Award;
             case "silver": return Sparkles;
             case "gold": return Crown;
+            case "platinum": return ShieldCheck;
             default: return Award;
         }
     };
@@ -111,6 +112,7 @@ export default function FeatureMatrixClient({
             case "bronze": return "bg-orange-100 text-orange-700 border-orange-200";
             case "silver": return "bg-slate-100 text-slate-700 border-slate-200";
             case "gold": return "bg-amber-100 text-amber-700 border-amber-200";
+            case "platinum": return "bg-purple-100 text-purple-700 border-purple-200";
             default: return "bg-slate-100 text-slate-700 border-slate-200";
         }
     };
@@ -118,7 +120,7 @@ export default function FeatureMatrixClient({
     return (
         <div className="space-y-8">
             {/* Package Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {packages.map((pkg) => {
                     const Icon = getPackageIcon(pkg.slug);
                     const coreCount = features.filter(f => f.isCore).length;
