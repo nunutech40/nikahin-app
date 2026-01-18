@@ -321,6 +321,18 @@ export default function DashboardClient({
                         </span>
                     </div>
 
+                    {/* Navigation - Moved from Lainnya */}
+                    <div className="hidden md:flex items-center gap-2">
+                        <Link href="/dashboard/guests" className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-xl text-slate-500 hover:text-[#B48C5E] transition-all group">
+                            <Users className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold">Tamu</span>
+                        </Link>
+                        <Link href="/dashboard/rsvp" className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-xl text-slate-500 hover:text-indigo-500 transition-all group">
+                            <Smartphone className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold">RSVP</span>
+                        </Link>
+                    </div>
+
                     <div className="hidden lg:flex bg-slate-100 p-1 rounded-xl">
                         <button onClick={() => setPreviewMode("mobile")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${previewMode === "mobile" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}>
                             <Smartphone className="w-3.5 h-3.5 mr-2 inline" /> HP
@@ -442,29 +454,31 @@ export default function DashboardClient({
                     {/* Quick Access Debug */}
                     <button onClick={() => setDebugMode(true)} className="absolute bottom-4 right-4 p-2 bg-slate-800 text-slate-400 rounded-full opacity-20 hover:opacity-100 transition-all"><Terminal className="w-4 h-4" /></button>
                 </main>
-            </div>
+            </div >
 
             {/* Debug Mode Modal */}
-            {debugMode && (
-                <div className="fixed inset-0 z-[9999] bg-slate-900/95 text-emerald-400 p-8 font-mono overflow-auto animate-in fade-in">
-                    <div className="flex justify-between items-center mb-6 border-b border-emerald-900/50 pb-4">
-                        <h2 className="text-xl font-bold flex items-center gap-3">🛠️ INVITATION DEBUGGER</h2>
-                        <button onClick={() => setDebugMode(false)} className="bg-emerald-500 text-slate-900 px-6 py-2 rounded-xl font-bold">CLOSE</button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8 text-sm">
-                        <div className="space-y-2">
-                            <p><span className="text-slate-500">Package:</span> {userPackageSlug}</p>
-                            <p><span className="text-slate-500">Invitation ID:</span> {invitationId}</p>
-                            <p><span className="text-slate-500">Preview Mode:</span> {previewMode}</p>
+            {
+                debugMode && (
+                    <div className="fixed inset-0 z-[9999] bg-slate-900/95 text-emerald-400 p-8 font-mono overflow-auto animate-in fade-in">
+                        <div className="flex justify-between items-center mb-6 border-b border-emerald-900/50 pb-4">
+                            <h2 className="text-xl font-bold flex items-center gap-3">🛠️ INVITATION DEBUGGER</h2>
+                            <button onClick={() => setDebugMode(false)} className="bg-emerald-500 text-slate-900 px-6 py-2 rounded-xl font-bold">CLOSE</button>
                         </div>
-                        <pre className="bg-black/40 p-6 rounded-3xl border border-emerald-900/30 text-[10px] leading-relaxed">
-                            {JSON.stringify(invitationData, null, 2)}
-                        </pre>
+                        <div className="grid grid-cols-2 gap-8 text-sm">
+                            <div className="space-y-2">
+                                <p><span className="text-slate-500">Package:</span> {userPackageSlug}</p>
+                                <p><span className="text-slate-500">Invitation ID:</span> {invitationId}</p>
+                                <p><span className="text-slate-500">Preview Mode:</span> {previewMode}</p>
+                            </div>
+                            <pre className="bg-black/40 p-6 rounded-3xl border border-emerald-900/30 text-[10px] leading-relaxed">
+                                {JSON.stringify(invitationData, null, 2)}
+                            </pre>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} feature={upgradeFeature} message={upgradeMessage} />
-        </div>
+        </div >
     );
 }
