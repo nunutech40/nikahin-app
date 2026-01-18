@@ -210,47 +210,53 @@ export function Hero({ data, guestName, variant = "fullscreen_center", onOpen }:
     }
 
     // RENDER VARIANT: Card Overlap (New)
+    if (variant === "card_overlap") {
+        return (
+            <motion.section
+                className="relative min-h-screen flex items-center justify-center p-4 bg-[var(--color-bg-2)]"
+            >
+                <div className="relative w-full max-w-md bg-white rounded-[40px] shadow-2xl overflow-hidden p-8 text-center pt-[320px]">
+                    {/* Image sticking out top */}
+                    <div className="absolute top-0 left-0 w-full h-[300px]">
+                        <Image
+                            src={coverImage}
+                            alt="Couple"
+                            fill
+                            className="object-cover"
+                        />
+                        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+                    </div>
+
+                    <div className="relative z-10">
+                        <h1 className="font-serif text-4xl text-[var(--color-primary-dark)] mb-2">
+                            {data.groom.name} & {data.bride.name}
+                        </h1>
+                        <p className="text-sm text-[var(--color-text-muted)] mb-6">
+                            {data.events[0]?.date}
+                        </p>
+
+                        {guestName && (
+                            <div className="bg-[var(--color-bg-2)] rounded-2xl p-4 mb-6">
+                                <p className="text-xs text-[var(--color-text-muted)]">Kepada Yth.</p>
+                                <p className="font-medium text-[var(--color-text)]">{guestName}</p>
+                            </div>
+                        )}
+
+                        <motion.button
+                            whileTap={{ scale: 0.95 }}
+                            onClick={onOpen}
+                            className="w-full py-4 rounded-2xl bg-[var(--color-primary)] text-white font-medium shadow-lg shadow-[var(--color-primary)]/30"
+                        >
+                            Buka Undangan
+                        </motion.button>
+                    </div>
+                </div>
+            </motion.section>
+        );
+    }
+
     // Default fallback to fullscreen if variant not found
     return (
-        <motion.section
-            className="relative min-h-screen flex items-center justify-center p-4 bg-[var(--color-bg-2)]"
-        >
-            <div className="relative w-full max-w-md bg-white rounded-[40px] shadow-2xl overflow-hidden p-8 text-center pt-[320px]">
-                {/* Image sticking out top */}
-                <div className="absolute top-0 left-0 w-full h-[300px]">
-                    <Image
-                        src={coverImage}
-                        alt="Couple"
-                        fill
-                        className="object-cover"
-                    />
-                    <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
-                </div>
-
-                <div className="relative z-10">
-                    <h1 className="font-serif text-4xl text-[var(--color-primary-dark)] mb-2">
-                        {data.groom.name} & {data.bride.name}
-                    </h1>
-                    <p className="text-sm text-[var(--color-text-muted)] mb-6">
-                        {data.events[0]?.date}
-                    </p>
-
-                    {guestName && (
-                        <div className="bg-[var(--color-bg-2)] rounded-2xl p-4 mb-6">
-                            <p className="text-xs text-[var(--color-text-muted)]">Kepada Yth.</p>
-                            <p className="font-medium text-[var(--color-text)]">{guestName}</p>
-                        </div>
-                    )}
-
-                    <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={onOpen}
-                        className="w-full py-4 rounded-2xl bg-[var(--color-primary)] text-white font-medium shadow-lg shadow-[var(--color-primary)]/30"
-                    >
-                        Buka Undangan
-                    </motion.button>
-                </div>
-            </div>
-        </motion.section>
+        <Hero data={data} guestName={guestName} variant="fullscreen_center" onOpen={onOpen} />
     );
 }

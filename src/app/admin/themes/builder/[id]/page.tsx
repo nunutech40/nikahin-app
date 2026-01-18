@@ -160,26 +160,40 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
     };
 
     const getVariantsForType = (type: string) => {
-        // This is a naive mapping. Ideally this comes from a central registry or section component
         const variants: Record<string, string[]> = {
-            'hero': ['fullscreen_center', 'fullscreen_simple', 'split_screen'],
-            'couple': ['classic_circle', 'modern_card', 'minimal_split'],
-            'event': ['timeline_vertical', 'grid_cards', 'classic_list'],
-            'gallery': ['grid_masonry', 'carousel', 'grid_bento'],
-            'quote': ['simple_centered', 'card_w_icon', 'parallax_bg'],
-            'love_story': ['timeline_zigzag', 'story_cards'],
-            'gift': ['bank_cards', 'simple_list', 'qr_popup'],
-            'rsvp': ['simple_form', 'card_style'],
-            'closing': ['simple_centered', 'image_bg_overlay']
+            'hero': ['fullscreen_center', 'minimal_split', 'card_overlap'],
+            'quote': ['centered_simple', 'card_backdrop', 'floating_text'],
+            'couple': ['card_grid', 'rounded_split', 'vertical_timeline'],
+            'event': ['vertical_list', 'card_carousel'],
+            'gallery': ['masonry_grid', 'standard_grid', 'carousel_slider'],
+            'love_story': ['zig_zag', 'vertical_timeline', 'carousel'],
+            'gift': ['card_grid', 'simple_list'],
+            'rsvp': ['standard_form', 'modal_popup'],
+            'closing': ['simple_centered', 'full_image']
         };
         return variants[type] || ['default'];
+    };
+
+    const getSectionName = (type: string) => {
+        const names: Record<string, string> = {
+            'hero': 'Sampul / Hero',
+            'quote': 'Kata Mutiara',
+            'couple': 'Mempelai',
+            'event': 'Detail Acara',
+            'love_story': 'Cerita Cinta',
+            'gallery': 'Galeri Foto',
+            'gift': 'Amplop Digital',
+            'rsvp': 'Konfirmasi RSVP',
+            'closing': 'Penutup'
+        };
+        return names[type] || type;
     };
 
     if (isLoading) {
         return (
             <div className="fixed inset-0 bg-slate-950 flex flex-col items-center justify-center z-[100]">
                 <Loader2 className="w-12 h-12 text-amber-500 animate-spin mb-4" />
-                <p className="text-slate-400 font-serif italic">Loading Theme Configuration...</p>
+                <p className="text-slate-400 font-serif italic">Memuat Konfigurasi Tema...</p>
             </div>
         );
     }
@@ -193,8 +207,8 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
                     <div>
-                        <h1 className="font-bold text-slate-100">Theme Builder</h1>
-                        <p className="text-xs text-slate-400">Editing: Custom Theme</p>
+                        <h1 className="font-bold text-slate-100">Builder Tema</h1>
+                        <p className="text-xs text-slate-400">Mengedit: Tema Kustom</p>
                     </div>
                 </div>
 
@@ -202,14 +216,14 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                     <button
                         onClick={() => setPreviewMode('mobile')}
                         className={`p-2 rounded-md transition-all ${previewMode === 'mobile' ? 'bg-slate-700 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
-                        title="Mobile View"
+                        title="Tampilan Mobile"
                     >
                         <Smartphone className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => setPreviewMode('desktop')}
                         className={`p-2 rounded-md transition-all ${previewMode === 'desktop' ? 'bg-slate-700 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
-                        title="Desktop View"
+                        title="Tampilan Desktop"
                     >
                         <Monitor className="w-4 h-4" />
                     </button>
@@ -221,11 +235,11 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                     className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-600 disabled:text-slate-400 text-slate-900 px-4 py-2 rounded-lg font-bold transition-colors"
                 >
                     {isSaving ? (
-                        <>Saving...</>
+                        <>Menyimpan...</>
                     ) : (
                         <>
                             <Save className="w-4 h-4" />
-                            Save Changes
+                            Simpan Perubahan
                         </>
                     )}
                 </button>
@@ -235,26 +249,20 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
             <div className="flex-1 flex overflow-hidden">
 
                 {/* 2A. LEFT SIDEBAR: Controls */}
-                <aside className="w-80 border-r border-slate-800 bg-slate-900 flex flex-col">
+                <aside className="w-80 border-r border-slate-800 bg-slate-900 flex flex-col shrink-0">
                     {/* Tabs */}
-                    <div className="flex border-b border-slate-800">
+                    <div className="flex border-b border-slate-800 h-12">
                         <button
                             onClick={() => setActiveTab('global')}
-                            className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'global'
-                                ? 'border-amber-500 text-amber-500 bg-slate-800/50'
-                                : 'border-transparent text-slate-400 hover:text-slate-200'
-                                }`}
+                            className={`flex-1 flex items-center justify-center gap-2 text-sm font-bold transition-colors ${activeTab === 'global' ? 'text-amber-500 border-b-2 border-amber-500 bg-slate-800/50' : 'text-slate-400 hover:text-slate-200'}`}
                         >
-                            <Palette className="w-4 h-4" /> Global Style
+                            <Palette className="w-4 h-4" /> Gaya Global
                         </button>
                         <button
                             onClick={() => setActiveTab('sections')}
-                            className={`flex-1 py-3 text-sm font-medium border-b-2 transition-colors flex items-center justify-center gap-2 ${activeTab === 'sections'
-                                ? 'border-amber-500 text-amber-500 bg-slate-800/50'
-                                : 'border-transparent text-slate-400 hover:text-slate-200'
-                                }`}
+                            className={`flex-1 flex items-center justify-center gap-2 text-sm font-bold transition-colors ${activeTab === 'sections' ? 'text-amber-500 border-b-2 border-amber-500 bg-slate-800/50' : 'text-slate-400 hover:text-slate-200'}`}
                         >
-                            <Layers className="w-4 h-4" /> Sections
+                            <Layers className="w-4 h-4" /> Bagian
                         </button>
                     </div>
 
@@ -264,77 +272,70 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                             <div className="space-y-6">
                                 {/* Colors */}
                                 <div className="space-y-4">
-                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                                        <Palette className="w-3 h-3" /> Color Palette
-                                    </h3>
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Palet Warna</h3>
 
-                                    <div className="space-y-3">
+                                    <div className="grid grid-cols-1 gap-3">
                                         <div>
-                                            <label className="text-sm text-slate-300 block mb-1">Primary Color</label>
-                                            <div className="flex items-center gap-2">
+                                            <label className="text-sm text-slate-300 block mb-1">Warna Utama</label>
+                                            <div className="flex gap-2">
                                                 <input
                                                     type="color"
                                                     value={config.global.primaryColor}
                                                     onChange={(e) => updateGlobalConfig('primaryColor', e.target.value)}
-                                                    className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                                                    className="w-10 h-10 bg-slate-800 border border-slate-700 rounded cursor-pointer"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={config.global.primaryColor}
-                                                    readOnly
-                                                    className="flex-1 bg-slate-800 border border-slate-700 rounded px-2 py-1 text-sm text-slate-300"
+                                                    onChange={(e) => updateGlobalConfig('primaryColor', e.target.value)}
+                                                    className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 uppercase"
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="text-sm text-slate-300 block mb-1">Secondary Color</label>
-                                            <div className="flex items-center gap-2">
+                                            <label className="text-sm text-slate-300 block mb-1">Warna Sekunder</label>
+                                            <div className="flex gap-2">
                                                 <input
                                                     type="color"
                                                     value={config.global.secondaryColor}
                                                     onChange={(e) => updateGlobalConfig('secondaryColor', e.target.value)}
-                                                    className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                                                    className="w-10 h-10 bg-slate-800 border border-slate-700 rounded cursor-pointer"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={config.global.secondaryColor}
-                                                    readOnly
-                                                    className="flex-1 bg-slate-800 border-slate-700 rounded px-2 py-1 text-sm text-slate-300"
+                                                    onChange={(e) => updateGlobalConfig('secondaryColor', e.target.value)}
+                                                    className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 uppercase"
                                                 />
                                             </div>
                                         </div>
 
                                         <div>
-                                            <label className="text-sm text-slate-300 block mb-1">Background Color</label>
-                                            <div className="flex items-center gap-2">
+                                            <label className="text-sm text-slate-300 block mb-1">Warna Latar</label>
+                                            <div className="flex gap-2">
                                                 <input
                                                     type="color"
                                                     value={config.global.backgroundColor}
                                                     onChange={(e) => updateGlobalConfig('backgroundColor', e.target.value)}
-                                                    className="w-8 h-8 rounded cursor-pointer border-0 p-0"
+                                                    className="w-10 h-10 bg-slate-800 border border-slate-700 rounded cursor-pointer"
                                                 />
                                                 <input
                                                     type="text"
                                                     value={config.global.backgroundColor}
-                                                    readOnly
-                                                    className="flex-1 bg-slate-800 border-slate-700 rounded px-2 py-1 text-sm text-slate-300"
+                                                    onChange={(e) => updateGlobalConfig('backgroundColor', e.target.value)}
+                                                    className="flex-1 bg-slate-800 border border-slate-700 rounded px-3 text-sm text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 uppercase"
                                                 />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="border-t border-slate-800 my-4" />
-
-                                {/* Fonts */}
-                                <div className="space-y-4">
-                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                                        <Type className="w-3 h-3" /> Typography
-                                    </h3>
+                                <div className="space-y-4 pt-6 border-t border-slate-800">
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tipografi</h3>
 
                                     <div>
-                                        <label className="text-sm text-slate-300 block mb-1">Heading Font</label>
+                                        <label className="text-sm text-slate-300 block mb-1">Font Judul</label>
                                         <select
                                             value={config.global.fontHeading}
                                             onChange={(e) => updateGlobalConfig('fontHeading', e.target.value)}
@@ -349,7 +350,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                     </div>
 
                                     <div>
-                                        <label className="text-sm text-slate-300 block mb-1">Body Font</label>
+                                        <label className="text-sm text-slate-300 block mb-1">Font Isi</label>
                                         <select
                                             value={config.global.fontBody}
                                             onChange={(e) => updateGlobalConfig('fontBody', e.target.value)}
@@ -367,41 +368,39 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                         ) : (
                             <div className="space-y-2">
                                 <p className="text-xs text-slate-500 mb-4 px-1">
-                                    Use arrows to reorder sections. Manage visibility and variants.
+                                    Gunakan panah untuk mengatur urutan bagian. Atur visibilitas dan varian.
                                 </p>
 
                                 <div className="space-y-2">
                                     {config.sections.sort((a, b) => a.order - b.order).map((section, index) => (
                                         <div
                                             key={section.id}
-                                            className={`bg-slate-800 border ${section.isVisible ? 'border-slate-700' : 'border-slate-800 opacity-60'} rounded-lg p-3 transition-all`}
+                                            className={`bg-slate-800/40 border ${section.isVisible ? 'border-slate-800' : 'border-slate-800/50 grayscale opacity-60'} rounded-lg p-3 group hover:border-slate-700 transition-all`}
                                         >
                                             {/* Header Row */}
                                             <div className="flex items-center justify-between mb-3">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="p-2 bg-slate-700 rounded text-slate-400">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-8 h-8 rounded bg-slate-800 flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
                                                         <Layout className="w-4 h-4" />
                                                     </div>
-                                                    <div>
-                                                        <p className="text-sm font-bold text-slate-200 capitalize">{section.type.replace('_', ' ')}</p>
-                                                    </div>
+                                                    <span className="text-sm font-bold text-slate-200">{getSectionName(section.type)}</span>
                                                 </div>
 
                                                 {/* Actions */}
-                                                <div className="flex items-center gap-1 bg-slate-900 rounded p-1">
+                                                <div className="flex items-center gap-1">
                                                     <button
                                                         disabled={index === 0}
                                                         onClick={() => moveSection(section.id, 'up')}
-                                                        className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
-                                                        title="Move Up"
+                                                        className="p-1 text-slate-500 hover:text-white disabled:opacity-30"
+                                                        title="Pindah Ke Atas"
                                                     >
                                                         <ArrowUp className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         disabled={index === config.sections.length - 1}
                                                         onClick={() => moveSection(section.id, 'down')}
-                                                        className="p-1 text-slate-400 hover:text-white disabled:opacity-30"
-                                                        title="Move Down"
+                                                        className="p-1 text-slate-500 hover:text-white disabled:opacity-30"
+                                                        title="Pindah Ke Bawah"
                                                     >
                                                         <ArrowDown className="w-4 h-4" />
                                                     </button>
@@ -409,7 +408,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                                     <button
                                                         onClick={() => toggleSectionVisibility(section.id)}
                                                         className={`p-1 ${section.isVisible ? 'text-amber-500' : 'text-slate-600'} hover:text-white`}
-                                                        title={section.isVisible ? "Hide Section" : "Show Section"}
+                                                        title={section.isVisible ? "Sembunyikan Bagian" : "Tampilkan Bagian"}
                                                     >
                                                         {section.isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                                                     </button>
@@ -417,26 +416,61 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                                     <button
                                                         onClick={() => removeSection(section.id)}
                                                         className="p-1 text-slate-600 hover:text-rose-500 transition-colors"
-                                                        title="Remove Section"
+                                                        title="Hapus Bagian"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
                                                 </div>
                                             </div>
 
-                                            {/* Variant Selector */}
+                                            {/* Section Settings */}
                                             {section.isVisible && (
-                                                <div className="bg-slate-900/50 rounded p-2">
-                                                    <label className="text-xs text-slate-500 block mb-1 uppercase font-bold">Layout Variant</label>
-                                                    <select
-                                                        value={section.variant}
-                                                        onChange={(e) => updateSectionVariant(section.id, e.target.value)}
-                                                        className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500"
-                                                    >
-                                                        {getVariantsForType(section.type).map(v => (
-                                                            <option key={v} value={v}>{v.replace('_', ' ')}</option>
-                                                        ))}
-                                                    </select>
+                                                <div className="mt-3 space-y-3 bg-slate-900/50 rounded p-2">
+                                                    <div>
+                                                        <label className="text-[10px] text-slate-500 block mb-1 uppercase font-black tracking-widest">Varian Tampilan</label>
+                                                        <select
+                                                            value={section.variant}
+                                                            onChange={(e) => updateSectionVariant(section.id, e.target.value)}
+                                                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-amber-500 capitalize"
+                                                        >
+                                                            {getVariantsForType(section.type).map(v => (
+                                                                <option key={v} value={v}>{v.replace(/_/g, ' ')}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="text-[10px] text-slate-500 block mb-1 uppercase font-black tracking-widest">Warna Latar Bagian</label>
+                                                        <div className="flex gap-2">
+                                                            <input
+                                                                type="color"
+                                                                value={section.backgroundColor || "#ffffff"}
+                                                                onChange={(e) => {
+                                                                    const newColor = e.target.value;
+                                                                    setConfig(prev => ({
+                                                                        ...prev,
+                                                                        sections: prev.sections.map(s =>
+                                                                            s.id === section.id ? { ...s, backgroundColor: newColor } : s
+                                                                        )
+                                                                    }));
+                                                                }}
+                                                                className="w-6 h-6 bg-slate-800 border border-slate-700 rounded cursor-pointer p-0"
+                                                            />
+                                                            <button
+                                                                onClick={() => {
+                                                                    setConfig(prev => ({
+                                                                        ...prev,
+                                                                        sections: prev.sections.map(s =>
+                                                                            s.id === section.id ? { ...s, backgroundColor: undefined } : s
+                                                                        )
+                                                                    }));
+                                                                }}
+                                                                className="text-[10px] text-slate-400 hover:text-white"
+                                                            >
+                                                                Gunakan Global
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -447,8 +481,8 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                     {showAddMenu ? (
                                         <div className="bg-slate-900 border border-slate-800 rounded-lg p-3 space-y-2 animate-in fade-in slide-in-from-bottom-2">
                                             <div className="flex items-center justify-between mb-2">
-                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Select Section Type</h4>
-                                                <button onClick={() => setShowAddMenu(false)} className="text-slate-500 hover:text-white text-xs">Cancel</button>
+                                                <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Pilih Jenis Bagian</h4>
+                                                <button onClick={() => setShowAddMenu(false)} className="text-slate-500 hover:text-white text-xs">Batal</button>
                                             </div>
                                             <div className="grid grid-cols-2 gap-2">
                                                 {['quote', 'couple', 'event', 'love_story', 'gallery', 'gift', 'rsvp', 'closing'].map((type) => (
@@ -458,9 +492,9 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                                             addSection(type as SectionBlock['type']);
                                                             setShowAddMenu(false);
                                                         }}
-                                                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300 capitalize text-left transition-colors flex items-center gap-2"
+                                                        className="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded text-xs text-slate-300 transition-colors flex items-center gap-2"
                                                     >
-                                                        <Plus className="w-3 h-3" /> {type.replace('_', ' ')}
+                                                        <Plus className="w-3 h-3" /> {getSectionName(type)}
                                                     </button>
                                                 ))}
                                             </div>
@@ -470,7 +504,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                             onClick={() => setShowAddMenu(true)}
                                             className="w-full flex items-center justify-center gap-2 border border-dashed border-slate-700 rounded-lg py-3 text-slate-500 hover:text-amber-500 hover:border-amber-500/50 hover:bg-slate-800/50 transition-all text-sm font-medium"
                                         >
-                                            <Plus className="w-4 h-4" /> Add New Section
+                                            <Plus className="w-4 h-4" /> Tambah Bagian Baru
                                         </button>
                                     )}
                                 </div>

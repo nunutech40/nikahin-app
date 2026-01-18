@@ -33,7 +33,7 @@ export default function ThemesPage() {
                     <p className="text-slate-400">Atur koleksi tema undangan dan buat template baru.</p>
                 </div>
                 <Link
-                    href="/admin/themes/builder/custom_default"
+                    href={`/admin/themes/builder/theme_${Date.now()}`}
                     className="flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-600 text-slate-900 px-4 py-2 rounded-lg font-bold hover:shadow-lg hover:shadow-amber-500/20 transition-all"
                 >
                     <Plus className="w-5 h-5" />

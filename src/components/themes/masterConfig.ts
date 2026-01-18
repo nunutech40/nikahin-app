@@ -35,7 +35,7 @@ export const MASTER_THEME_CONFIG: DynamicThemeConfig = {
         {
             id: "couple_section",
             type: "couple",
-            variant: "rounded_split",
+            variant: "card_grid",
             order: 2,
             isVisible: true,
         },
@@ -49,7 +49,7 @@ export const MASTER_THEME_CONFIG: DynamicThemeConfig = {
         {
             id: "love_story_section",
             type: "love_story",
-            variant: "vertical_timeline",
+            variant: "zig_zag",
             order: 4,
             isVisible: true,
         },

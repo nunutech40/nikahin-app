@@ -118,45 +118,38 @@ export function DynamicTheme({ data, guestName, isPreview = false, isMobile = fa
         // Wrapper Style (optional background override)
         const style = section.backgroundColor ? { backgroundColor: section.backgroundColor } : {};
 
-        switch (section.type) {
-            case 'hero':
-                // Hero is usually the cover. If rendered in flow, we might want a different variant or hide "Open" button.
-                // For now, render it as a Header.
-                return (
-                    // @ts-ignore variant string compatibility
-                    <Hero key={section.id} data={data} guestName={guestName} variant={section.variant} onOpen={() => { }} />
-                );
-            case 'quote':
-                // @ts-ignore
-                return <QuoteSection key={section.id} quotes={data.quotes} variant={section.variant} />;
-            case 'couple':
-                // @ts-ignore
-                return <Couple key={section.id} groom={data.groom} bride={data.bride} variant={section.variant} />;
-            case 'event':
-                // @ts-ignore
-                return <EventSection key={section.id} events={data.events} variant={section.variant} />;
-            case 'love_story':
-                if (!canUseFeature(data, 'love_story')) return null;
-                // @ts-ignore
-                return <LoveStory key={section.id} stories={data.loveStory} variant={section.variant} />;
-            case 'gallery':
-                if (!canUseFeature(data, 'gallery')) return null;
-                // @ts-ignore
-                return <Gallery key={section.id} gallery={data.gallery} variant={section.variant} />;
-            case 'gift':
-                if (!canUseFeature(data, 'gift_registry')) return null;
-                // @ts-ignore
-                return <GiftSection key={section.id} giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} variant={section.variant} />;
-            case 'rsvp':
-                if (!canUseFeature(data, 'rsvp')) return null;
-                // @ts-ignore
-                return <Rsvp key={section.id} invitationId={invitationId} variant={section.variant} />;
-            case 'closing':
-                // @ts-ignore
-                return <Closing key={section.id} data={data} variant={section.variant} />;
-            default:
-                return null;
-        }
+        return (
+            <div key={section.id} style={style}>
+                {(() => {
+                    switch (section.type) {
+                        case 'hero':
+                            return <Hero data={data} guestName={guestName} variant={section.variant as any} onOpen={() => { }} />;
+                        case 'quote':
+                            return <QuoteSection quotes={data.quotes} variant={section.variant as any} />;
+                        case 'couple':
+                            return <Couple groom={data.groom} bride={data.bride} variant={section.variant as any} />;
+                        case 'event':
+                            return <EventSection events={data.events} variant={section.variant as any} />;
+                        case 'love_story':
+                            if (!canUseFeature(data, 'love_story')) return null;
+                            return <LoveStory stories={data.loveStory} variant={section.variant as any} />;
+                        case 'gallery':
+                            if (!canUseFeature(data, 'gallery')) return null;
+                            return <Gallery gallery={data.gallery} variant={section.variant as any} />;
+                        case 'gift':
+                            if (!canUseFeature(data, 'gift_registry')) return null;
+                            return <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} variant={section.variant as any} />;
+                        case 'rsvp':
+                            if (!canUseFeature(data, 'rsvp')) return null;
+                            return <Rsvp invitationId={invitationId} variant={section.variant as any} />;
+                        case 'closing':
+                            return <Closing data={data} variant={section.variant as any} />;
+                        default:
+                            return null;
+                    }
+                })()}
+            </div>
+        );
     };
 
     return (
