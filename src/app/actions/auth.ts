@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { users, packages } from "@/db/schema";
+import { users, packages, invitations, themes } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcrypt";
 import { z } from "zod";
@@ -58,7 +58,7 @@ export async function registerUser(formData: any) {
             : null;
 
         // 6. Insert user with package assignment
-        await db.insert(users).values({
+        const newUser = await db.insert(users).values({
             email: validated.email,
             password: hashedPassword,
             name: validated.name,
@@ -68,7 +68,41 @@ export async function registerUser(formData: any) {
             isActive: false, // Testing Mode: User needs to pay to publish
             referralCode: referralCode,
             referredBy: referrerId,
-        });
+        }).returning();
+
+        const userId = newUser[0].id;
+
+        // 7. AUTO-CREATE INITIAL DRAFT
+        // This prevents the "Empty Dashboard" friction
+        try {
+            const defaultTheme = await db.query.themes.findFirst({
+                where: eq(themes.isActive, true)
+            });
+
+            if (defaultTheme) {
+                // Generate a base slug from name
+                const baseSlug = validated.name.toLowerCase()
+                    .replace(/[^a-z0-9]/g, '-')
+                    .replace(/-+/g, '-')
+                    .replace(/^-|-$/g, '');
+
+                const uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(7)}`;
+
+                const { MOCK_DATA } = await import("@/data/mockData");
+
+                await db.insert(invitations).values({
+                    userId: userId,
+                    themeId: defaultTheme.id,
+                    packageId: selectedPkg.id,
+                    slug: uniqueSlug,
+                    content: MOCK_DATA,
+                    isPublished: false,
+                });
+            }
+        } catch (draftError) {
+            console.error("⚠️ Failed to create auto-draft:", draftError);
+            // Non-blocking, user can still create manual draft later
+        }
 
         return { success: true };
     } catch (error) {

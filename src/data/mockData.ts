@@ -11,13 +11,13 @@ export const MOCK_DATA: InvitationData = {
         name: "Robert Downey",
         fullName: "Robert Downey Junior",
         parentName: "Bapak Ahmad Nugraha & Ibu Siti Fatimah",
-        photo: "/images/couple/groom-portrait.png",
+        photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop",
     },
     bride: {
         name: "Dakot Johnson",
         fullName: "Dakot Johnson",
         parentName: "Bapak Hendra Kusuma & Ibu Dewi Anggraeni",
-        photo: "/images/couple/bride-portrait.png",
+        photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop",
     },
     events: [
         {
@@ -116,22 +116,25 @@ export const MOCK_DATA: InvitationData = {
         recipient: "Robert Downey & Dakot Johnson",
         address: "Jl. Merdeka No. 123, RT 05/RW 03, Kebayoran Baru, Jakarta Selatan, DKI Jakarta 12345",
     },
-    coverImage: "/images/couple/hero-couple.png",
+    coverImage: "https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=2070&auto=format&fit=crop",
     themeConfig: {
         primaryColor: "#D4AF37", // Gold
         secondaryColor: "#F3E5AB", // Light Gold
         fontHeading: "Playfair Display",
         fontBody: "Inter",
     },
-    // Mocking a 'Professional' package with all features enabled
-    packageId: "pkg_professional",
+    packageId: "gold",
     features: [
-        'love-story',
-        'gallery',
-        'gift-registry',
-        'background-music',
-        'custom-theme',
-        'rsvp',
-        'quotes'
+        'love_story',
+        'gallery_10',
+        'gallery_unlimited',
+        'gift_registry',
+        'background_music',
+        'custom_theme',
+        'rsvp_basic',
+        'rsvp_export',
+        'quotes',
+        'unlimited_events',
+        'remove_branding'
     ],
 };

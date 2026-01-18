@@ -2,6 +2,7 @@
 
 import { X, Lock, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface UpgradeModalProps {
     isOpen: boolean;
@@ -11,7 +12,10 @@ interface UpgradeModalProps {
 }
 
 export function UpgradeModal({ isOpen, onClose, feature, message }: UpgradeModalProps) {
+    const { data: session } = useSession();
     if (!isOpen) return null;
+
+    const upgradeLink = session ? "/dashboard/billing" : "/register";
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
@@ -32,7 +36,7 @@ export function UpgradeModal({ isOpen, onClose, feature, message }: UpgradeModal
                     <h2 className="text-2xl font-black text-gray-800 mb-2">
                         Fitur Terkunci
                     </h2>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm px-4">
                         {message || `Upgrade untuk menggunakan ${feature}`}
                     </p>
                 </div>
@@ -42,13 +46,13 @@ export function UpgradeModal({ isOpen, onClose, feature, message }: UpgradeModal
                     {/* Feature Info */}
                     <div className="mb-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
                         <p className="text-sm font-semibold text-gray-500 mb-2">Fitur yang Dikunci:</p>
-                        <p className="text-lg font-black text-gray-800">{feature}</p>
+                        <p className="text-lg font-black text-gray-800 tracking-tight">{feature}</p>
                     </div>
 
                     {/* Benefits */}
                     <div className="mb-6 space-y-2">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Dengan Upgrade:</p>
-                        <ul className="space-y-2 text-sm text-gray-600">
+                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Keuntungan Upgrade:</p>
+                        <ul className="space-y-2 text-sm text-gray-600 font-medium">
                             <li className="flex items-start gap-2">
                                 <Sparkles className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
                                 <span>Akses penuh semua fitur premium</span>
@@ -61,68 +65,30 @@ export function UpgradeModal({ isOpen, onClose, feature, message }: UpgradeModal
                                 <Sparkles className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
                                 <span>Share ke tamu via WhatsApp</span>
                             </li>
-                            <li className="flex items-start gap-2">
-                                <Sparkles className="w-4 h-4 text-[#D4AF37] mt-0.5 flex-shrink-0" />
-                                <span>Support 24/7 dari tim Nikahin</span>
-                            </li>
                         </ul>
                     </div>
 
-                    {/* Package Options */}
-                    <div className="mb-6 space-y-3">
-                        <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pilih Paket:</p>
-
+                    {/* CTA Button */}
+                    <div className="space-y-3">
                         <Link
-                            href="/register?package=bronze"
-                            className="block w-full p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-all"
+                            href={upgradeLink}
+                            onClick={onClose}
+                            className="block w-full py-4 bg-gradient-to-r from-[#D4AF37] to-[#b28f1f] text-white rounded-2xl font-black text-center shadow-xl shadow-amber-200/50 hover:scale-[1.02] transition-all"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-bold text-gray-800">🥉 Bronze</p>
-                                    <p className="text-xs text-gray-500">Fitur basic</p>
-                                </div>
-                                <p className="font-black text-gray-800">Gratis</p>
-                            </div>
+                            LIHAT PILIHAN PAKET
                         </Link>
 
-                        <Link
-                            href="/register?package=silver"
-                            className="block w-full p-4 bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 rounded-xl border-2 border-[#D4AF37] transition-all"
+                        <button
+                            onClick={onClose}
+                            className="w-full py-3 text-gray-400 font-bold hover:text-gray-600 transition-colors text-sm"
                         >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-bold text-gray-800">🥈 Silver <span className="text-xs text-[#D4AF37]">⭐ BEST VALUE</span></p>
-                                    <p className="text-xs text-gray-500">Fitur lengkap</p>
-                                </div>
-                                <p className="font-black text-[#D4AF37]">Rp 150k</p>
-                            </div>
-                        </Link>
-
-                        <Link
-                            href="/register?package=gold"
-                            className="block w-full p-4 bg-gradient-to-r from-yellow-50 to-amber-50 hover:from-yellow-100 hover:to-amber-100 rounded-xl border border-yellow-200 transition-all"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="font-bold text-gray-800">🥇 Gold <span className="text-xs text-yellow-600">👑 PREMIUM</span></p>
-                                    <p className="text-xs text-gray-500">Fitur eksklusif</p>
-                                </div>
-                                <p className="font-black text-yellow-600">Rp 300k</p>
-                            </div>
-                        </Link>
+                            NANTI SAJA
+                        </button>
                     </div>
 
-                    {/* CTA Button */}
-                    <button
-                        onClick={onClose}
-                        className="w-full py-3 text-gray-500 font-semibold hover:text-gray-700 transition-colors"
-                    >
-                        Nanti Saja
-                    </button>
-
                     {/* Note */}
-                    <p className="mt-6 text-xs text-center text-gray-400">
-                        💡 Anda masih bisa edit dan preview undangan
+                    <p className="mt-8 text-[10px] text-center text-gray-400 font-medium uppercase tracking-widest">
+                        💡 Anda masih bisa mencoba fitur di Editor
                     </p>
                 </div>
             </div>

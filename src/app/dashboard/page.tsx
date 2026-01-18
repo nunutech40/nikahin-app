@@ -3,90 +3,60 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getUserInvitations } from "@/lib/queries";
 import { db } from "@/db";
+import { packages, themes, users } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { getUserFeatures } from "@/lib/featureGating";
 import DashboardClient from "./DashboardClient";
 import { DEMO_DATA } from "@/data/demoData";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
 
-    // ============================================
-    // GUEST MODE: User not logged in
-    // ============================================
     if (!session?.user) {
-        // Guest can access dashboard for testing
-        // But with limited functionality (no save, no publish)
-        return (
-            <DashboardClient
-                initialData={null}
-                userId={0}
-                userRole="guest"
-                userPackageSlug="demo"
-                availableThemes={[]}
-                availablePackages={[]}
-                guestMode={true}
-            />
-        );
+        redirect("/login");
     }
 
-    // ============================================
-    // LOGGED IN MODE: Normal flow
-    // ============================================
     const userId = Number((session.user as any).id);
-    const userRole = (session.user as any).role;
+    const userRole = (session.user as any).role || "user";
 
-    // JIKA ADMIN & AGENCY: Lempar ke portal masing-masing
-    if (userRole === "admin") {
-        redirect("/admin");
-    }
-    if (userRole === "agency") {
-        redirect("/agency");
-    }
-
+    // 1. Fetch User Data with Package
     let userPackageSlug = "bronze";
-    let availableThemes: any[] = [];
-    let availablePackages: any[] = [];
-    let userInvitations: any[] = [];
-    let userFeatures: string[] = [];
+    const user = await db.query.users.findFirst({
+        where: eq(users.id, userId),
+        with: {
+            package: true,
+        },
+    });
 
-    try {
-        // Get user with package info
-        const user = await db.query.users.findFirst({
-            where: (users, { eq }) => eq(users.id, userId),
-            with: {
-                package: true
-            }
-        });
-
-        if (user?.package) {
-            userPackageSlug = user.package.slug;
-        }
-
-        userInvitations = await getUserInvitations(userId);
-
-        const { getUserFeatures } = await import("@/lib/featureGating");
-        userFeatures = await getUserFeatures(userId);
-
-        // Fetch available themes and packages
-        availableThemes = await db.query.themes.findMany({
-            where: (themes, { eq }) => eq(themes.isActive, true)
-        });
-        availablePackages = await db.query.packages.findMany({
-            where: (packages, { eq }) => eq(packages.isActive, true)
-        });
-    } catch (error) {
-        console.error("Dashboard Data Fetch Error:", error);
-        // Fallback to defaults to prevent crash
+    if (user?.package) {
+        userPackageSlug = user.package.slug;
     }
 
-    let initialData = userInvitations.length > 0
-        ? userInvitations[0]
-        : null;
+    // 2. Fetch User Features
+    let userFeatures: string[] = [];
+    try {
+        userFeatures = await getUserFeatures(userId);
+    } catch (error) {
+        console.error("❌ Dashboard getUserFeatures Error:", error);
+    }
 
-    // ============================================
-    // DEMO PACKAGE: Load demo data for preview
-    // ============================================
-    if (userPackageSlug === "demo") {
-        // Demo users see full preview with DEMO_DATA
+    // 3. Fetch Invitations
+    const userInvitations = await getUserInvitations(userId);
+
+    // 4. Global Data for Forms
+    const availableThemes = await db.query.themes.findMany({
+        where: eq(themes.isActive, true),
+    });
+
+    const availablePackages = await db.query.packages.findMany({
+        where: eq(packages.isActive, true),
+    });
+
+    // Determine initial data
+    let initialData = userInvitations.length > 0 ? userInvitations[0] : null;
+
+    // Fallback for special Demo Package static check
+    if (userPackageSlug === "demo" && userInvitations.length === 0) {
         initialData = {
             id: 0,
             slug: "demo-preview",
@@ -95,21 +65,25 @@ export default async function DashboardPage() {
         } as any;
     }
 
-    // Inject features into content safely (Avoid mutation)
+    // Prepare content with injected features for the client
     let dashboardInitialData = initialData;
-    if (initialData?.content) {
+    if (initialData) {
         dashboardInitialData = {
             ...initialData,
             content: {
-                ...(initialData.content as any),
+                ...(initialData.content as any || {}),
                 features: userFeatures
             }
         };
     }
 
-    console.log(`[Dashboard] Loading for User ${userId} (${userRole}) with package ${userPackageSlug}`);
-    console.log(`[Dashboard] InitialData status: ${initialData ? 'FOUND' : 'NOT FOUND'}`);
-    if (initialData) console.log(`[Dashboard] InitialData Slug: ${initialData.slug}`);
+    // Debug Logs
+    console.log(`[Dashboard] User ${userId} (${userRole}) | Package: ${userPackageSlug} | Features: ${userFeatures.length}`);
+    if (initialData) {
+        console.log(`[Dashboard] Invitation Found: ${initialData.slug} (ID: ${initialData.id})`);
+    } else {
+        console.log(`[Dashboard] No Invitation Found for User ${userId}`);
+    }
 
     return (
         <DashboardClient
@@ -123,4 +97,3 @@ export default async function DashboardPage() {
         />
     );
 }
-

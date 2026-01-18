@@ -69,10 +69,14 @@ export default function DashboardClient({
     const [invitationData, setInvitationData] = useState<InvitationData>(() => {
         // Priority: 1. initialData.content, 2. DEMO_DATA (if demo), 3. MOCK_DATA
         const data = initialData?.content || (userPackageSlug === "demo" ? DEMO_DATA : MOCK_DATA);
-        // Ensure some critical fields exist to prevent render crashes
+
+        // Ensure critical fields exist
+        const baseData = userPackageSlug === "demo" ? DEMO_DATA : MOCK_DATA;
+
         return {
-            ...MOCK_DATA, // Base defaults
-            ...data,      // Actual data
+            ...baseData,
+            ...data,
+            slug: data?.slug || initialData?.slug || baseData.slug
         } as InvitationData;
     });
     const [invitationId, setInvitationId] = useState<number | null>(initialData?.id || (userPackageSlug === "demo" ? 0 : null));

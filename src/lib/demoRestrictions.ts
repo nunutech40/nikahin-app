@@ -71,8 +71,9 @@ export function canShareWhatsApp(packageSlug?: string): boolean {
 }
 
 export function canSaveInvitation(packageSlug?: string): boolean {
-    // Demo users cannot save (data not persisted)
-    return !isDemoPackage(packageSlug);
+    // Demo users SHOULD be able to save their draft, so they don't lose progress.
+    // They just can't publish it live.
+    return true;
 }
 
 export function canPublishInvitation(packageSlug?: string, isActive?: boolean): boolean {
