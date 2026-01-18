@@ -191,6 +191,71 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Love Story Preview - Compact & Elegant */}
+      <section className="py-32 bg-[#FDFBF7]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-col md:flex-row items-center gap-20">
+            <div className="flex-1 order-2 md:order-1">
+              <div className="relative pl-12 border-l-2 border-[#B48C5E]/20 space-y-16">
+                {[
+                  {
+                    date: "12 Sept 2021",
+                    title: "Pertemuan Pertama",
+                    desc: "Berawal dari sebuah kedai kopi kecil di sudut kota, percakapan singkat yang tak terduga menjadi awal dari segalanya."
+                  },
+                  {
+                    date: "05 Jan 2023",
+                    title: "Menjalin Kasih",
+                    desc: "Melewati tawa dan air mata, kami menyadari bahwa setiap langkah akan terasa lebih ringan jika dilewati bersama."
+                  },
+                  {
+                    date: "24 Des 2024",
+                    title: "Lamaran (The Proposal)",
+                    desc: "Di bawah cahaya bintang, sebuah janji diucapkan, dan sebuah jawaban 'Yes' meresmikan langkah kami menuju pelaminan."
+                  }
+                ].map((step, i) => (
+                  <div key={i} className="relative group">
+                    {/* Timeline Dot */}
+                    <div className="absolute -left-[57px] top-0 w-11 h-11 bg-white border-2 border-[#B48C5E] rounded-full flex items-center justify-center shadow-lg group-hover:scale-125 transition-transform duration-500 z-10">
+                      <Heart className="w-4 h-4 text-[#B48C5E] fill-current" />
+                    </div>
+
+                    <div className="bg-white p-8 rounded-[32px] border border-[#B48C5E]/5 shadow-[0_20px_40px_-15px_rgba(180,140,94,0.1)] group-hover:shadow-[0_40px_80px_-20px_rgba(180,140,94,0.2)] transition-all duration-700">
+                      <p className="text-[#B48C5E] text-[10px] font-black uppercase tracking-[0.2em] mb-3">{step.date}</p>
+                      <h4 className="text-xl font-black text-[#1A1612] mb-3 tracking-tight italic">{step.title}</h4>
+                      <p className="text-[#1A1612]/50 text-xs leading-relaxed font-bold uppercase tracking-wider">{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 order-1 md:order-2">
+              <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-[#B48C5E]/5 rounded-full border border-[#B48C5E]/20 text-[#B48C5E] font-black text-[10px] uppercase tracking-[0.25em] mb-10">
+                <Music className="w-4 h-4" /> Love Story Feature
+              </div>
+              <h2 className="font-serif text-5xl md:text-8xl font-black text-[#1A1612] mb-10 leading-[0.95] tracking-tighter">
+                Bagikan <br />
+                <span className="italic font-normal">Kisah</span> <span className="text-[#B48C5E]">Cinta Anda.</span>
+              </h2>
+              <p className="text-lg text-[#1A1612]/50 mb-12 max-w-xl leading-relaxed font-bold">
+                Berikan sentuhan personal pada undangan Anda. Biarkan tamu undangan merasakan setiap getaran emosi dari perjalanan cinta Anda melalui fitur Love Story yang interaktif.
+              </p>
+              <div className="flex items-center gap-6">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="w-12 h-12 rounded-full border-4 border-[#FDFBF7] bg-[#B48C5E]/10 flex items-center justify-center">
+                      <Music className="w-5 h-5 text-[#B48C5E]" />
+                    </div>
+                  ))}
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#1A1612]/40">Integrasi Musik & Audio Story</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Theme Showcase Section */}
       <div id="themes">
         <ThemeShowcase themes={availableThemes} />
