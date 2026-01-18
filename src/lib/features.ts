@@ -26,18 +26,20 @@ export function canUseFeature(data: InvitationData, code: FeatureCode | string):
         return userFeatures.includes('gallery_10') || userFeatures.includes('gallery_unlimited');
     }
 
+    if (code === 'rsvp') {
+        return userFeatures.includes('rsvp_basic') || userFeatures.includes('rsvp_export');
+    }
+
+    if (code === 'music') {
+        return userFeatures.includes('background_music');
+    }
+
     if (code === 'multi-event') {
         return userFeatures.includes('unlimited_events');
     }
 
-    // Video Background check
-    if (code === 'video_background') {
-        return userFeatures.includes('video_background');
-    }
-
-    // Live Streaming check
-    if (code === 'live_streaming') {
-        return userFeatures.includes('live_streaming');
+    if (code === 'quotes') {
+        return userFeatures.includes('quotes');
     }
 
     // Check if feature is explicitly enabled in the invitation's features list

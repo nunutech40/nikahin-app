@@ -1239,13 +1239,13 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                         transition={{ duration: 0.5 }}
                         className="content-with-nav"
                     >
-                        <QuoteSection quotes={data.quotes} />
+                        {canUseFeature(data, 'quotes') && <QuoteSection quotes={data.quotes} />}
                         <CoupleSection groom={data.groom} bride={data.bride} />
                         <EventSection events={data.events} />
                         {canUseFeature(data, 'love_story') && <LoveStorySection loveStory={data.loveStory} />}
                         {canUseFeature(data, 'gallery') && <GallerySection gallery={data.gallery} />}
                         {canUseFeature(data, 'gift_registry') && <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />}
-                        {canUseFeature(data, 'rsvp_basic') && <RSVPSection invitationId={invitationId} />}
+                        {canUseFeature(data, 'rsvp') && <RSVPSection invitationId={invitationId} />}
                         <GuestBookSection messages={guests} />
                         <FooterSection data={data} />
                     </motion.div>
@@ -1254,7 +1254,7 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
 
             {isOpen && (
                 <>
-                    <MusicToggle isPlaying={isMusicPlaying} onToggle={toggleMusic} />
+                    {canUseFeature(data, 'music') && <MusicToggle isPlaying={isMusicPlaying} onToggle={toggleMusic} />}
                     <BottomNavigation activeSection={activeSection} />
                 </>
             )}

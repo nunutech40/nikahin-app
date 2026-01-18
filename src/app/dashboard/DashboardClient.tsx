@@ -105,7 +105,22 @@ export default function DashboardClient({
     const previewData: InvitationData = isDemo ? {
         ...DEMO_DATA,
         ...invitationData,
-        // Features override to Platinum set
+        // For features that are LOCKED in demo, we force the beautiful DEMO_DATA
+        // For features that are OPEN in demo, we use the user's edits (invitationData)
+        giftOptions: canEditGiftRegistry(userPackageSlug) ? invitationData.giftOptions : DEMO_DATA.giftOptions,
+        themeConfig: canEditThemeConfig(userPackageSlug) ? invitationData.themeConfig : DEMO_DATA.themeConfig,
+
+        // Ensure editable sections take priority
+        groom: invitationData.groom || DEMO_DATA.groom,
+        bride: invitationData.bride || DEMO_DATA.bride,
+        events: invitationData.events || DEMO_DATA.events,
+        loveStory: canEditLoveStory(userPackageSlug) ? (invitationData.loveStory || DEMO_DATA.loveStory) : DEMO_DATA.loveStory,
+        gallery: canEditGallery(userPackageSlug) ? (invitationData.gallery || DEMO_DATA.gallery) : DEMO_DATA.gallery,
+        quotes: canEditQuotes(userPackageSlug) ? (invitationData.quotes || DEMO_DATA.quotes) : DEMO_DATA.quotes,
+        musicUrl: canEditMusic(userPackageSlug) ? (invitationData.musicUrl || DEMO_DATA.musicUrl) : DEMO_DATA.musicUrl,
+        coverImage: canChangeCover(userPackageSlug) ? (invitationData.coverImage || DEMO_DATA.coverImage) : DEMO_DATA.coverImage,
+
+        // Features override to Platinum set (using underscores consistently)
         features: [
             'love_story', 'gallery_10', 'gallery_unlimited', 'gift_registry',
             'background_music', 'custom_theme', 'rsvp_basic', 'rsvp_export',
