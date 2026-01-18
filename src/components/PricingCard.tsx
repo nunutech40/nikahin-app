@@ -38,11 +38,11 @@ export function PricingCard({ name, packageSlug, price, description, features, p
             icon: "text-slate-400"
         },
         gold: {
-            container: "border-[#D4AF37] bg-gradient-to-b from-amber-50/50 to-white shadow-2xl shadow-amber-200/40",
-            badge: "bg-[#D4AF37] text-white",
-            price: "text-[#B28F1F] font-black",
-            button: "bg-[#D4AF37] text-white hover:bg-[#927519] shadow-lg shadow-amber-200/50",
-            icon: "text-[#D4AF37]"
+            container: "border-[#B48C5E] bg-gradient-to-b from-[#B48C5E]/5 to-white shadow-2xl shadow-[#B48C5E]/20",
+            badge: "bg-[#B48C5E] text-white",
+            price: "text-[#B48C5E] font-black",
+            button: "bg-[#B48C5E] text-white hover:bg-[#927519] shadow-lg shadow-[#B48C5E]/30",
+            icon: "text-[#B48C5E]"
         },
         platinum: {
             container: "border-indigo-500/30 bg-slate-900 text-white shadow-2xl shadow-indigo-900/40",

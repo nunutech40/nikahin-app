@@ -12,37 +12,33 @@ export function ThemeShowcase({ themes }: ThemeShowcaseProps) {
     const activeThemes = themes.filter(t => t.isActive);
 
     return (
-        <section className="py-24 bg-white relative overflow-hidden">
-            {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-96 h-96 bg-rose-50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2" />
-
+        <section className="py-24 bg-[#FDFBF7] relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-50 border border-amber-100 rounded-full text-amber-600 font-bold text-xs uppercase tracking-widest mb-4">
-                        <Palette className="w-3 h-3" /> Catalog Tema
+                <div className="text-center mb-24">
+                    <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-[#B48C5E]/5 border border-[#B48C5E]/20 rounded-full text-[#B48C5E] font-black text-[10px] uppercase tracking-[0.25em] mb-6">
+                        <Palette className="w-4 h-4" /> Gallery Collections
                     </div>
-                    <h2 className="font-serif text-4xl md:text-5xl font-black text-gray-900 mb-4">
-                        Desain Premium untuk <span className="text-[#D4AF37]">Momen Spesial</span>
+                    <h2 className="font-serif text-5xl md:text-7xl font-black text-[#1A1612] mb-6 tracking-tighter">
+                        Temukan <span className="text-[#B48C5E]">Karya Seni</span> Undanganmu.
                     </h2>
-                    <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                        Pilih dari koleksi tema eksklusif kami. Ganti tema kapan saja tanpa perlu input ulang data.
+                    <p className="text-lg text-[#1A1612]/40 max-w-2xl mx-auto font-bold leading-relaxed">
+                        Pilih dari koleksi tema eksklusif yang dirancang oleh desainer profesional kami. <br className="hidden md:block" /> Ganti tema kapan saja dalam hitungan detik.
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-12">
                     {activeThemes.map((theme, i) => (
                         <div
                             key={theme.id}
-                            className="group relative bg-white rounded-3xl border border-gray-100 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                            className="group relative bg-white rounded-[40px] border border-[#B48C5E]/5 overflow-hidden hover:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] transition-all duration-700 hover:-translate-y-4"
                         >
                             {/* Theme Preview Image */}
-                            <div className="aspect-[4/5] bg-slate-100 relative overflow-hidden">
+                            <div className="aspect-[4/5] bg-slate-50 relative overflow-hidden">
                                 {theme.previewImage ? (
                                     <img
                                         src={theme.previewImage}
                                         alt={theme.name}
-                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                                     />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
@@ -51,23 +47,23 @@ export function ThemeShowcase({ themes }: ThemeShowcaseProps) {
                                 )}
 
                                 {/* Hover Overlay */}
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4">
+                                <div className="absolute inset-0 bg-[#1A1612]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                                     <a
                                         href={`/rizka-ayu?theme=${theme.slug}`}
                                         target="_blank"
-                                        className="px-6 py-3 bg-white text-gray-900 rounded-xl font-bold text-sm transform transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                                        className="px-10 py-5 bg-[#B48C5E] text-white rounded-full font-black text-[10px] uppercase tracking-widest transform transition-all hover:scale-105 active:scale-95 flex items-center gap-3 shadow-2xl shadow-[#B48C5E]/40"
                                     >
                                         <ExternalLink className="w-4 h-4" /> Preview Live
                                     </a>
                                 </div>
 
                                 {/* Tier Badge */}
-                                <div className="absolute top-4 left-4">
+                                <div className="absolute top-6 left-6">
                                     <span className={`
-                                        px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg
-                                        ${theme.tier === 'platinum' ? 'bg-purple-500 text-white' :
-                                            theme.tier === 'gold' ? 'bg-amber-500 text-white' :
-                                                'bg-emerald-500 text-white'}
+                                        px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-2xl
+                                        ${theme.tier === 'platinum' ? 'bg-[#1A1612] text-white' :
+                                            theme.tier === 'gold' ? 'bg-[#B48C5E] text-white' :
+                                                'bg-emerald-600 text-white'}
                                     `}>
                                         {theme.tier}
                                     </span>
@@ -75,37 +71,37 @@ export function ThemeShowcase({ themes }: ThemeShowcaseProps) {
                             </div>
 
                             {/* Theme Info */}
-                            <div className="p-6">
-                                <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-black text-xl text-gray-900">{theme.name}</h3>
-                                    {theme.tier === 'platinum' && <Sparkles className="w-5 h-5 text-purple-400" />}
-                                    {theme.tier === 'gold' && <Star className="w-5 h-5 text-amber-400 fill-current" />}
+                            <div className="p-10">
+                                <div className="flex justify-between items-start mb-3">
+                                    <h3 className="font-black text-2xl text-[#1A1612] tracking-tight italic">{theme.name}</h3>
+                                    {theme.tier === 'platinum' && <Sparkles className="w-5 h-5 text-indigo-400" />}
+                                    {theme.tier === 'gold' && <Star className="w-5 h-5 text-[#B48C5E] fill-current" />}
                                 </div>
-                                <p className="text-gray-500 text-sm line-clamp-2">{theme.description || "Desain elegan untuk pernikahan impian Anda."}</p>
+                                <p className="text-[#121212]/40 text-xs font-bold leading-relaxed line-clamp-2 uppercase tracking-wider">{theme.description || "Desain kontemporer untuk momen sakral Anda."}</p>
 
-                                <div className="mt-6 pt-6 border-t border-gray-50 flex items-center justify-between">
-                                    <div className="flex -space-x-2">
+                                <div className="mt-8 pt-8 border-t border-[#B48C5E]/5 flex items-center justify-between">
+                                    <div className="flex -space-x-3">
                                         {[1, 2, 3].map(j => (
-                                            <div key={j} className="w-6 h-6 rounded-full border-2 border-white bg-slate-200 overflow-hidden">
+                                            <div key={j} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
                                                 <img src={`https://i.pravatar.cc/100?u=${theme.id}${j}`} alt="User" />
                                             </div>
                                         ))}
                                     </div>
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">Sudah dipakai 100+ pasangan</span>
+                                    <span className="text-[9px] text-[#1A1612]/30 font-black uppercase tracking-[0.2em]">100+ Pasangan Bahagia</span>
                                 </div>
                             </div>
                         </div>
                     ))}
                 </div>
 
-                <div className="mt-16 text-center">
-                    <p className="text-gray-500 font-medium mb-6">Punya request tema khusus? Kami bisa buatkan eksklusif untukmu.</p>
+                <div className="mt-24 text-center">
+                    <p className="text-[#1A1612]/40 font-bold text-xs uppercase tracking-[0.3em] mb-10">Ingin Desain Khusus Sesuai Konsepmu?</p>
                     <a
                         href="https://wa.me/your-number"
                         target="_blank"
-                        className="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all"
+                        className="inline-flex items-center gap-4 px-12 py-6 bg-[#1A1612] text-white rounded-full font-black text-xs uppercase tracking-widest hover:bg-[#B48C5E] transition-all shadow-2xl shadow-black/10"
                     >
-                        <Heart className="w-5 h-5 text-rose-500 fill-current" /> Konsultasi Tema Custom
+                        <Heart className="w-5 h-5 text-rose-500 fill-current" /> Konsultasi Tema Eksklusif
                     </a>
                 </div>
             </div>
