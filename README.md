@@ -88,9 +88,15 @@ pnpm dev
 - [x] **Iteration 4**: Database Integration (Persistence & RSVP)
 - [x] **Iteration 5**: Authentication & Data Isolation
 - [x] **Iteration 6**: Super Admin & Agency Management
-- [x] **Iteration 7**: Multi-tier Package System & Feature Gating
-- [x] **Iteration 8**: Commercial Launch Readiness (Pricing, SEO, Analytics)
+- [x] **Iteration 7**: Multi-tier Package System & Feature Gating (With Strict Preview Logic)
+- [x] **Iteration 8**: Commercial Launch Readiness (Pricing, SEO, Analytics, Refined Demo Flow)
 - [ ] **Iteration 9**: Automated Payment & WhatsApp Integration (Planned)
+
+## 📄 Documentation Highlights
+- [Preview & Input Logic](./docs/logic/preview_logic.md) - **(New)** Rules for Demo vs Paid User feature access.
+- [Theme Development Guide](./docs/THEME_DEVELOPMENT.md) - Guide for creating custom themes.
+- [PRD.md](./PRD.md) - Product Requirements.
+
 
 ---
 
