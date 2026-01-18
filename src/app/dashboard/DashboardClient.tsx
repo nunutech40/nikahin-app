@@ -584,12 +584,11 @@ export default function DashboardClient({
                                 <tab.icon className="w-5 h-5" />
                                 {tab.label}
 
-                                {/* Lock Icon for Demo restricted features */}
-                                {isDemo && (
-                                    (tab.id === 'cerita' && !canEditLoveStory(userPackageSlug)) ||
-                                    (tab.id === 'galeri' && !canEditGallery(userPackageSlug)) ||
-                                    (tab.id === 'hadiah' && !canEditGiftRegistry(userPackageSlug)) ||
-                                    (tab.id === 'lainnya' && (!canEditMusic(userPackageSlug) || !canEditQuotes(userPackageSlug)))
+                                {/* Lock Icon for restricted features (Both Demo & Paid) */}
+                                {((tab.id === 'cerita' && !canUseFeature(invitationData, 'love_story')) ||
+                                    (tab.id === 'galeri' && !canUseFeature(invitationData, 'gallery')) ||
+                                    (tab.id === 'hadiah' && !canUseFeature(invitationData, 'gift_registry')) ||
+                                    (tab.id === 'lainnya' && !canUseFeature(invitationData, 'quotes') && !canUseFeature(invitationData, 'background_music'))
                                 ) && (
                                         <div className="absolute top-1 right-1">
                                             <Lock className="w-2.5 h-2.5 text-slate-400" />
@@ -620,7 +619,7 @@ export default function DashboardClient({
                             />
                         )}
                         {activeTab === "cerita" && (
-                            <FeatureGate canUse={canUseFeature(invitationData, 'love-story')} featureCode="love-story">
+                            <FeatureGate canUse={canUseFeature(invitationData, 'love_story')} featureCode="love_story">
                                 <LoveStoryForm
                                     loveStory={invitationData.loveStory}
                                     onChange={handleLoveStoryChange}
@@ -629,7 +628,7 @@ export default function DashboardClient({
                             </FeatureGate>
                         )}
                         {activeTab === "galeri" && (
-                            <FeatureGate canUse={canUseFeature(invitationData, 'gallery')} featureCode="gallery">
+                            <FeatureGate canUse={canUseFeature(invitationData, 'gallery')} featureCode="gallery_10">
                                 <GalleryForm
                                     gallery={invitationData.gallery}
                                     onChange={handleGalleryChange}
@@ -638,7 +637,7 @@ export default function DashboardClient({
                             </FeatureGate>
                         )}
                         {activeTab === "hadiah" && (
-                            <FeatureGate canUse={canUseFeature(invitationData, 'gift-registry')} featureCode="gift-registry">
+                            <FeatureGate canUse={canUseFeature(invitationData, 'gift_registry')} featureCode="gift_registry">
                                 <GiftForm
                                     giftOptions={invitationData.giftOptions}
                                     shippingAddress={invitationData.shippingAddress}
@@ -649,15 +648,16 @@ export default function DashboardClient({
                             </FeatureGate>
                         )}
                         {activeTab === "tampilan" && (
-                            <FeatureGate canUse={canUseFeature(invitationData, 'custom-theme')} featureCode="custom-theme">
-                                <ThemeSettingsForm
-                                    themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
-                                    coverImage={invitationData.coverImage || ""}
-                                    onConfigChange={handleThemeConfigChange}
-                                    onCoverChange={handleCoverChange}
-                                    errorSource={zodError}
-                                />
-                            </FeatureGate>
+                            <ThemeSettingsForm
+                                themeConfig={invitationData.themeConfig || MOCK_DATA.themeConfig!}
+                                coverImage={invitationData.coverImage || ""}
+                                onConfigChange={handleThemeConfigChange}
+                                onCoverChange={handleCoverChange}
+                                errorSource={zodError}
+                                canCustomizePalette={canUseFeature(invitationData, 'custom_theme')}
+                                canCustomizeTypography={canUseFeature(invitationData, 'custom_theme')}
+                                canCustomizeCover={canUseFeature(invitationData, 'cover_image')}
+                            />
                         )}
                         {activeTab === "lainnya" && (
                             <div className="space-y-8">
@@ -669,7 +669,7 @@ export default function DashboardClient({
                                     />
                                 </FeatureGate>
 
-                                <FeatureGate canUse={canUseFeature(invitationData, 'background-music')} featureCode="background-music">
+                                <FeatureGate canUse={canUseFeature(invitationData, 'background_music')} featureCode="background_music">
                                     <MusicForm
                                         musicUrl={invitationData.musicUrl}
                                         onChange={handleMusicChange}

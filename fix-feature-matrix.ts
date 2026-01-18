@@ -3,23 +3,21 @@ import { packages, features, packageFeatures } from "./src/db/schema";
 import { eq, inArray } from "drizzle-orm";
 
 async function fixFeatureMatrix() {
-    console.log("🛠️  Fixing Feature Matrix and Packages...");
+    console.log("🛠️  Fixing Feature Matrix and Packages (v2)...");
 
     try {
-        // 1. Core / Basic Features (Bronze level)
-        const bronzeFeatureCodes = [
+        // 1. Core / Basic Features (Bronze level) - Now Includes Basic Theme settings
+        const coreFeatureCodes = [
             "basic_info", "countdown", "google_maps", "guestbook",
-            "rsvp_basic", "single_event", "basic-invitation", "rsvp",
-            "countdown", "gallery-basic", "google-maps", "analytics-basic"
+            "rsvp_basic", "single_event", "cover_image"
         ];
 
         console.log("  - Setting basic features as Global/Core...");
         await db.update(features)
             .set({ isCore: true })
-            .where(inArray(features.code, bronzeFeatureCodes));
+            .where(inArray(features.code, coreFeatureCodes));
 
-        // 2. Ensure Packages exist with correct structure
-        console.log("  - Updating package list...");
+        // 2. Ensure Packages exist
         const packageUpdates = [
             { slug: "bronze", name: "Bronze", price: 0, description: "Paket Dasar (Gratis)" },
             { slug: "silver", name: "Silver", price: 150000, description: "Paket Best Value" },
@@ -35,33 +33,32 @@ async function fixFeatureMatrix() {
             });
         }
 
-        // 3. Re-map Features
-        console.log("  - Re-mapping features to packages...");
+        // 3. Re-map Features with better hierarchy
         const allPkgs = await db.query.packages.findMany();
         const allFeats = await db.query.features.findMany();
-
         const pkgMap = new Map(allPkgs.map(p => [p.slug, p.id]));
         const featMap = new Map(allFeats.map(f => [f.code, f.id]));
 
-        // Clear existing mappings to avoid duplicates/mess (OPTIONAL but recommended for a clean state)
-        // await db.delete(packageFeatures);
+        // SILVER: Now includes Gallery AND Love Story (as requested)
+        const silverFeatures = ["rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", "love_story"];
 
-        const silverFeatures = ["rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", "music-player", "digital-envelope"];
-        const goldFeatures = [...silverFeatures, "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding", "no-watermark", "analytics-advanced"];
-        const platinumFeatures = [...goldFeatures, "custom-domain", "video-background", "live-streaming", "guest-filter", "whatsapp-blast", "priority-support"];
+        // GOLD: All Silver + advanced customizations
+        const goldFeatures = [...silverFeatures, "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding", "no_watermark", "analytics_advanced"];
+
+        // PLATINUM: Everything
+        const platinumFeatures = [...goldFeatures, "custom_domain", "video_background", "live_streaming", "guest_filter", "whatsapp_blast", "priority_support"];
 
         const mapping = [
             { slug: "silver", codes: silverFeatures },
             { slug: "gold", codes: goldFeatures },
             { slug: "platinum", codes: platinumFeatures },
-            { slug: "demo", codes: platinumFeatures }, // Demo has everything
+            { slug: "demo", codes: platinumFeatures },
         ];
 
         for (const m of mapping) {
             const pkgId = pkgMap.get(m.slug);
             if (!pkgId) continue;
 
-            // Delete existing for this package to prevent duplicates
             await db.delete(packageFeatures).where(eq(packageFeatures.packageId, pkgId));
 
             for (const code of m.codes) {
@@ -75,7 +72,7 @@ async function fixFeatureMatrix() {
             }
         }
 
-        console.log("✅ Feature Matrix Fixed Successfully!");
+        console.log("✅ Feature Matrix Fixed Successfully (v2)!");
         process.exit(0);
     } catch (error) {
         console.error("❌ Error fixing feature matrix:", error);

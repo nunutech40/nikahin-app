@@ -47,31 +47,31 @@ export async function saveInvitation(invitationId: number, content: any) {
         // 3. Sanitize content based on entitlements
         const sanitizedContent = { ...content };
 
-        if (!allowedFeatures.includes('gallery')) {
+        if (!allowedFeatures.includes('gallery_10') && !allowedFeatures.includes('gallery_unlimited')) {
             sanitizedContent.gallery = [];
         }
 
-        if (!allowedFeatures.includes('love-story')) {
+        if (!allowedFeatures.includes('love_story')) {
             sanitizedContent.loveStory = [];
         }
 
-        if (!allowedFeatures.includes('background-music')) {
+        if (!allowedFeatures.includes('background_music')) {
             sanitizedContent.musicUrl = "";
         }
 
-        if (!allowedFeatures.includes('gift-registry')) {
+        if (!allowedFeatures.includes('gift_registry')) {
             sanitizedContent.giftOptions = [];
             sanitizedContent.shippingAddress = null;
         }
 
-        if (!allowedFeatures.includes('custom-theme')) {
+        if (!allowedFeatures.includes('custom_theme')) {
             // Reset to default/null so renderer uses default theme values
             if (sanitizedContent.themeConfig) {
                 delete sanitizedContent.themeConfig;
             }
         }
 
-        if (!allowedFeatures.includes('multi-event') && sanitizedContent.events && sanitizedContent.events.length > 1) {
+        if (!allowedFeatures.includes('unlimited_events') && sanitizedContent.events && sanitizedContent.events.length > 1) {
             sanitizedContent.events = [sanitizedContent.events[0]];
         }
 

@@ -2,57 +2,88 @@ import { InvitationData, FeatureCode } from "@/types/invitation";
 
 /**
  * Helper to check if a feature is accessible for a given invitation.
- * In a real app, this would check against the invitation's package privileges.
  * 
  * @param data InvitationData
  * @param code FeatureCode to check
  * @returns boolean
  */
-export function canUseFeature(data: InvitationData, code: FeatureCode): boolean {
+export function canUseFeature(data: InvitationData, code: FeatureCode | string): boolean {
+    const userFeatures = data.features || [];
+
     // Core features that are always enabled for everyone
-    const coreFeatures: FeatureCode[] = []; // Add codes here if needed
+    const coreFeatures: string[] = [
+        'basic_info',
+        'countdown',
+        'google_maps',
+        'guestbook',
+        'single_event'
+    ];
 
     if (coreFeatures.includes(code)) return true;
 
+    // Special logic for tiered features
+    if (code === 'gallery') {
+        return userFeatures.includes('gallery_10') || userFeatures.includes('gallery_unlimited');
+    }
+
+    if (code === 'multi-event') {
+        return userFeatures.includes('unlimited_events');
+    }
+
     // Check if feature is explicitly enabled in the invitation's features list
-    // This list would be populated from the database based on the package_features pivot table
-    return data.features?.includes(code) ?? false;
+    return userFeatures.includes(code);
 }
 
 /**
  * List of feature metadata for display purposes
  */
-export const FEATURE_METADATA: Record<FeatureCode, { name: string; description: string }> = {
-    'love-story': {
+export const FEATURE_METADATA: Record<string, { name: string; description: string }> = {
+    'love_story': {
         name: 'Cerita Cinta',
         description: 'Tampilkan perjalanan cinta Anda dalam bentuk timeline yang romantis.'
     },
-    'gallery': {
-        name: 'Galeri Foto',
-        description: 'Unggah momen-momen indah Anda untuk dibagikan kepada tamu.'
+    'gallery_10': {
+        name: 'Galeri Foto (10)',
+        description: 'Unggah hingga 10 foto momen indah Anda.'
     },
-    'gift-registry': {
+    'gallery_unlimited': {
+        name: 'Galeri Foto Unlimited',
+        description: 'Unggah foto sepuasnya untuk dibagikan kepada tamu.'
+    },
+    'gift_registry': {
         name: 'Hadiah Digital',
         description: 'Mudahkan tamu memberikan kado melalui rekening atau alamat pengiriman.'
     },
-    'background-music': {
+    'background_music': {
         name: 'Musik Latar',
         description: 'Tambahkan suasana romantis dengan musik pilihan Anda.'
     },
-    'custom-theme': {
+    'custom_theme': {
         name: 'Kustomisasi Tampilan',
         description: 'Atur warna dan font sesuai keinginan untuk undangan yang unik.'
     },
-    'rsvp': {
+    'rsvp_basic': {
         name: 'Sistem RSVP',
-        description: 'Kelola daftar kehadiran tamu secara otomatis dan instan.'
+        description: 'Kelola daftar kehadiran tamu secara otomatis.'
+    },
+    'rsvp_export': {
+        name: 'Export RSVP',
+        description: 'Download daftar tamu dalam format Excel/CSV.'
     },
     'quotes': {
         name: 'Kutipan & Doa',
         description: 'Sematkan ayat suci atau kata mutiara di undangan Anda.'
     },
-    'multi-event': {
+    'unlimited_events': {
         name: 'Multi Acara',
         description: 'Tambahkan lebih dari satu rangkaian acara (misal: Akad dan Resepsi terpisah).'
+    },
+    'remove_branding': {
+        name: 'Hapus Branding',
+        description: 'Hilangkan tulisan "Powered by Nikahin" di bagian bawah undangan.'
+    },
+    'cover_image': {
+        name: 'Foto Sampul Premium',
+        description: 'Gunakan foto sampul kustom untuk mempercantik pembukaan undangan.'
     }
 };

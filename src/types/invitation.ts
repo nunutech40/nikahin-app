@@ -135,14 +135,24 @@ export interface InvitationData {
  * Feature Gating Module
  */
 export type FeatureCode =
-    | 'love-story'
-    | 'gallery'
-    | 'gift-registry'
-    | 'background-music'
-    | 'custom-theme'
-    | 'rsvp'
+    | 'love_story'
+    | 'gallery_10'
+    | 'gallery_unlimited'
+    | 'gift_registry'
+    | 'background_music'
+    | 'custom_theme'
+    | 'rsvp_basic'
+    | 'rsvp_export'
     | 'quotes'
-    | 'multi-event';
+    | 'unlimited_events'
+    | 'remove_branding'
+    | 'custom_domain'
+    | 'video_background'
+    | 'live_streaming'
+    | 'guest_filter'
+    | 'whatsapp_blast'
+    | 'priority_support'
+    | 'cover_image';
 
 /**
  * Theme Customization Configuration
