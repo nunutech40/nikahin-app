@@ -9,8 +9,7 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, AlertCircle, LogOut, ShieldCheck, Mail,
-    Copy, Share2, ExternalLink, Sparkles, Terminal
+    Lock, LogOut, ExternalLink, Sparkles, Terminal, Copy, Share2
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -67,17 +66,9 @@ export default function DashboardClient({
     availablePackages = [],
     guestMode = false
 }: DashboardClientProps) {
-    // 🔍 Debugging Mode
     const [debugMode, setDebugMode] = useState(false);
 
-    useEffect(() => {
-        console.log("[DashboardClient] Mount. Data Source:", initialData?.id ? `DB (ID: ${initialData.id})` : "Fallback/Demo");
-        if (typeof window !== "undefined") {
-            (window as any).nikahinDebug = () => setDebugMode(true);
-        }
-    }, [initialData]);
-
-    // State
+    // Invitation State
     const [invitationData, setInvitationData] = useState<InvitationData>(() => {
         const data = initialData?.content || (userPackageSlug === "demo" ? DEMO_DATA : MOCK_DATA);
         const baseData = userPackageSlug === "demo" ? DEMO_DATA : MOCK_DATA;
@@ -109,18 +100,12 @@ export default function DashboardClient({
 
     const isDemo = isDemoPackage(userPackageSlug);
 
-    // Prepare "Platinum" version for Preview
-    // If it's a demo, we merge current edits with DEMO_DATA to ensure Platinum features always have content
+    // ✨ PLATINUM PREVIEW FOR DEMO ✨
+    // Merge user edits with beautiful DEMO_DATA and enable all Platinum features in preview
     const previewData: InvitationData = isDemo ? {
         ...DEMO_DATA,
         ...invitationData,
-        // Ensure editable sections take priority from invitationData
-        groom: invitationData.groom || DEMO_DATA.groom,
-        bride: invitationData.bride || DEMO_DATA.bride,
-        events: invitationData.events || DEMO_DATA.events,
-        loveStory: invitationData.loveStory || DEMO_DATA.loveStory,
-        gallery: invitationData.gallery || DEMO_DATA.gallery,
-        // Platinum features: Always enabled in preview
+        // Features override to Platinum set
         features: [
             'love_story', 'gallery_10', 'gallery_unlimited', 'gift_registry',
             'background_music', 'custom_theme', 'rsvp_basic', 'rsvp_export',
@@ -141,12 +126,10 @@ export default function DashboardClient({
 
     const isTabLocked = (tabId: string) => {
         if (isDemo) {
-            // For Demo, follow Silver/Gold restrictions in Editor
             if (tabId === 'hadiah') return !canEditGiftRegistry(userPackageSlug);
             if (tabId === 'tampilan') return false;
             return false;
         }
-
         if (tabId === 'cerita') return !canUseFeature(invitationData, 'love_story');
         if (tabId === 'galeri') return !canUseFeature(invitationData, 'gallery');
         if (tabId === 'hadiah') return !canUseFeature(invitationData, 'gift_registry');
@@ -154,141 +137,10 @@ export default function DashboardClient({
         return false;
     };
 
-    const handleCopyLink = () => {
-        if (isDemo && !canCopyLink(userPackageSlug)) {
-            setUpgradeFeature("Bagikan Undangan");
-            setShowUpgradeModal(true);
-            return;
-        }
-        const url = `${window.location.origin}/${invitationData.slug}`;
-        navigator.clipboard.writeText(url);
-        toast.success("Link berhasil disalin!");
-    };
-
-    const handleShareWhatsApp = () => {
-        if (isDemo && !canShareWhatsApp(userPackageSlug)) {
-            setUpgradeFeature("Share WhatsApp");
-            setShowUpgradeModal(true);
-            return;
-        }
-        const url = `${window.location.origin}/${invitationData.slug}`;
-        window.open(`https://wa.me/?text=${encodeURIComponent("Lihat undangan kami: " + url)}`, '_blank');
-    };
-
-    const handleCoupleChange = (section: 'groom' | 'bride', field: keyof Person, value: string) => {
-        setInvitationData(prev => ({
-            ...prev,
-            [section]: { ...prev[section], [field]: value }
-        }));
-    };
-
-    const handleEventChange = (index: number, field: keyof Event, value: string) => {
-        setInvitationData(prev => {
-            const newEvents = [...(prev.events || [])];
-            newEvents[index] = { ...newEvents[index], [field]: value };
-            return { ...prev, events: newEvents };
-        });
-    };
-
-    const handleEventAdd = () => {
-        setInvitationData(prev => ({
-            ...prev,
-            events: [...(prev.events || []), {
-                name: '', date: '', time: '',
-                location: '', address: '', mapsLink: ''
-            }]
-        }));
-    };
-
-    const handleEventRemove = (index: number) => {
-        setInvitationData(prev => ({
-            ...prev,
-            events: (prev.events || []).filter((_, i) => i !== index)
-        }));
-    };
-
-    const handleLoveStoryChange = (newLoveStory: LoveStoryItem[]) => {
-        if (isDemo && !canEditLoveStory(userPackageSlug)) {
-            setUpgradeFeature("Love Story");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({ ...prev, loveStory: newLoveStory }));
-    };
-
-    const handleGalleryChange = (newGallery: string[]) => {
-        if (isDemo && !canEditGallery(userPackageSlug)) {
-            setUpgradeFeature("Galeri");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({ ...prev, gallery: newGallery }));
-    };
-
-    const handleGiftOptionsChange = (newOptions: InvitationData['giftOptions']) => {
-        if (isDemo && !canEditGiftRegistry(userPackageSlug)) {
-            setUpgradeFeature("Hadiah Digital");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({ ...prev, giftOptions: newOptions }));
-    };
-
-    const handleAddressChange = (field: keyof InvitationData['shippingAddress'], value: string) => {
-        setInvitationData(prev => ({
-            ...prev,
-            shippingAddress: { ...(prev.shippingAddress || {}), [field]: value }
-        }));
-    };
-
-    const handleQuotesChange = (field: keyof Quotes, value: string) => {
-        if (isDemo && !canEditQuotes(userPackageSlug)) {
-            setUpgradeFeature("Quotes");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({
-            ...prev,
-            quotes: { ...(prev.quotes || {}), [field]: value }
-        }));
-    };
-
-    const handleMusicChange = (value: string) => {
-        if (isDemo && !canEditMusic(userPackageSlug)) {
-            setUpgradeFeature("Musik");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({ ...prev, musicUrl: value }));
-    };
-
-    const handleThemeConfigChange = (field: keyof ThemeConfig, value: string) => {
-        if (isDemo && !canEditThemeConfig(userPackageSlug)) {
-            setUpgradeFeature("Custom Theme");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({
-            ...prev,
-            themeConfig: {
-                ...(prev.themeConfig || MOCK_DATA.themeConfig!),
-                [field]: value
-            }
-        }));
-    };
-
-    const handleCoverChange = (value: string) => {
-        if (isDemo && !canChangeCover(userPackageSlug)) {
-            setUpgradeFeature("Cover Image");
-            setShowUpgradeModal(true);
-            return;
-        }
-        setInvitationData(prev => ({ ...prev, coverImage: value }));
-    };
-
+    // --- HANDLERS ---
     const handleSave = async () => {
         if (isDemo && !canSaveInvitation(userPackageSlug)) {
-            setUpgradeFeature("Fitur Simpan");
+            setUpgradeFeature("Simpan Data");
             setShowUpgradeModal(true);
             return;
         }
@@ -304,11 +156,73 @@ export default function DashboardClient({
                 const saveResult = await saveInvitation(invitationId, invitationData);
                 if (saveResult.success) toast.success("Draft berhasil disimpan!");
             } catch (err) {
-                toast.error("Error saving data.");
+                toast.error("Gagal menyimpan.");
             } finally {
                 setIsSaving(false);
             }
         }
+    };
+
+    const handleCoupleChange = (section: 'groom' | 'bride', field: keyof Person, value: string) => {
+        setInvitationData(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
+    };
+
+    const handleEventChange = (index: number, field: keyof Event, value: string) => {
+        setInvitationData(prev => {
+            const newEvents = [...(prev.events || [])];
+            newEvents[index] = { ...newEvents[index], [field]: value };
+            return { ...prev, events: newEvents };
+        });
+    };
+
+    const handleEventAdd = () => {
+        setInvitationData(prev => ({
+            ...prev,
+            events: [...(prev.events || []), { name: '', date: '', time: '', location: '', address: '', mapsLink: '' }]
+        }));
+    };
+
+    const handleEventRemove = (index: number) => {
+        setInvitationData(prev => ({ ...prev, events: (prev.events || []).filter((_, i) => i !== index) }));
+    };
+
+    const handleLoveStoryChange = (newLoveStory: LoveStoryItem[]) => {
+        if (isDemo && !canEditLoveStory(userPackageSlug)) { setUpgradeFeature("Love Story"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, loveStory: newLoveStory }));
+    };
+
+    const handleGalleryChange = (newGallery: string[]) => {
+        if (isDemo && !canEditGallery(userPackageSlug)) { setUpgradeFeature("Galeri"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, gallery: newGallery }));
+    };
+
+    const handleGiftOptionsChange = (newOptions: InvitationData['giftOptions']) => {
+        if (isDemo && !canEditGiftRegistry(userPackageSlug)) { setUpgradeFeature("Hadiah Digital"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, giftOptions: newOptions }));
+    };
+
+    const handleAddressChange = (field: keyof InvitationData['shippingAddress'], value: string) => {
+        setInvitationData(prev => ({ ...prev, shippingAddress: { ...(prev.shippingAddress || {}), [field]: value } }));
+    };
+
+    const handleQuotesChange = (field: keyof Quotes, value: string) => {
+        if (isDemo && !canEditQuotes(userPackageSlug)) { setUpgradeFeature("Quotes"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, quotes: { ...(prev.quotes || {}), [field]: value } }));
+    };
+
+    const handleMusicChange = (value: string) => {
+        if (isDemo && !canEditMusic(userPackageSlug)) { setUpgradeFeature("Musik"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, musicUrl: value }));
+    };
+
+    const handleThemeConfigChange = (field: keyof ThemeConfig, value: string) => {
+        if (isDemo && !canEditThemeConfig(userPackageSlug)) { setUpgradeFeature("Custom Theme"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, themeConfig: { ...(prev.themeConfig || MOCK_DATA.themeConfig!), [field]: value } }));
+    };
+
+    const handleCoverChange = (value: string) => {
+        if (isDemo && !canChangeCover(userPackageSlug)) { setUpgradeFeature("Cover Image"); setShowUpgradeModal(true); return; }
+        setInvitationData(prev => ({ ...prev, coverImage: value }));
     };
 
     const handleCreateFirstInvitation = async () => {
@@ -318,37 +232,9 @@ export default function DashboardClient({
             const defaultTheme = availableThemes.find(t => t.slug === 'basic-theme') || availableThemes[0];
             const defaultPackage = availablePackages.find(p => p.slug === 'basic') || availablePackages[0];
             const result = await createInvitation(defaultTheme.id, defaultPackage.id, newSlug, MOCK_DATA);
-            if (result.success) {
-                toast.success("Selesai!");
-                window.location.reload();
-            }
-        } finally {
-            setIsCreating(false);
-        }
+            if (result.success) { toast.success("Selesai!"); window.location.reload(); }
+        } finally { setIsCreating(false); }
     };
-
-    // DEBUG PANEL
-    if (debugMode) {
-        return (
-            <div className="fixed inset-0 z-[9999] bg-slate-900 text-emerald-400 p-8 font-mono overflow-auto">
-                <div className="flex justify-between items-center mb-4 border-b border-emerald-900 pb-2">
-                    <h2 className="text-xl font-bold flex items-center gap-2"><Terminal className="w-5 h-5" /> DEBUG PANEL</h2>
-                    <button onClick={() => setDebugMode(false)} className="bg-emerald-900 text-white px-4 py-1 rounded">CLOSE</button>
-                </div>
-                <div className="space-y-4 text-sm">
-                    <p><span className="text-slate-500">User ID:</span> {userId}</p>
-                    <p><span className="text-slate-500">Package:</span> {userPackageSlug}</p>
-                    <p><span className="text-slate-500">Invitation ID:</span> {invitationId}</p>
-                    <p><span className="text-slate-500">Available Themes:</span> {availableThemes.length}</p>
-                    <p><span className="text-slate-500">Available Packages:</span> {availablePackages.length}</p>
-                    <p className="text-white mt-4 font-bold">INVITATION DATA CONTENT:</p>
-                    <pre className="bg-black/50 p-4 rounded border border-emerald-900/50">
-                        {JSON.stringify(invitationData, null, 2)}
-                    </pre>
-                </div>
-            </div>
-        );
-    }
 
     if (guestMode || !initialData) {
         return (
@@ -378,9 +264,9 @@ export default function DashboardClient({
     }
 
     return (
-        <div className="h-screen flex flex-col bg-slate-50 scrollbar-hide">
+        <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
             {/* Header */}
-            <header className="bg-white border-b border-slate-200 shadow-sm z-50">
+            <header className="bg-white border-b border-slate-200 z-50">
                 <div className="px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-4">
                         <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="lg:hidden p-2 hover:bg-slate-100 rounded-lg">
@@ -393,21 +279,18 @@ export default function DashboardClient({
                     </div>
 
                     <div className="hidden lg:flex bg-slate-100 p-1 rounded-xl">
-                        <button onClick={() => setPreviewMode("mobile")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${previewMode === "mobile" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+                        <button onClick={() => setPreviewMode("mobile")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${previewMode === "mobile" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}>
                             <Smartphone className="w-3.5 h-3.5 mr-2 inline" /> HP
                         </button>
-                        <button onClick={() => setPreviewMode("desktop")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${previewMode === "desktop" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+                        <button onClick={() => setPreviewMode("desktop")} className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${previewMode === "desktop" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}>
                             <Monitor className="w-3.5 h-3.5 mr-2 inline" /> DESKTOP
                         </button>
                     </div>
 
-                    <div className="flex items-center gap-2">
-                        <div className="hidden md:flex gap-1">
-                            <button onClick={handleCopyLink} className="p-2 text-slate-400 hover:text-amber-500 hover:bg-amber-50 rounded-xl transition-colors"><Copy className="w-4 h-4" /></button>
-                            <Link href={`/${invitationData.slug}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-colors"><ExternalLink className="w-4 h-4" /></Link>
-                        </div>
-                        <button onClick={handleSave} disabled={isSaving} className="px-5 py-2 bg-[#D4AF37] hover:bg-[#b28f1f] text-white rounded-xl text-xs font-black shadow-sm disabled:opacity-50 transition-all">
-                            {isSaving ? "SIMPAN..." : "SIMPAN DRAFT"}
+                    <div className="flex items-center gap-3">
+                        <Link href={`/${invitationData.slug}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-500 transition-colors hidden sm:block"><ExternalLink className="w-4 h-4" /></Link>
+                        <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 bg-[#D4AF37] hover:bg-[#b28f1f] text-white rounded-xl text-xs font-black shadow-sm disabled:opacity-50 transition-all">
+                            {isSaving ? "SAVING..." : "SIMPAN"}
                         </button>
                         <button onClick={() => signOut({ callbackUrl: "/login" })} className="p-2 text-slate-400 hover:text-rose-500 ml-1 transition-colors"><LogOut className="w-4 h-4" /></button>
                     </div>
@@ -415,12 +298,12 @@ export default function DashboardClient({
             </header>
 
             <div className="flex-1 flex overflow-hidden">
-                {/* Sidebar */}
+                {/* Sidebar Editor */}
                 <aside className={`fixed lg:static inset-y-0 left-0 z-40 w-full lg:w-[400px] xl:w-[450px] bg-white border-r transform transition-transform duration-300 ${isSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} flex flex-col pt-[58px] lg:pt-0`}>
                     <div className="flex overflow-x-auto border-b bg-slate-50/30 scrollbar-hide">
                         {tabs.map((tab) => (
                             <button key={tab.id} onClick={() => { setActiveTab(tab.id); setIsSidebarOpen(false); }} className={`flex flex-col items-center py-4 px-3 min-w-[70px] border-b-2 transition-all relative ${activeTab === tab.id ? "border-[#D4AF37] text-[#D4AF37] bg-white" : "border-transparent text-slate-400 hover:text-slate-600"}`}>
-                                <tab.icon className={`w-4 h-4 mb-1.5 transition-transform ${activeTab === tab.id ? 'scale-110' : ''}`} />
+                                <tab.icon className="w-4 h-4 mb-1.5" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">{tab.label}</span>
                                 {isTabLocked(tab.id) && <Lock className="absolute top-2 right-2 w-2 h-2 text-slate-300" />}
                             </button>
@@ -470,42 +353,58 @@ export default function DashboardClient({
                     </div>
                 </aside>
 
-                {/* Mobile Overlay */}
-                {isSidebarOpen && <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-[2px] z-30 lg:hidden" onClick={() => setIsSidebarOpen(false)} />}
+                {/* Main Preview (The part that used to be "menceng") */}
+                <main className="flex-1 bg-slate-100 p-4 lg:p-8 flex items-center justify-center overflow-hidden">
+                    <div className={`
+                        relative bg-white shadow-2xl transition-all duration-500 overflow-hidden
+                        ${previewMode === "mobile"
+                            ? "w-[375px] h-[750px] rounded-[40px] border-[12px] border-slate-900 border-x-[12px]"
+                            : "w-full h-full max-w-5xl rounded-2xl border"
+                        }
+                    `}>
+                        {/* Fake Smartphone Notch for Mobile Mode */}
+                        {previewMode === "mobile" && (
+                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-900 rounded-b-2xl z-20 flex items-center justify-center">
+                                <div className="w-10 h-1 bg-slate-800 rounded-full" />
+                            </div>
+                        )}
 
-                {/* Main Preview */}
-                <main className="flex-1 bg-slate-100 flex items-center justify-center p-4 relative overflow-hidden">
-                    {previewMode === "mobile" ? (
-                        <div className="w-[310px] h-[640px] md:w-[360px] md:h-[720px] border-[10px] border-slate-900 rounded-[3.5rem] overflow-hidden bg-white shadow-2xl relative animate-in zoom-in-95 duration-700">
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-6 bg-slate-900 rounded-b-2xl z-20 flex items-center justify-center">
-                                <div className="w-8 h-1 bg-slate-800 rounded-full" />
-                            </div>
-                            <div className="h-full pt-6 overflow-y-auto bg-white custom-scrollbar">
-                                <BasicTheme data={previewData} guestName="Bpk. Fulan & Kel." isPreview={true} isMobile={true} invitationId={invitationId || undefined} />
-                            </div>
+                        {/* THE THEME PREVIEW */}
+                        <div className="h-full overflow-y-auto custom-scrollbar bg-white">
+                            <BasicTheme
+                                data={previewData}
+                                guestName="Bpk. Fulan & Kel."
+                                isPreview={true}
+                                isMobile={previewMode === "mobile"}
+                                invitationId={invitationId || undefined}
+                            />
                         </div>
-                    ) : (
-                        <div className="w-full h-full max-w-6xl bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col border border-slate-200 animate-in fade-in duration-500">
-                            <div className="h-10 bg-slate-50 border-b border-slate-200 flex items-center px-6 gap-2">
-                                <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-slate-200" /><div className="w-2.5 h-2.5 rounded-full bg-slate-200" /><div className="w-2.5 h-2.5 rounded-full bg-slate-200" /></div>
-                                <div className="bg-white border rounded-full px-4 py-0.5 text-[9px] text-slate-300 font-mono flex-1 text-center max-w-sm mx-auto">nikahin.app/{invitationData.slug}</div>
-                            </div>
-                            <div className="flex-1 overflow-y-auto custom-scrollbar">
-                                <BasicTheme data={previewData} guestName="Bpk. Fulan & Kel." isPreview={true} isMobile={false} invitationId={invitationId || undefined} />
-                            </div>
-                        </div>
-                    )}
+                    </div>
 
-                    {/* Floating Debug Button for User */}
-                    <button
-                        onClick={() => setDebugMode(true)}
-                        className="absolute bottom-4 right-4 p-2 bg-slate-800 text-slate-400 rounded-full hover:text-white transition-colors group opacity-20 hover:opacity-100"
-                        title="Open Debug Console (Type nikahinDebug() in JS Console)"
-                    >
-                        <Terminal className="w-4 h-4" />
-                    </button>
+                    {/* Quick Access Debug */}
+                    <button onClick={() => setDebugMode(true)} className="absolute bottom-4 right-4 p-2 bg-slate-800 text-slate-400 rounded-full opacity-20 hover:opacity-100 transition-all"><Terminal className="w-4 h-4" /></button>
                 </main>
             </div>
+
+            {/* Debug Mode Modal */}
+            {debugMode && (
+                <div className="fixed inset-0 z-[9999] bg-slate-900/95 text-emerald-400 p-8 font-mono overflow-auto animate-in fade-in">
+                    <div className="flex justify-between items-center mb-6 border-b border-emerald-900/50 pb-4">
+                        <h2 className="text-xl font-bold flex items-center gap-3">🛠️ INVITATION DEBUGGER</h2>
+                        <button onClick={() => setDebugMode(false)} className="bg-emerald-500 text-slate-900 px-6 py-2 rounded-xl font-bold">CLOSE</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-8 text-sm">
+                        <div className="space-y-2">
+                            <p><span className="text-slate-500">Package:</span> {userPackageSlug}</p>
+                            <p><span className="text-slate-500">Invitation ID:</span> {invitationId}</p>
+                            <p><span className="text-slate-500">Preview Mode:</span> {previewMode}</p>
+                        </div>
+                        <pre className="bg-black/40 p-6 rounded-3xl border border-emerald-900/30 text-[10px] leading-relaxed">
+                            {JSON.stringify(invitationData, null, 2)}
+                        </pre>
+                    </div>
+                </div>
+            )}
 
             <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} feature={upgradeFeature} message={upgradeMessage} />
         </div>

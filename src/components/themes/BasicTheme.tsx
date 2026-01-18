@@ -1242,10 +1242,10 @@ export function BasicTheme({ data, guestName, isPreview = false, isMobile = fals
                         <QuoteSection quotes={data.quotes} />
                         <CoupleSection groom={data.groom} bride={data.bride} />
                         <EventSection events={data.events} />
-                        {canUseFeature(data, 'love-story') && <LoveStorySection loveStory={data.loveStory} />}
+                        {canUseFeature(data, 'love_story') && <LoveStorySection loveStory={data.loveStory} />}
                         {canUseFeature(data, 'gallery') && <GallerySection gallery={data.gallery} />}
-                        {canUseFeature(data, 'gift-registry') && <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />}
-                        {canUseFeature(data, 'rsvp') && <RSVPSection invitationId={invitationId} />}
+                        {canUseFeature(data, 'gift_registry') && <GiftSection giftOptions={data.giftOptions} shippingAddress={data.shippingAddress} />}
+                        {canUseFeature(data, 'rsvp_basic') && <RSVPSection invitationId={invitationId} />}
                         <GuestBookSection messages={guests} />
                         <FooterSection data={data} />
                     </motion.div>
