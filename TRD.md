@@ -75,7 +75,62 @@ Validasi kepemilikan undangan dilakukan di tingkat database mengacu pada `userId
 4. Bungkus komponen UI di dashboard dengan `<FeatureGate />`.
 5. Update server action sanitization di `src/app/actions/invitation.ts`.
 
----
+78: ---
+79: 
+80: ## 6. Dynamic Theme Engine (Theme Builder) - Iteration 9
+81: 
+82: Sistem "No-Code Theme Builder" memungkinkan Admin & Seller membuat variasi tema tanpa coding, menggunakan komponen "Lego Blocks" yang sudah disediakan developer.
+83: 
+84: ### 6.1 Architecture Concept: "Stack of Sections"
+85: Tema tidak lagi *hardcoded* sebagai satu file React, melainkan satu komponen renderer (`DynamicTheme.tsx`) yang membaca konfigurasi JSON.
+86: 
+87: **Prinsip Utama:**
+88: 1.  **Vertical Stack:** Komponen disusun secara vertikal (Atas ke Bawah). Tidak ada drag-and-drop posisi pixel (absolute).
+89: 2.  **Orderable:** Urutan seksi bisa diubah (e.g., *Quote* di atas *Mempelai*).
+90: 3.  **Toggleable:** Seksi bisa dinonaktifkan (Hidden).
+91: 4.  **Completeness:** Tema **WAJIB** mengandung konfigurasi untuk seluruh fitur standar (Hero, Couple, Event, Gallery, dll) agar kompatibel dengan semua Paket (Bronze/Silver/Gold).
+92: 
+93: ### 6.2 Data Structure (`themes.config`)
+94: Kolom `config` (JSONB) pada tabel `themes` akan menyimpan definisi tema:
+95: 
+96: ```json
+97: {
+98:   "global": {
+99:     "fontHeading": "Playfair Display",
+100:     "fontBody": "Inter",
+101:     "primaryColor": "#D4AF37",
+102:     "secondaryColor": "#F3E5AB",
+103:     "backgroundColor": "#FFFFFF",
+104:     "backgroundImage": "https://assets.nikahin.com/..."
+105:   },
+106:   "sections": [
+107:     { 
+108:       "id": "hero", 
+109:       "type": "hero_section",
+110:       "variant": "fullscreen_center", // Pilihan varian (A/B/C)
+111:       "isVisible": true,
+112:       "order": 0 
+113:     },
+114:     { 
+115:       "id": "couple", 
+116:       "type": "couple_section",
+117:       "variant": "card_overlap", 
+118:       "isVisible": true,
+119:       "order": 1 
+120:     }
+121:     // ... semua seksi lainnya
+122:   ]
+123: }
+124: ```
+125: 
+126: ### 6.3 Constraints (Batasan Kontributor)
+127: Agar sistem tetap *maintainable* dan valid:
+128: *   **No Custom CSS/JS:** Kontributor tidak bisa menyuntikkan kode custom. Hanya memilih opsi yang disediakan.
+129: *   **Mandatory Sections:** Editor akan menolak simpan jika seksi krusial (Mempelai, Acara) dihapus.
+130: *   **Variant Only:** Layout hanya bisa dipilih dari varian yang sudah dikoding developer (misal: *Gallery Grid* vs *Gallery Masonry*).
+131: 
+132: ---
+
 
 **Nikahin App Technical Documentation**
 *Update Terakhir: 18 Januari 2026 - Iterasi 7: Granular Feature Gating.*

@@ -73,7 +73,21 @@ Menghubungkan konten dengan tema dan paket fitur yang aktif.
 | `attendance` | VARCHAR | | 'hadir', 'tidak', 'ragu' |
 | `message` | TEXT | | |
 
----
+76: ---
+77: 
+78: ### 2.6. Tabel `themes` (Dynamic Engine)
+79: Tabel ini menyimpan definisi tema. Mulai Iterasi 9, tema mendukung konfigurasi dinamis (No-Code).
+80: 
+81: | Column | Type | Constraints | Description |
+82: | :--- | :--- | :--- | :--- |
+83: | `id` | SERIAL | PK | |
+84: | `slug` | VARCHAR | UNIQUE | Identifier unik (e.g., 'minimal-gold') |
+85: | `name` | VARCHAR | | Nama Display |
+86: | `config` | JSONB | | **New:** Struktur JSON berisi aturan warna, font, dan urutan seksi lego-blocks. |
+87: | `is_active` | BOOLEAN | | Soft delete status |
+88: 
+89: ---
+
 
 ## 3. Relationship Logic & Rationale
 

@@ -66,6 +66,7 @@ export interface ThemeRegistration {
 // ============================================
 
 import { BasicTheme } from "@/components/themes/BasicTheme";
+import { DynamicTheme } from "@/components/themes/DynamicTheme";
 
 // Future themes will be imported here:
 // import { ElegantTheme } from "@/components/themes/ElegantTheme";
@@ -93,6 +94,17 @@ const THEME_REGISTRY: Record<string, ThemeRegistration> = {
             previewImage: "/images/themes/basic-preview.png",
         },
         component: BasicTheme,
+    },
+    custom: {
+        metadata: {
+            id: "custom",
+            name: "Custom Theme (Builder)",
+            description: "Tema dinamis yang dibuat dengan No-Code Builder",
+            isFree: false,
+            category: "dynamic",
+            previewImage: "/images/themes/custom-preview.png",
+        },
+        component: DynamicTheme,
     },
 
     // Future themes can be added here:

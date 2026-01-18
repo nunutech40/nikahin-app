@@ -16,7 +16,8 @@
 - [x] **Iterasi 6:** Super Admin Panel - ✅ **COMPLETED**
 - [x] **Iterasi 7:** Package System & Registration - ✅ **COMPLETED**
 - [ ] **Iterasi 8:** Commercial Launch Readiness - 🔄 **IN PROGRESS**
-- [ ] **Iterasi 9:** Automated Payment Gateway
+19: - [ ] **Iterasi 9:** Dynamic Theme Builder (No-Code) - 🆕 **PLANNED**
+20: - [ ] **Iterasi 10:** Automated Payment Gateway
 
 ---
 
@@ -585,7 +586,54 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [ ] **TDep.5** - Configure SSL certificate
 - [ ] **TDep.6** - Setup monitoring (Sentry)
 
----
+589: ## 🎨 Iterasi 9: Dynamic Theme Builder (No-Code)
+590: 
+591: ### 📝 Feature Definition
+592: Implement a modular "Lego Block" theme engine that allows Admins & Sellers to build unique themes by stacking pre-defined component variants.
+593: 
+594: ### 🎯 Acceptance Criteria
+595: - [ ] Database supports JSON config for themes.
+596: - [ ] `DynamicTheme.tsx` can render components based on JSON config.
+597: - [ ] Admin Interface to Create/Edit themes (Reorder sections, Choose variants).
+598: - [ ] Constraints enforced: Mandatory sections must exist.
+599: - [ ] Global styling (Font/Color) works across all blocks.
+600: - [ ] Minimum 2 variants for each core section (Hero, Gallery, Quote).
+601: 
+602: ### 📦 Tasks Breakdown
+603: 
+604: #### **Phase 9.1: Architect & Database**
+605: 605: - [x] **T9.1.1** - Update `themes` table schema: Add `config` (jsonb) column.
+606: 606: - [x] **T9.1.2** - Define TypeScript Interfaces for `ThemeConfig`, `SectionConfig`, `GlobalStyle`.
+607: 607: - [x] **T9.1.3** - Create default "Master Config" JSON as a template.
+608: 608: - [x] **T9.1.4** - Run DB migration (`pnpm db:push`).
+609: 
+#### **Phase 9.2: Component Standardization (The Lego Blocks)**
+- [x] **T9.2.1** - Refactor `Hero` to accept `variant` prop ('fullscreen', 'card', 'minimal').
+- [x] **T9.2.2** - Refactor `Couple` to accept `variant` prop.
+- [x] **T9.2.3** - Refactor `Gallery` to accept `variant` prop ('grid', 'masonry', 'carousel').
+- [x] **T9.2.4** - Refactor `Event` & `Quote` sections.
+- [x] **T9.2.5** - Ensure all components respect `GlobalStyle` (colors/fonts) from props.
+
+#### **Phase 9.3: Dynamic Renderer**
+- [x] **T9.3.1** - Create `src/components/themes/DynamicTheme.tsx`.
+- [x] **T9.3.2** - Implement "Block Resolver" (Map section type -> React Component).
+- [x] **T9.3.3** - Implement sorting logic based on `order` field.
+- [ ] **T9.3.4** - Test: Render a theme using hardcoded JSON config.
+622: 
+623: #### **Phase 9.4: Theme Builder UI (Admin/Seller)**
+624: - [ ] **T9.4.1** - Create `/admin/themes/builder/[id]` page.
+625: - [ ] **T9.4.2** - **Global Settings Panel**: Form for Colors (Pickers) & Fonts (Dropdown).
+626: - [ ] **T9.4.3** - **Section Manager**: List of active sections with "Move Up/Down" buttons.
+627: - [ ] **T9.4.4** - **Variant Selector**: Dropdown to choose layout for each section.
+628: - [ ] **T9.4.5** - **Live Preview**: Show iframe/preview of the theme being built.
+629: - [ ] **T9.4.6** - Save Action: Validate completeness (Must have Core sections) before saving to DB.
+630: 
+631: ---
+632: 
+633: ## 💳 Iterasi 10: Automated Payment Gateway
+634: 
+635: *(Moved from Iteration 9 - Tasks remain same)*
+636:
 
 ## 🔄 How to Use This Roadmap
 

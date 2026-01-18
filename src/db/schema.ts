@@ -91,6 +91,7 @@ export const themes = pgTable("themes", {
   description: text("description"),
   category: varchar("category", { length: 100 }),
   previewImage: text("preview_image"),
+  config: jsonb("config"), // For Dynamic Theme Engine (Iteration 9)
   isFree: boolean("is_free").default(true).notNull(),
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

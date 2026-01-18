@@ -32,6 +32,7 @@ interface PageProps {
     }>;
     searchParams: Promise<{
         to?: string;
+        theme?: string;
     }>;
 }
 
@@ -80,7 +81,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function InvitationPage({ params, searchParams }: PageProps) {
     // Unwrap promises
     const { slug } = await params;
-    const { to } = await searchParams;
+    const { to, theme } = await searchParams; // Updated to extract 'theme'
 
     const guestName = to ? decodeURIComponent(to) : undefined;
 
@@ -92,7 +93,10 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         return notFound();
     }
 
-    const { data, themeId, invitationId, guests, packageSlug, features } = result;
+    const { data, themeId: dbThemeId, invitationId, guests, packageSlug, features } = result;
+
+    // Allow overriding theme via URL param (e.g. ?theme=custom)
+    const themeId = theme || dbThemeId;
 
     // 2.5. Track Analytics (Internal)
     trackVisit(invitationId);
