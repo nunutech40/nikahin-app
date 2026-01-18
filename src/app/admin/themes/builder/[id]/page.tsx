@@ -366,13 +366,26 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                 </div>
                             </div>
                         ) : (
-                            <div className="space-y-2">
+                            <>
+                                <div className="flex items-center justify-between mb-4 px-1">
+                                    <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Daftar Bagian</h3>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm("Reset semua bagian ke pengaturan awal?")) {
+                                                setConfig(prev => ({ ...prev, sections: MASTER_THEME_CONFIG.sections }));
+                                            }
+                                        }}
+                                        className="text-[10px] text-amber-500 hover:text-amber-400 font-bold"
+                                    >
+                                        Reset ke Default
+                                    </button>
+                                </div>
                                 <p className="text-xs text-slate-500 mb-4 px-1">
                                     Gunakan panah untuk mengatur urutan bagian. Atur visibilitas dan varian.
                                 </p>
 
                                 <div className="space-y-2">
-                                    {config.sections.sort((a, b) => a.order - b.order).map((section, index) => (
+                                    {[...config.sections].sort((a, b) => a.order - b.order).map((section, index) => (
                                         <div
                                             key={section.id}
                                             className={`bg-slate-800/40 border ${section.isVisible ? 'border-slate-800' : 'border-slate-800/50 grayscale opacity-60'} rounded-lg p-3 group hover:border-slate-700 transition-all`}
@@ -485,7 +498,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                                 <button onClick={() => setShowAddMenu(false)} className="text-slate-500 hover:text-white text-xs">Batal</button>
                                             </div>
                                             <div className="grid grid-cols-2 gap-2">
-                                                {['quote', 'couple', 'event', 'love_story', 'gallery', 'gift', 'rsvp', 'closing'].map((type) => (
+                                                {['hero', 'quote', 'couple', 'event', 'love_story', 'gallery', 'gift', 'rsvp', 'closing'].map((type) => (
                                                     <button
                                                         key={type}
                                                         onClick={() => {
@@ -508,7 +521,7 @@ export default function ThemeBuilderPage({ params }: { params: Promise<{ id: str
                                         </button>
                                     )}
                                 </div>
-                            </div>
+                            </>
                         )}
                     </div>
                 </aside>

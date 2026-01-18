@@ -114,8 +114,21 @@ export const DEMO_DATA: InvitationData = {
     themeConfig: {
         primaryColor: "#D4AF37",
         secondaryColor: "#8B7355",
+        backgroundColor: "#FFFFFF",
         fontHeading: "Playfair Display",
         fontBody: "Inter"
     },
-    features: [] // Will be populated from package
+    features: [
+        'love_story',
+        'gallery_unlimited',
+        'gift_registry',
+        'background_music',
+        'custom_theme',
+        'rsvp_basic',
+        'rsvp_export',
+        'quotes',
+        'unlimited_events',
+        'remove_branding',
+        'cover_image'
+    ]
 };
