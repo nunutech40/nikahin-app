@@ -101,8 +101,14 @@ export default function DashboardClient({
 
     const isDemo = isDemoPackage(userPackageSlug);
 
-    // ✨ PLATINUM PREVIEW FOR DEMO ✨
-    // Merge user edits with beautiful DEMO_DATA and enable all Platinum features in preview
+    // ✨ PREVIEW DATA LOGIC ✨
+    // 1. DEMO USER:
+    //    - Input: Restricted to Silver features (controlled by FeatureGate components below)
+    //    - Preview: FULL PLATINUM EXPERIENCE (User edits + DEMO_DATA for locked features)
+    // 2. PAID USERS (Silver/Gold/Platinum):
+    //    - Input: Full access according to their package
+    //    - Preview: REALISTIC REPRESENTATION (Only what they have input/paid for)
+
     const previewData: InvitationData = isDemo ? {
         ...DEMO_DATA,
         ...invitationData,
@@ -121,14 +127,14 @@ export default function DashboardClient({
         musicUrl: canEditMusic(userPackageSlug) ? (invitationData.musicUrl || DEMO_DATA.musicUrl) : DEMO_DATA.musicUrl,
         coverImage: canChangeCover(userPackageSlug) ? (invitationData.coverImage || DEMO_DATA.coverImage) : DEMO_DATA.coverImage,
 
-        // Features override to Platinum set (using underscores consistently)
+        // Features override to Platinum set for DEMO ONLY (Visual Tease)
         features: [
             'love_story', 'gallery_10', 'gallery_unlimited', 'gift_registry',
             'background_music', 'custom_theme', 'rsvp_basic', 'rsvp_export',
             'quotes', 'unlimited_events', 'remove_branding', 'cover_image',
             'video_background', 'live_streaming'
         ]
-    } : invitationData;
+    } : invitationData; // NON-DEMO: Strictly what user has input. No fake upgrades.
 
     const tabs = [
         { id: 'mempelai', label: 'Mempelai', icon: Users },
