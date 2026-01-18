@@ -129,7 +129,8 @@ export function FeatureLockBadge({ featureName, requiredPackage, currentPackage 
                             {/* CTA Buttons */}
                             <div className="space-y-3">
                                 <Link
-                                    href="/dashboard/upgrade"
+                                    href="/#pricing"
+                                    target="_blank"
                                     className={`flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r ${info.color} text-white rounded-2xl font-black uppercase tracking-wider hover:shadow-lg transition-all`}
                                 >
                                     Upgrade Sekarang

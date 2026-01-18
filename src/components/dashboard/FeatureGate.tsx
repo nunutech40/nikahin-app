@@ -1,5 +1,6 @@
 import React from "react";
 import { Lock } from "lucide-react";
+import Link from "next/link";
 import { FeatureCode } from "@/types/invitation";
 import { FEATURE_METADATA } from "@/lib/features";
 
@@ -28,9 +29,9 @@ export default function FeatureGate({ canUse, featureCode, children }: FeatureGa
                     <p className="text-slate-500 text-xs mb-4 leading-relaxed">
                         {metadata?.description || 'Fitur ini tidak tersedia dalam paket Anda saat ini.'}
                     </p>
-                    <button className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm shadow-amber-200">
+                    <Link href="/#pricing" target="_blank" className="block w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm shadow-amber-200">
                         Upgrade Paket Sekarang
-                    </button>
+                    </Link>
                 </div>
             </div>
 

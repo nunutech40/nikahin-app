@@ -55,7 +55,8 @@ export default function DemoMarker() {
 
                         {/* Button - POINTER EVENTS AUTO so it can be clicked */}
                         <Link
-                            href="/register"
+                            href="/#pricing"
+                            target="_blank"
                             className="pointer-events-auto bg-white hover:bg-slate-200 text-slate-900 w-full py-3.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all shadow-lg active:scale-95 group mt-2"
                         >
                             Buat Gratis
