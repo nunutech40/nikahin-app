@@ -1,18 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Check, Sparkles } from "lucide-react";
+import { Check, X, Sparkles } from "lucide-react";
+
+interface Feature {
+    name: string;
+    checked: boolean;
+}
 
 interface PricingCardProps {
     name: string;
     packageSlug: string;
     price: number;
     description: string;
-    features: string[];
+    features: Feature[];
     popular?: boolean;
+    originalPrice?: number;
 }
 
-export function PricingCard({ name, packageSlug, price, description, features, popular }: PricingCardProps) {
+export function PricingCard({ name, packageSlug, price, description, features, popular, originalPrice }: PricingCardProps) {
     const formatPrice = (price: number) => {
         if (price === 0) return "Gratis";
         return new Intl.NumberFormat("id-ID", {
@@ -24,38 +30,48 @@ export function PricingCard({ name, packageSlug, price, description, features, p
 
     return (
         <div
-            className={`relative rounded-3xl p-8 border-2 transition-all hover:scale-105 ${popular
-                ? "border-[#D4AF37] bg-gradient-to-b from-amber-50 to-white shadow-2xl shadow-amber-200/50"
-                : "border-gray-100 bg-white shadow-xl shadow-gray-100/20 hover:border-[#D4AF37]"
+            className={`relative rounded-3xl p-8 border-2 transition-all hover:scale-[1.02] flex flex-col h-full ${popular
+                ? "border-[#D4AF37] bg-gradient-to-b from-amber-50/50 to-white shadow-2xl shadow-amber-200/40"
+                : "border-gray-100 bg-white"
                 }`}
         >
             {/* Popular Badge */}
             {popular && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#D4AF37] text-white rounded-full text-sm font-black uppercase tracking-wider shadow-lg flex items-center gap-2">
-                    <Sparkles className="w-4 h-4" />
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#D4AF37] text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg flex items-center gap-2">
+                    <Sparkles className="w-3 h-3" />
                     Paling Populer
                 </div>
             )}
 
             {/* Package Name */}
             <div className="text-center mb-6">
-                <h3 className="text-2xl font-black text-gray-800 mb-2">{name}</h3>
-                <p className="text-sm text-gray-500">{description}</p>
+                <h3 className="text-xl font-black text-gray-900 mb-1">{name}</h3>
+                <p className="text-xs text-gray-500 font-medium px-4">{description}</p>
             </div>
 
             {/* Price */}
-            <div className="text-center mb-8">
-                <div className="text-5xl font-black text-[#D4AF37] mb-2">
+            <div className="text-center mb-8 border-b border-gray-50 pb-8">
+                {originalPrice && (
+                    <div className="text-sm text-gray-400 line-through mb-1 font-bold">
+                        {formatPrice(originalPrice)}
+                    </div>
+                )}
+                <div className="text-4xl font-black text-gray-900 mb-2 tracking-tighter">
                     {formatPrice(price)}
                 </div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sekali Bayar</div>
             </div>
 
-            {/* Features */}
-            <ul className="space-y-4 mb-8">
+            {/* Features Matrix */}
+            <ul className="space-y-3.5 mb-10 flex-grow">
                 {features.map((feature, index) => (
-                    <li key={index} className="flex items-start gap-3">
-                        <Check className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-600 text-sm leading-relaxed">{feature}</span>
+                    <li key={index} className={`flex items-start gap-3 ${feature.checked ? "text-gray-700" : "text-gray-300"}`}>
+                        {feature.checked ? (
+                            <Check className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                        ) : (
+                            <X className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5" />
+                        )}
+                        <span className="text-xs font-semibold leading-tight">{feature.name}</span>
                     </li>
                 ))}
             </ul>

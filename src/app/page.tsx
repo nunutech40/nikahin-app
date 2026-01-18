@@ -214,51 +214,66 @@ export default async function HomePage() {
 
           <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             <PricingCard
-              name="Silver"
-              price={149000}
-              description="Populer untuk kebutuhan simpel"
+              name="Essential"
+              price={99000}
+              originalPrice={199000}
+              description="Simple & Elegan untuk budget minimalis"
               features={[
-                "Mempelai & Ortu",
-                "Unlimited Acara",
-                "Google Maps Integration",
-                "10 Foto Galeri",
-                "Musik Latar",
-                "Countdown Timer",
-                "Masa Aktif 1 Tahun"
+                { name: "Input Mempelai & 2 Acara", checked: true },
+                { name: "Pilihan Tema Standard", checked: true },
+                { name: "Tema Premium (Eksklusif)", checked: false },
+                { name: "Max. 10 Galeri Foto", checked: true },
+                { name: "RSVP & Ucapan Dasar", checked: true },
+                { name: "Love Story & Musik", checked: false },
+                { name: "Digital Envelope (QR Angpao)", checked: false },
+                { name: "Tanpa Label Nikahin", checked: false },
+                { name: "Masa Aktif 1 Tahun", checked: true },
+                { name: "WhatsApp Blast Sender", checked: false },
+                { name: "QR Check-in Tamu", checked: false },
               ]}
               packageSlug="silver"
               popular={false}
             />
 
             <PricingCard
-              name="Gold"
-              price={249000}
-              description="Fitur lengkap untuk undangan mewah"
+              name="Premium"
+              price={149000}
+              originalPrice={349000}
+              description="Favorit 90% Pasangan Happily Ever After"
               features={[
-                "Semua fitur Silver",
-                "Gift Registry (Amplop Digital)",
-                "Full Theme Customizer",
-                "Unlimited Foto Galeri",
-                "Love Story Timeline",
-                "Masa Aktif Selamanya",
-                "Tanpa Label Nikahin"
+                { name: "Input Mempelai & 2 Acara", checked: true },
+                { name: "Pilihan Tema Standard", checked: true },
+                { name: "SEMUA Tema Premium", checked: true },
+                { name: "Unlimited Photo Gallery", checked: true },
+                { name: "RSVP & Ucapan Dasar", checked: true },
+                { name: "Full Love Story & Musik", checked: true },
+                { name: "Digital Envelope (QR Angpao)", checked: true },
+                { name: "TANPA Watermark Nikahin", checked: true },
+                { name: "Masa Aktif SELAMANYA", checked: true },
+                { name: "WhatsApp Blast Sender", checked: false },
+                { name: "QR Check-in Tamu", checked: false },
               ]}
               packageSlug="gold"
               popular={true}
             />
 
             <PricingCard
-              name="Platinum"
-              price={499000}
-              description="Eksklusifitas tingkat tertinggi"
+              name="Royal"
+              price={299000}
+              originalPrice={699000}
+              description="Teknologi Resepsionis Digital Tercanggih"
               features={[
-                "Semua fitur Gold",
-                "WhatsApp Blast Sender (500 Tamu)",
-                "Custom Domain (.com / .id)",
-                "Video Background Premium",
-                "Live Streaming Player",
-                "Pengaturan Nama Tamu (VIP)",
-                "Support Prioritas 24/7"
+                { name: "Input Mempelai & 2 Acara", checked: true },
+                { name: "Pilihan Tema Standard", checked: true },
+                { name: "SEMUA Tema Premium", checked: true },
+                { name: "Unlimited Photo Gallery", checked: true },
+                { name: "RSVP & Ucapan Dasar", checked: true },
+                { name: "Full Love Story & Musik", checked: true },
+                { name: "Digital Envelope (QR Angpao)", checked: true },
+                { name: "TANPA Watermark Nikahin", checked: true },
+                { name: "Masa Aktif SELAMANYA", checked: true },
+                { name: "WhatsApp Blast Automator", checked: true },
+                { name: "QR Check-in Tamu Hari-H", checked: true },
               ]}
               packageSlug="platinum"
               popular={false}
