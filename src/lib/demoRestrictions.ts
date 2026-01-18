@@ -23,34 +23,35 @@ export function canChangeCover(packageSlug?: string): boolean {
     return true; // Always allowed
 }
 
-// ===== BLOCKED EDITS (Premium Features) =====
+// ===== ALLOWED EDITS (Silver Package Level) =====
 export function canEditGallery(packageSlug?: string): boolean {
-    // Demo users CANNOT edit gallery (use default)
-    return !isDemoPackage(packageSlug);
+    // Demo users CAN edit gallery (Silver feature)
+    return true;
 }
 
 export function canEditLoveStory(packageSlug?: string): boolean {
-    // Demo users CANNOT edit love story (use default)
-    return !isDemoPackage(packageSlug);
+    // Demo users CAN edit love story (Silver feature)
+    return true;
 }
 
 export function canEditMusic(packageSlug?: string): boolean {
-    // Demo users CANNOT change music (use default)
-    return !isDemoPackage(packageSlug);
+    // Demo users CAN change music (Silver feature)
+    return true;
 }
 
 export function canEditQuotes(packageSlug?: string): boolean {
-    // Demo users CANNOT edit quotes (use default)
-    return !isDemoPackage(packageSlug);
+    // Demo users CAN edit quotes (Silver feature)
+    return true;
 }
 
+// ===== BLOCKED EDITS (Gold/Platinum Level) =====
 export function canEditGiftRegistry(packageSlug?: string): boolean {
-    // Demo users CANNOT edit gift registry (use default)
+    // Demo users CANNOT edit gift registry (Gold feature)
     return !isDemoPackage(packageSlug);
 }
 
 export function canEditThemeConfig(packageSlug?: string): boolean {
-    // Demo users CANNOT edit theme config (use default)
+    // Demo users CANNOT edit theme config (Gold feature)
     return !isDemoPackage(packageSlug);
 }
 

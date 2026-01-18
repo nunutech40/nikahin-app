@@ -10,26 +10,34 @@ import DashboardClient from "./DashboardClient";
 import { DEMO_DATA } from "@/data/demoData";
 
 export default async function DashboardPage() {
+    console.log("[Dashboard] Server Component Start");
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
+        console.log("[Dashboard] No session, redirecting to login");
         redirect("/login");
     }
 
     const userId = Number((session.user as any).id);
     const userRole = (session.user as any).role || "user";
 
+    console.log(`[Dashboard] User ID: ${userId}, Role: ${userRole}`);
+
     // 1. Fetch User Data with Package
     let userPackageSlug = "bronze";
-    const user = await db.query.users.findFirst({
-        where: eq(users.id, userId),
-        with: {
-            package: true,
-        },
-    });
+    try {
+        const user = await db.query.users.findFirst({
+            where: eq(users.id, userId),
+            with: {
+                package: true,
+            },
+        });
 
-    if (user?.package) {
-        userPackageSlug = user.package.slug;
+        if (user?.package) {
+            userPackageSlug = user.package.slug;
+        }
+    } catch (e) {
+        console.error("[Dashboard] Error fetching user package:", e);
     }
 
     // 2. Fetch User Features
@@ -41,16 +49,27 @@ export default async function DashboardPage() {
     }
 
     // 3. Fetch Invitations
-    const userInvitations = await getUserInvitations(userId);
+    let userInvitations: any[] = [];
+    try {
+        userInvitations = await getUserInvitations(userId);
+    } catch (e) {
+        console.error("[Dashboard] Error fetching invitations:", e);
+    }
 
     // 4. Global Data for Forms
-    const availableThemes = await db.query.themes.findMany({
-        where: eq(themes.isActive, true),
-    });
+    let availableThemes: any[] = [];
+    let availablePackages: any[] = [];
+    try {
+        availableThemes = await db.query.themes.findMany({
+            where: eq(themes.isActive, true),
+        });
 
-    const availablePackages = await db.query.packages.findMany({
-        where: eq(packages.isActive, true),
-    });
+        availablePackages = await db.query.packages.findMany({
+            where: eq(packages.isActive, true),
+        });
+    } catch (e) {
+        console.error("[Dashboard] Error fetching global data:", e);
+    }
 
     // Determine initial data
     let initialData = userInvitations.length > 0 ? userInvitations[0] : null;
@@ -68,22 +87,21 @@ export default async function DashboardPage() {
     // Prepare content with injected features for the client
     let dashboardInitialData = initialData;
     if (initialData) {
-        dashboardInitialData = {
-            ...initialData,
-            content: {
-                ...(initialData.content as any || {}),
-                features: userFeatures
-            }
-        };
+        try {
+            dashboardInitialData = {
+                ...initialData,
+                content: {
+                    ...(initialData.content as any || {}),
+                    features: userFeatures
+                }
+            };
+        } catch (e) {
+            console.error("[Dashboard] Error preparing initialData content:", e);
+        }
     }
 
     // Debug Logs
-    console.log(`[Dashboard] User ${userId} (${userRole}) | Package: ${userPackageSlug} | Features: ${userFeatures.length}`);
-    if (initialData) {
-        console.log(`[Dashboard] Invitation Found: ${initialData.slug} (ID: ${initialData.id})`);
-    } else {
-        console.log(`[Dashboard] No Invitation Found for User ${userId}`);
-    }
+    console.log(`[Dashboard] Final state: Package=${userPackageSlug}, Features=${userFeatures.length}, InitialData=${!!initialData}`);
 
     return (
         <DashboardClient

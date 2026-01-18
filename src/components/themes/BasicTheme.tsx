@@ -88,7 +88,7 @@ export interface BasicThemeProps {
 
 // Confetti Celebration Component
 function ConfettiCelebration() {
-    const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; duration: number; color: string }>>([]);
+    const [confetti, setConfetti] = useState<Array<{ id: number; x: number; delay: number; duration: number; color: string; shape: string }>>([]);
 
     useEffect(() => {
         const particles = Array.from({ length: 50 }, (_, i) => ({
@@ -97,6 +97,7 @@ function ConfettiCelebration() {
             delay: Math.random() * 0.5,
             duration: 2 + Math.random() * 2,
             color: ['#c9a96e', '#d4af37', '#f4e4c1', '#e8b4b8', '#ffd700'][Math.floor(Math.random() * 5)],
+            shape: Math.random() > 0.5 ? '50%' : '0%',
         }));
         setConfetti(particles);
     }, []);
@@ -120,7 +121,7 @@ function ConfettiCelebration() {
                     className="absolute w-2 h-2 md:w-3 md:h-3"
                     style={{
                         backgroundColor: particle.color,
-                        borderRadius: Math.random() > 0.5 ? '50%' : '0%',
+                        borderRadius: particle.shape,
                     }}
                 />
             ))}
