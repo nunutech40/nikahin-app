@@ -5,15 +5,14 @@ import { Check, Sparkles } from "lucide-react";
 
 interface PricingCardProps {
     name: string;
-    slug: string;
+    packageSlug: string;
     price: number;
     description: string;
     features: string[];
-    isPopular?: boolean;
-    isFree?: boolean;
+    popular?: boolean;
 }
 
-export function PricingCard({ name, slug, price, description, features, isPopular, isFree }: PricingCardProps) {
+export function PricingCard({ name, packageSlug, price, description, features, popular }: PricingCardProps) {
     const formatPrice = (price: number) => {
         if (price === 0) return "Gratis";
         return new Intl.NumberFormat("id-ID", {
@@ -25,13 +24,13 @@ export function PricingCard({ name, slug, price, description, features, isPopula
 
     return (
         <div
-            className={`relative rounded-3xl p-8 border-2 transition-all hover:scale-105 ${isPopular
-                    ? "border-[#D4AF37] bg-gradient-to-b from-amber-50 to-white shadow-2xl shadow-amber-200/50"
-                    : "border-gray-100 bg-white shadow-xl shadow-gray-100/20 hover:border-[#D4AF37]"
+            className={`relative rounded-3xl p-8 border-2 transition-all hover:scale-105 ${popular
+                ? "border-[#D4AF37] bg-gradient-to-b from-amber-50 to-white shadow-2xl shadow-amber-200/50"
+                : "border-gray-100 bg-white shadow-xl shadow-gray-100/20 hover:border-[#D4AF37]"
                 }`}
         >
             {/* Popular Badge */}
-            {isPopular && (
+            {popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#D4AF37] text-white rounded-full text-sm font-black uppercase tracking-wider shadow-lg flex items-center gap-2">
                     <Sparkles className="w-4 h-4" />
                     Paling Populer
@@ -49,11 +48,6 @@ export function PricingCard({ name, slug, price, description, features, isPopula
                 <div className="text-5xl font-black text-[#D4AF37] mb-2">
                     {formatPrice(price)}
                 </div>
-                {isFree && (
-                    <p className="text-xs text-gray-400 font-semibold">
-                        Testing Mode - Bayar untuk Publish
-                    </p>
-                )}
             </div>
 
             {/* Features */}
@@ -68,10 +62,10 @@ export function PricingCard({ name, slug, price, description, features, isPopula
 
             {/* CTA Button */}
             <Link
-                href={`/register?package=${slug}`}
-                className={`block w-full py-4 rounded-2xl font-black text-center uppercase tracking-wider transition-all ${isPopular
-                        ? "bg-[#D4AF37] text-white hover:bg-[#b28f1f] shadow-lg shadow-amber-200/50"
-                        : "bg-gray-100 text-gray-700 hover:bg-[#D4AF37] hover:text-white"
+                href={`/register?package=${packageSlug}`}
+                className={`block w-full py-4 rounded-2xl font-black text-center uppercase tracking-wider transition-all ${popular
+                    ? "bg-[#D4AF37] text-white hover:bg-[#b28f1f] shadow-lg shadow-amber-200/50"
+                    : "bg-gray-100 text-gray-700 hover:bg-[#D4AF37] hover:text-white"
                     }`}
             >
                 Pilih Paket {name}

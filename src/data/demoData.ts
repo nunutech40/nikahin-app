@@ -6,26 +6,23 @@ import { InvitationData } from "@/types/invitation";
  */
 export const DEMO_DATA: InvitationData = {
     slug: "demo-preview",
+    weddingDate: "2024-12-25T08:00:00",
     groom: {
         name: "Ahmad Rizki",
-        nickname: "Rizki",
-        father: "Bapak Suryanto",
-        mother: "Ibu Siti Aminah",
-        instagram: "@ahmadrizki",
+        fullName: "Ahmad Rizki Maulana",
+        parentName: "Bapak Suryanto & Ibu Siti Aminah",
         photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
     },
     bride: {
         name: "Siti Nurhaliza",
-        nickname: "Siti",
-        father: "Bapak Hadi Wijaya",
-        mother: "Ibu Dewi Lestari",
-        instagram: "@sitinurhaliza",
+        fullName: "Siti Nurhaliza Putri",
+        parentName: "Bapak Hadi Wijaya & Ibu Dewi Lestari",
         photo: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop"
     },
     events: [
         {
             name: "Akad Nikah",
-            date: "2024-12-25",
+            date: "Rabu, 25 Desember 2024",
             time: "08:00 WIB",
             location: "Masjid Al-Ikhlas",
             address: "Jl. Merdeka No. 123, Jakarta Selatan",
@@ -33,7 +30,7 @@ export const DEMO_DATA: InvitationData = {
         },
         {
             name: "Resepsi Pernikahan",
-            date: "2024-12-25",
+            date: "Rabu, 25 Desember 2024",
             time: "11:00 - 14:00 WIB",
             location: "Grand Ballroom Hotel Mulia",
             address: "Jl. Asia Afrika No. 8, Jakarta Pusat",
@@ -42,29 +39,34 @@ export const DEMO_DATA: InvitationData = {
     ],
     loveStory: [
         {
-            year: "2018",
             title: "Pertemuan Pertama",
-            description: "Kami bertemu pertama kali di kampus saat orientasi mahasiswa baru. Siapa sangka pertemuan singkat itu menjadi awal dari segalanya."
+            date: "2018",
+            story: "Kami bertemu pertama kali di kampus saat orientasi mahasiswa baru. Siapa sangka pertemuan singkat itu menjadi awal dari segalanya.",
+            icon: "💫"
         },
         {
-            year: "2019",
             title: "Menjadi Sahabat",
-            description: "Dari teman sekelas, kami menjadi sahabat yang selalu berbagi cerita, tawa, dan dukungan di setiap langkah."
+            date: "2019",
+            story: "Dari teman sekelas, kami menjadi sahabat yang selalu berbagi cerita, tawa, dan dukungan di setiap langkah.",
+            icon: "🌸"
         },
         {
-            year: "2020",
             title: "Perasaan Tumbuh",
-            description: "Di tengah pandemi, kami menyadari bahwa perasaan kami lebih dari sekadar persahabatan. Jarak membuat hati semakin dekat."
+            date: "2020",
+            story: "Di tengah pandemi, kami menyadari bahwa perasaan kami lebih dari sekadar persahabatan. Jarak membuat hati semakin dekat.",
+            icon: "💕"
         },
         {
-            year: "2022",
             title: "Lamaran",
-            description: "Dengan restu kedua orang tua, kami resmi bertunangan. Moment yang paling membahagiakan dalam hidup kami."
+            date: "2022",
+            story: "Dengan restu kedua orang tua, kami resmi bertunangan. Moment yang paling membahagiakan dalam hidup kami.",
+            icon: "💍"
         },
         {
-            year: "2024",
             title: "Pernikahan",
-            description: "Hari yang kami tunggu-tunggu akhirnya tiba. Kami siap memulai babak baru sebagai suami istri."
+            date: "2024",
+            story: "Hari yang kami tunggu-tunggu akhirnya tiba. Kami siap memulai babak baru sebagai suami istri.",
+            icon: "👰‍♀️🤵‍♂️"
         }
     ],
     gallery: [
@@ -79,41 +81,41 @@ export const DEMO_DATA: InvitationData = {
         "https://images.unsplash.com/photo-1529636798458-92182e662485?w=800&h=600&fit=crop",
         "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?w=800&h=600&fit=crop"
     ],
+    quotes: {
+        verse: "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.",
+        source: "QS. Ar-Rum: 21"
+    },
+    musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     giftOptions: [
         {
-            type: "bank",
-            label: "Transfer Bank BCA",
+            bankName: "Bank Central Asia (BCA)",
             accountNumber: "1234567890",
-            accountName: "Ahmad Rizki"
+            accountHolder: "Ahmad Rizki",
+            logo: "🏦"
         },
         {
-            type: "bank",
-            label: "Transfer Bank Mandiri",
+            bankName: "Bank Mandiri",
             accountNumber: "0987654321",
-            accountName: "Siti Nurhaliza"
+            accountHolder: "Siti Nurhaliza",
+            logo: "🏦"
         },
         {
-            type: "ewallet",
-            label: "GoPay",
+            bankName: "GoPay",
             accountNumber: "081234567890",
-            accountName: "Ahmad Rizki"
+            accountHolder: "Ahmad Rizki",
+            logo: "💳"
         }
     ],
     shippingAddress: {
         recipient: "Ahmad Rizki & Siti Nurhaliza",
-        phone: "081234567890",
         address: "Jl. Kebahagiaan No. 99, Jakarta Selatan 12345"
     },
-    quotes: {
-        text: "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.",
-        author: "QS. Ar-Rum: 21"
-    },
-    musicUrl: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
     coverImage: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&h=800&fit=crop",
     themeConfig: {
         primaryColor: "#D4AF37",
         secondaryColor: "#8B7355",
-        fontFamily: "Playfair Display"
+        fontHeading: "Playfair Display",
+        fontBody: "Inter"
     },
     features: [] // Will be populated from package
 };
