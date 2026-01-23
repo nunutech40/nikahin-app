@@ -250,6 +250,20 @@ export const systemSettings = pgTable("system_settings", {
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
 });
 
+// ============================================
+// MUSIC_LIBRARY TABLE (Admin Managed)
+// ============================================
+
+export const musicLibrary = pgTable("music_library", {
+  id: serial("id").primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  artist: varchar("artist", { length: 255 }),
+  category: varchar("category", { length: 100 }),
+  url: text("url").notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const visitorLogs = pgTable("visitor_logs", {
   id: serial("id").primaryKey(),
   invitationId: integer("invitation_id")

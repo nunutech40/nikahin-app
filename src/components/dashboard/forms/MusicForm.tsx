@@ -1,12 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Music, AlertCircle, Headphones, Play, Pause, Check } from 'lucide-react';
 import { z } from 'zod';
 import { getZodErrorByPath } from '@/lib/validation';
 import FormInput from '../FormInput';
-import { MUSIC_LIBRARY } from '@/data/musicLibrary';
+import { getPublicMusicList } from '@/app/actions/admin';
 import RoyalBadge from '@/components/ui/RoyalBadge';
+import AudioUpload from '../AudioUpload';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 interface MusicFormProps {
     musicUrl: string;
@@ -16,25 +19,91 @@ interface MusicFormProps {
 
 export default function MusicForm({ musicUrl, onChange, errorSource }: MusicFormProps) {
     const [playingPreview, setPlayingPreview] = useState<string | null>(null);
+    const [musicLibrary, setMusicLibrary] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const audioInstance = useRef<HTMLAudioElement | null>(null);
+
+    useEffect(() => {
+        const fetchMusic = async () => {
+            setIsLoading(true);
+            const result = await getPublicMusicList();
+            if (result.success) {
+                setMusicLibrary(result.data || []);
+            }
+            setIsLoading(false);
+        };
+        fetchMusic();
+    }, []);
 
     const togglePreview = (url: string) => {
-        const audio = document.getElementById('preview-audio') as HTMLAudioElement;
+        // 1. Matikan audio yang sedang jalan jika ada
+        if (audioInstance.current) {
+            audioInstance.current.pause();
+            const wasPlayingSame = playingPreview === url;
+            audioInstance.current = null;
 
-        if (playingPreview === url) {
-            setPlayingPreview(null);
-            if (audio) audio.pause();
-        } else {
-            setPlayingPreview(url);
-            if (audio) {
-                audio.src = url;
-                audio.play().catch(e => console.error("Audio play failed", e));
+            if (wasPlayingSame) {
+                setPlayingPreview(null);
+                return;
             }
+        }
+
+        if (!url) return;
+
+        // 2. Buat instance audio baru (Jauh lebih stabil di Mac/Safari)
+        try {
+            const newAudio = new Audio(url);
+            newAudio.preload = "auto";
+
+            audioInstance.current = newAudio;
+            setPlayingPreview(url);
+
+            const playPromise = newAudio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error("Playback failed:", error);
+                    if (error.name === 'NotAllowedError') {
+                        toast.error("Klik sekali lagi untuk memutar.");
+                    } else if (error.name === 'NotSupportedError') {
+                        toast.error("Format audio tidak didukung atau link rusak.");
+                    }
+                    setPlayingPreview(null);
+                });
+            }
+
+            newAudio.onended = () => {
+                setPlayingPreview(null);
+                audioInstance.current = null;
+            };
+
+            newAudio.onerror = () => {
+                console.error("Audio error event triggered");
+                toast.error("File audio bermasalah atau tidak bisa diakses.");
+                setPlayingPreview(null);
+                audioInstance.current = null;
+            };
+        } catch (err) {
+            console.error("Audio creation failed:", err);
+            toast.error("Gagal memutar audio.");
+            setPlayingPreview(null);
         }
     };
 
+    // Cleanup saat ganti tab/halaman agar musik berhenti
+    useEffect(() => {
+        return () => {
+            if (audioInstance.current) {
+                audioInstance.current.pause();
+                audioInstance.current = null;
+            }
+        };
+    }, []);
+
+    const isLibraryTrack = musicLibrary.some(track => track.url === musicUrl);
+
     return (
         <div className="space-y-8">
-            <audio id="preview-audio" className="hidden" onEnded={() => setPlayingPreview(null)} />
+            {/* Audio tag dihapus, diganti dynamic object di atas */}
 
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-3 text-slate-800">
@@ -51,12 +120,17 @@ export default function MusicForm({ musicUrl, onChange, errorSource }: MusicForm
             {/* Library Section */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Pilih dari Galeri</span>
-                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500">Recommended</span>
+                    <span className="text-xs font-black text-slate-900 uppercase tracking-widest">Pilih dari Galeri Pilihan</span>
+                    <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500">10 Pilihan Utama</span>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {MUSIC_LIBRARY.map((track) => {
+                    {isLoading ? (
+                        <div className="col-span-full py-10 flex flex-col items-center justify-center text-slate-400">
+                            <div className="w-8 h-8 border-4 border-sky-500/20 border-t-sky-500 rounded-full animate-spin mb-3" />
+                            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Memuat Lagu...</p>
+                        </div>
+                    ) : musicLibrary.map((track) => {
                         const isSelected = musicUrl === track.url;
                         const isPlaying = playingPreview === track.url;
 
@@ -95,7 +169,7 @@ export default function MusicForm({ musicUrl, onChange, errorSource }: MusicForm
                                         <div className="flex items-center gap-2">
                                             <p className="text-xs text-slate-400 truncate">{track.artist}</p>
                                             <span className="w-1 h-1 rounded-full bg-slate-200" />
-                                            <p className="text-[10px] font-medium text-slate-400">{track.category}</p>
+                                            <p className="text-[10px] font-medium text-slate-400 uppercase tracking-widest text-sky-500">{track.category}</p>
                                         </div>
                                     </div>
 
@@ -124,19 +198,26 @@ export default function MusicForm({ musicUrl, onChange, errorSource }: MusicForm
                     <div className="w-full border-t border-slate-100"></div>
                 </div>
                 <div className="relative flex justify-center">
-                    <span className="bg-white px-2 text-xs text-slate-400 font-medium">atau upload sendiri</span>
+                    <span className="bg-white px-3 text-[10px] font-black uppercase tracking-widest text-slate-400">atau pakai musik sendiri</span>
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+                <AudioUpload
+                    onUploadSuccess={(url) => onChange(url)}
+                    currentAudioUrl={!isLibraryTrack && musicUrl ? musicUrl : undefined}
+                    onRemove={() => onChange('')}
+                    label="Unggah File Lagu (MP3)"
+                />
+
                 <FormInput
-                    label="Custom URL (MP3)"
+                    label="Music Source URL (Opsional)"
                     value={musicUrl}
                     onChange={(e) => onChange(e.target.value)}
                     placeholder="https://example.com/audio/wedding-song.mp3"
                     error={getZodErrorByPath(errorSource, 'musicUrl')}
                     icon={<Headphones className="w-3.5 h-3.5" />}
-                    helperText="Mendukung direct link file .mp3"
+                    helperText="Input manual URL MP3 jika tidak melalui upload"
                 />
 
                 <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex gap-4 text-xs text-amber-800 leading-relaxed shadow-sm">

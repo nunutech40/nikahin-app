@@ -23,8 +23,14 @@ export async function POST(req: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // 1. Create a safe path: public/uploads/users/[userId]
-        const relativeUploadDir = `/uploads/users/${userId}`;
+        // 1. Determine type based on mime
+        const mimeType = file.type;
+        let typeSubDir = "images";
+        if (mimeType.startsWith("audio/")) typeSubDir = "audio";
+        else if (mimeType.startsWith("video/")) typeSubDir = "videos";
+
+        // 1. Create a safe path: public/uploads/users/[userId]/[type]
+        const relativeUploadDir = `/uploads/users/${userId}/${typeSubDir}`;
         const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
         if (!existsSync(uploadDir)) {

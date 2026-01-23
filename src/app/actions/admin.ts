@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users, packages, systemSettings, musicLibrary } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -503,3 +503,109 @@ export async function getStorageStats() {
         return { success: false, error: "Failed to calculate storage stats" };
     }
 }
+
+/**
+ * MUSIC LIBRARY MANAGEMENT
+ */
+
+export async function getAdminMusicList() {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const list = await db.query.musicLibrary.findMany({
+            orderBy: [desc(musicLibrary.id)]
+        });
+        return { success: true, data: list };
+    } catch (error) {
+        return { success: false, error: "Gagal mengambil data musik." };
+    }
+}
+
+export async function addMusicToLibrary(data: { title: string, artist: string, category: string, url: string }) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        await db.insert(musicLibrary).values({
+            title: data.title,
+            artist: data.artist,
+            category: data.category,
+            url: data.url
+        });
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: "Gagal menambah musik ke database." };
+    }
+}
+
+export async function deleteMusicFromLibrary(id: number) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        await db.delete(musicLibrary).where(eq(musicLibrary.id, id));
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: "Gagal menghapus musik." };
+    }
+}
+
+export async function getPublicMusicList() {
+    try {
+        const list = await db.query.musicLibrary.findMany({
+            where: eq(musicLibrary.isActive, true),
+            orderBy: [desc(musicLibrary.id)]
+        });
+        return { success: true, data: list };
+    } catch (error) {
+        return { success: false, error: "Gagal mengambil library musik." };
+    }
+}
+
+export async function seedMusicLibrary() {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    const SEED_DATA = [
+        { title: "Eternal Love", artist: "Piano Wedding", category: "Romantic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { title: "Canon in D", artist: "Pachelbel", category: "Classic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+        { title: "Sweet Moments", artist: "Acoustic Guitar", category: "Acoustic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
+        { title: "Summer Wedding", artist: "Morning Jazz", category: "Jazz", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
+        { title: "Perfect Day", artist: "Pop Collection", category: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
+        { title: "Beautiful Soul", artist: "String Quartet", category: "Classic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+        { title: "Wedding March", artist: "Organ Solo", category: "Traditional", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
+        { title: "Falling in Love", artist: "Soft Piano", category: "Romantic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
+        { title: "Together Forever", artist: "Ambient Duo", category: "Acoustic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" },
+        { title: "Happy Ending", artist: "Modern Pop", category: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
+    ];
+
+    try {
+        await db.transaction(async (tx) => {
+            for (const track of SEED_DATA) {
+                await tx.insert(musicLibrary).values({
+                    title: track.title,
+                    artist: track.artist,
+                    category: track.category,
+                    url: track.url,
+                    isActive: true
+                });
+            }
+        });
+
+        revalidatePath("/admin/settings");
+        return { success: true };
+    } catch (error: any) {
+        console.error("Seeding error:", error);
+        return { success: false, error: `Gagal: ${error.message || "Database error"}` };
+    }
+}
+

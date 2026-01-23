@@ -12,12 +12,14 @@ import {
     Package,
     RefreshCcw,
     HardDrive,
-    Database
+    Database,
+    Music
 } from "lucide-react";
 import RoyalBadge from "@/components/ui/RoyalBadge";
 import { updateSystemSettings, getStorageStats } from "@/app/actions/admin";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import MusicManager from "./MusicManager";
 
 interface SettingsClientProps {
     initialSettings: any;
@@ -140,6 +142,7 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
                         { id: 'bisnis', label: 'Bisnis & Trial', icon: Package },
                         { id: 'keamanan', label: 'Keamanan', icon: ShieldCheck },
                         { id: 'storage', label: 'Storage', icon: HardDrive },
+                        { id: 'music', label: 'Music Library', icon: Music },
                     ].map((item) => (
                         <button
                             key={item.id}
@@ -819,6 +822,8 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
                         </div>
                     </RoyalCard>
                 </div>
+
+                <MusicManager />
             </div>
         </div>
     );
