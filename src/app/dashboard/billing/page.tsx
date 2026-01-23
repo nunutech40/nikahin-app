@@ -29,6 +29,15 @@ export default async function BillingPage() {
         orderBy: (packages, { asc }) => [asc(packages.id)]
     });
 
+    // Get system settings for payment instructions
+    const { getSystemSettings } = await import("@/app/actions/admin");
+    const settings = await getSystemSettings() as any || {
+        bankName: "BCA",
+        bankAccountNumber: "1234567890",
+        bankAccountName: "Nunu Nugraha",
+        supportWa: "628123456789"
+    };
+
     const isPaid = user.isActive;
     const currentPkg = user.package;
 
@@ -188,9 +197,9 @@ export default async function BillingPage() {
                                     <div className="space-y-4">
                                         <div className="bg-white/60 backdrop-blur-sm p-6 rounded-3xl border border-amber-200 flex items-center justify-between">
                                             <div>
-                                                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">Bank Central Asia (BCA)</p>
-                                                <p className="text-xl font-black text-amber-950">1234567890</p>
-                                                <p className="text-xs text-amber-800/60 font-medium">a.n. Nunu Nugraha</p>
+                                                <p className="text-[10px] font-bold text-amber-600 uppercase tracking-widest mb-1">{settings.bankName}</p>
+                                                <p className="text-xl font-black text-amber-950">{settings.bankAccountNumber}</p>
+                                                <p className="text-xs text-amber-800/60 font-medium">a.n. {settings.bankAccountName}</p>
                                             </div>
                                             <CreditCard className="w-8 h-8 text-amber-200" />
                                         </div>
@@ -206,7 +215,7 @@ export default async function BillingPage() {
                                         Setelah membayar, kirim bukti transfer ke WhatsApp admin untuk aktivasi instan (kurang dari 5 menit).
                                     </p>
                                     <a
-                                        href="https://wa.me/628123456789?text=Halo%20Admin%2C%20saya%20sudah%20melakukan%20pembayaran%20untuk%20paket%20undangan."
+                                        href={`https://wa.me/${settings.supportWa}?text=Halo%20Admin%2C%20saya%20sudah%20melakukan%20pembayaran%20untuk%20paket%20undangan.`}
                                         target="_blank"
                                         className="w-full py-4 bg-[#25D366] text-white rounded-2xl font-black text-center shadow-lg shadow-green-200 hover:bg-[#1ebd5b] transition-all block"
                                     >

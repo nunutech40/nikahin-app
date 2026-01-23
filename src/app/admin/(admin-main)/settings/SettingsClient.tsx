@@ -63,6 +63,9 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
         isMaintenance: false,
         allowRegistration: true,
         showWatermark: true,
+        bankName: "BCA",
+        bankAccountNumber: "1234567890",
+        bankAccountName: "Nikahin Collective",
     });
 
     const handleSave = async () => {
@@ -366,7 +369,43 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
                                 </div>
                             </div>
 
-                            <div className="space-y-2">
+                            <div className="pt-6 mt-6 border-t border-slate-50 space-y-6">
+                                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Atur Rekening Manual (Bank Transfer)</p>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Bank</label>
+                                        <input
+                                            type="text"
+                                            value={settings.bankName}
+                                            onChange={(e) => updateField("bankName", e.target.value)}
+                                            className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                            placeholder="BCA / Mandiri / BNI"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nomor Rekening</label>
+                                        <input
+                                            type="text"
+                                            value={settings.bankAccountNumber}
+                                            onChange={(e) => updateField("bankAccountNumber", e.target.value)}
+                                            className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                            placeholder="1234567890"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Atas Nama (A/N)</label>
+                                        <input
+                                            type="text"
+                                            value={settings.bankAccountName}
+                                            onChange={(e) => updateField("bankAccountName", e.target.value)}
+                                            className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                            placeholder="PT Nikahin Digital"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2 pt-6">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mayar API Key</label>
                                 <input
                                     type="password"

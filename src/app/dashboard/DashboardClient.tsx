@@ -9,7 +9,7 @@ import { invitationSchema } from "@/lib/validation";
 import {
     Smartphone, Monitor, Menu, X,
     Users, Calendar, Heart, Image as ImageIcon, Gift, Music, Palette,
-    Lock, LogOut, ExternalLink, Sparkles, Terminal, Copy, Share2
+    Lock, LogOut, ExternalLink, Sparkles, Terminal, Copy, Share2, UserCircle
 } from "lucide-react";
 import { z } from "zod";
 import Link from "next/link";
@@ -47,6 +47,7 @@ import QuotesForm from "@/components/dashboard/forms/QuotesForm";
 import MusicForm from "@/components/dashboard/forms/MusicForm";
 import ThemeSettingsForm from "@/components/dashboard/forms/ThemeSettingsForm";
 import ThemeSelectorForm from "@/components/dashboard/forms/ThemeSelectorForm";
+import ShareForm from "@/components/dashboard/forms/ShareForm";
 import { saveInvitation, createInvitation, updateInvitationTheme } from "@/app/actions/invitation";
 import { getThemeComponent } from "@/lib/themeRegistry";
 
@@ -150,6 +151,7 @@ export default function DashboardClient({
         { id: 'galeri', label: 'Galeri', icon: ImageIcon },
         { id: 'hadiah', label: 'Hadiah', icon: Gift },
         { id: 'lainnya', label: 'Lainnya', icon: Menu },
+        { id: 'bagikan', label: 'Bagikan', icon: Share2 },
     ];
 
     const isTabLocked = (tabId: string) => {
@@ -352,6 +354,10 @@ export default function DashboardClient({
                             <Smartphone className="w-4 h-4 group-hover:scale-110 transition-transform" />
                             <span className="text-xs font-bold">RSVP</span>
                         </Link>
+                        <Link href="/dashboard/profile" className="flex items-center gap-2 px-4 py-2 hover:bg-slate-50 rounded-xl text-slate-500 hover:text-[#D4AF37] transition-all group">
+                            <UserCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            <span className="text-xs font-bold">Profil</span>
+                        </Link>
                     </div>
 
                     <div className="hidden lg:flex bg-slate-100 p-1 rounded-xl">
@@ -433,6 +439,13 @@ export default function DashboardClient({
                                     <MusicForm musicUrl={invitationData.musicUrl || ""} onChange={handleMusicChange} errorSource={zodError} />
                                 </FeatureGate>
                             </div>
+                        )}
+                        {activeTab === "bagikan" && (
+                            <ShareForm
+                                slug={invitationData.slug}
+                                groomName={invitationData.groom?.name || ""}
+                                brideName={invitationData.bride?.name || ""}
+                            />
                         )}
                     </div>
                 </aside>
