@@ -238,6 +238,17 @@ export const transactionsRelations = relations(transactions, ({ one }) => ({
 // VISITOR_LOGS TABLE (Analytics)
 // ============================================
 
+// ============================================
+// SYSTEM_SETTINGS TABLE (Global Config)
+// ============================================
+
+export const systemSettings = pgTable("system_settings", {
+  id: serial("id").primaryKey(),
+  key: varchar("key", { length: 255 }).notNull().unique(),
+  value: jsonb("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
+});
+
 export const visitorLogs = pgTable("visitor_logs", {
   id: serial("id").primaryKey(),
   invitationId: integer("invitation_id")

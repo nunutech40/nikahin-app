@@ -1,0 +1,448 @@
+"use client";
+
+import React, { useState } from "react";
+import RoyalCard from "@/components/ui/RoyalCard";
+import {
+    Globe,
+    ShieldCheck,
+    Smartphone,
+    CreditCard,
+    Save,
+    Layout,
+    Package,
+    RefreshCcw
+} from "lucide-react";
+import RoyalBadge from "@/components/ui/RoyalBadge";
+import { updateSystemSettings } from "@/app/actions/admin";
+import { toast } from "sonner";
+
+interface SettingsClientProps {
+    initialSettings: any;
+}
+
+export default function SettingsClient({ initialSettings }: SettingsClientProps) {
+    const [isSaving, setIsSaving] = useState(false);
+    const [settings, setSettings] = useState(initialSettings || {
+        appName: "Nikahin",
+        logoUrl: "",
+        supportEmail: "halo@nikahin.app",
+        supportWa: "081234567890",
+        footerCopyright: "© 2024 Nikahin. All rights reserved.",
+        metaTitle: "Nikahin - Buat Undangan Pernikahan Digital Elegan",
+        metaDesc: "Platform terbaik untuk membuat undangan digital pernikahan dengan tema elegan, fitur lengkap, dan proses instan.",
+        gaId: "",
+        pixelId: "",
+        ogImage: "",
+        mayarApiKey: "",
+        mayarWebhookSecret: "",
+        waProvider: "Fonnte (Recommended)",
+        waToken: "",
+        smtpHost: "smtp.gmail.com",
+        smtpUser: "",
+        smtpPass: "",
+        defaultPackage: "Bronze (Trial)",
+        trialDays: 7,
+        referralCommission: 10,
+        isMaintenance: false,
+        allowRegistration: true,
+        showWatermark: true,
+    });
+
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            const result = await updateSystemSettings(settings);
+            if (result.success) {
+                toast.success("Pengaturan sistem berhasil disimpan!");
+            } else {
+                toast.error(result.error || "Gagal menyimpan pengaturan.");
+            }
+        } catch (error) {
+            toast.error("Terjadi kesalahan sistem.");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const updateField = (field: string, value: any) => {
+        setSettings((prev: any) => ({ ...prev, [field]: value }));
+    };
+
+    return (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Navigation Links (Quick Scroll) */}
+            <div className="lg:col-span-1 space-y-2">
+                <div className="sticky top-10 space-y-2">
+                    {[
+                        { id: 'umum', label: 'Informasi Umum', icon: Layout },
+                        { id: 'seo', label: 'SEO & Marketing', icon: Globe },
+                        { id: 'pembayaran', label: 'Pembayaran', icon: CreditCard },
+                        { id: 'gateway', label: 'WA & Email', icon: Smartphone },
+                        { id: 'bisnis', label: 'Bisnis & Trial', icon: Package },
+                        { id: 'keamanan', label: 'Keamanan', icon: ShieldCheck },
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => {
+                                document.getElementById(item.id)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }}
+                            className="w-full flex items-center gap-3 px-5 py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider text-slate-500 hover:bg-white hover:text-[#D4AF37] hover:shadow-xl hover:shadow-slate-200/50 transition-all border border-transparent hover:border-slate-100 group text-left"
+                        >
+                            <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            {item.label}
+                        </button>
+                    ))}
+
+                    <div className="pt-6 mt-6 border-t border-slate-200">
+                        <button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            className="w-full bg-[#D4AF37] hover:bg-[#B48C5E] text-white py-4 rounded-2xl font-black shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {isSaving ? <RefreshCcw className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                            {isSaving ? "MENYIMPAN..." : "SIMPAN SEMUA"}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Form Sections */}
+            <div className="lg:col-span-3 space-y-8">
+                {/* General Section */}
+                <div id="umum">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-amber-50 rounded-xl text-[#D4AF37]">
+                                <Layout className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Informasi Umum</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nama Platform</label>
+                                <input
+                                    type="text"
+                                    value={settings.appName}
+                                    onChange={(e) => updateField("appName", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Logo URL (PNG)</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://..."
+                                    value={settings.logoUrl}
+                                    onChange={(e) => updateField("logoUrl", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Support Email</label>
+                                <input
+                                    type="email"
+                                    value={settings.supportEmail}
+                                    onChange={(e) => updateField("supportEmail", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">WhatsApp Support</label>
+                                <input
+                                    type="text"
+                                    value={settings.supportWa}
+                                    onChange={(e) => updateField("supportWa", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Footer Copyright</label>
+                                <input
+                                    type="text"
+                                    value={settings.footerCopyright}
+                                    onChange={(e) => updateField("footerCopyright", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* SEO Section */}
+                <div id="seo">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-blue-50 rounded-xl text-blue-500">
+                                <Globe className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">SEO & Marketing Tag</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Meta Title Default</label>
+                                <input
+                                    type="text"
+                                    value={settings.metaTitle}
+                                    onChange={(e) => updateField("metaTitle", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Meta Description Default</label>
+                                <textarea
+                                    rows={3}
+                                    value={settings.metaDesc}
+                                    onChange={(e) => updateField("metaDesc", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700 resize-none"
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Google Analytics ID</label>
+                                    <input
+                                        type="text"
+                                        placeholder="G-XXXXXXXXXX"
+                                        value={settings.gaId}
+                                        onChange={(e) => updateField("gaId", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Facebook Pixel ID</label>
+                                    <input
+                                        type="text"
+                                        placeholder="1234567890"
+                                        value={settings.pixelId}
+                                        onChange={(e) => updateField("pixelId", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">OG Image Default (Social Share)</label>
+                                <input
+                                    type="text"
+                                    placeholder="https://..."
+                                    value={settings.ogImage}
+                                    onChange={(e) => updateField("ogImage", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                                <p className="text-[10px] text-slate-400">Rekomendasi ukuran 1200x630 px</p>
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Payments Section */}
+                <div id="pembayaran">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-emerald-50 rounded-xl text-emerald-600">
+                                    <CreditCard className="w-5 h-5" />
+                                </div>
+                                <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Metode Pembayaran (Mayar)</h3>
+                            </div>
+                            <RoyalBadge variant="success">ACTIVE</RoyalBadge>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mayar API Key</label>
+                                <input
+                                    type="password"
+                                    value={settings.mayarApiKey}
+                                    onChange={(e) => updateField("mayarApiKey", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px) font-black text-slate-400 uppercase tracking-widest ml-1">Mayar Webhook Secret</label>
+                                <input
+                                    type="password"
+                                    value={settings.mayarWebhookSecret}
+                                    onChange={(e) => updateField("mayarWebhookSecret", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Gateway Section */}
+                <div id="gateway">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-indigo-50 rounded-xl text-indigo-600">
+                                <Smartphone className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">WhatsApp & Email Gateway</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">WhatsApp Config</p>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Provider</label>
+                                    <select
+                                        value={settings.waProvider}
+                                        onChange={(e) => updateField("waProvider", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700 appearance-none"
+                                    >
+                                        <option>Fonnte (Recommended)</option>
+                                        <option>Meta Official API</option>
+                                        <option>Custom Webhook</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">API Token / Key</label>
+                                    <input
+                                        type="password"
+                                        placeholder="Key..."
+                                        value={settings.waToken}
+                                        onChange={(e) => updateField("waToken", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Email SMTP Config</p>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">SMTP Host</label>
+                                    <input
+                                        type="text"
+                                        placeholder="smtp.gmail.com"
+                                        value={settings.smtpHost}
+                                        onChange={(e) => updateField("smtpHost", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
+                                        <input
+                                            type="text"
+                                            value={settings.smtpUser}
+                                            onChange={(e) => updateField("smtpUser", e.target.value)}
+                                            className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                                        <input
+                                            type="password"
+                                            value={settings.smtpPass}
+                                            onChange={(e) => updateField("smtpPass", e.target.value)}
+                                            className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Business Section */}
+                <div id="bisnis">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-purple-50 rounded-xl text-purple-600">
+                                <Package className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Aturan Bisnis & Penjualan</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Paket Default Baru</label>
+                                <select
+                                    value={settings.defaultPackage}
+                                    onChange={(e) => updateField("defaultPackage", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 appearance-none font-bold text-slate-700"
+                                >
+                                    <option>Bronze (Trial)</option>
+                                    <option>Demo</option>
+                                    <option>Silver</option>
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Masa Trial (Hari)</label>
+                                <input
+                                    type="number"
+                                    value={settings.trialDays}
+                                    onChange={(e) => updateField("trialDays", parseInt(e.target.value))}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Komisi Referral (%)</label>
+                                <input
+                                    type="number"
+                                    value={settings.referralCommission}
+                                    onChange={(e) => updateField("referralCommission", parseInt(e.target.value))}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 font-bold text-slate-700"
+                                />
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Security Section */}
+                <div id="keamanan">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-rose-50 rounded-xl text-rose-500">
+                                <ShieldCheck className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Keamanan & Global Toggle</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div
+                                onClick={() => updateField("isMaintenance", !settings.isMaintenance)}
+                                className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors"
+                            >
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm">Mode Maintenance</p>
+                                    <p className="text-[10px] text-slate-400 font-medium tracking-wide">Matikan akses publik.</p>
+                                </div>
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${settings.isMaintenance ? 'bg-amber-500' : 'bg-slate-200'}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${settings.isMaintenance ? 'right-1' : 'left-1'}`} />
+                                </div>
+                            </div>
+
+                            <div
+                                onClick={() => updateField("allowRegistration", !settings.allowRegistration)}
+                                className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors"
+                            >
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm">Registrasi Baru</p>
+                                    <p className="text-[10px] text-slate-400 font-medium tracking-wide">Izinkan pendaftaran user.</p>
+                                </div>
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${settings.allowRegistration ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${settings.allowRegistration ? 'right-1' : 'left-1'}`} />
+                                </div>
+                            </div>
+
+                            <div
+                                onClick={() => updateField("showWatermark", !settings.showWatermark)}
+                                className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 md:col-span-2 cursor-pointer hover:bg-slate-100 transition-colors"
+                            >
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm">Watermark Nikahin</p>
+                                    <p className="text-[10px] text-slate-400 font-medium tracking-wide">Tampilkan 'Powered by' pada undangan Bronze/Silver.</p>
+                                </div>
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${settings.showWatermark ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${settings.showWatermark ? 'right-1' : 'left-1'}`} />
+                                </div>
+                            </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+            </div>
+        </div>
+    );
+}

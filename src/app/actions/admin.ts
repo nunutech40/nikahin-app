@@ -232,3 +232,49 @@ export async function deleteUser(userId: number) {
         return { success: false, error: "Failed to delete user" };
     }
 }
+
+/**
+ * Update system settings (Global Config)
+ */
+export async function updateSystemSettings(settings: any) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        const { systemSettings } = await import("@/db/schema");
+
+        await db.insert(systemSettings).values({
+            key: "global_config",
+            value: settings,
+        }).onConflictDoUpdate({
+            target: systemSettings.key,
+            set: { value: settings }
+        });
+
+        revalidatePath("/admin/settings");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating system settings:", error);
+        return { success: false, error: "Failed to save settings." };
+    }
+}
+
+/**
+ * Get system settings
+ */
+export async function getSystemSettings() {
+    try {
+        const { systemSettings } = await import("@/db/schema");
+        const settings = await db.query.systemSettings.findFirst({
+            where: eq(systemSettings.key, "global_config")
+        });
+
+        return settings?.value || null;
+    } catch (error) {
+        console.error("Error getting system settings:", error);
+        return null;
+    }
+}
