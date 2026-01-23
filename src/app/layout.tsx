@@ -46,31 +46,27 @@ export default async function RootLayout({
   const isMaintenance = settings?.isMaintenance === true;
   const isAdmin = (session?.user as any)?.role === "admin";
 
-  if (isMaintenance && !isAdmin) {
-    return (
-      <html lang="id">
-        <body className={`${montserrat.variable} font-montserrat bg-[#FDFBF7] flex items-center justify-center min-h-screen p-6 text-center`}>
-          <div className="max-w-md space-y-6">
-            <h1 className="text-4xl font-serif font-black text-[#1A1612]">Sedang Maintenance</h1>
-            <p className="text-[#1A1612]/50 font-bold leading-relaxed">
-              Halo! Kami sedang melakukan pembaruan sistem untuk memberikan pengalaman yang lebih baik. Kami akan segera kembali!
-            </p>
-            <div className="pt-6 border-t border-slate-200">
-              <p className="text-[10px] uppercase font-black tracking-widest text-[#B48C5E]">Powering by {settings?.appName || "Nikahin"}</p>
-            </div>
-          </div>
-        </body>
-      </html>
-    );
-  }
-
   return (
     <html lang="id" suppressHydrationWarning>
-      <body
-        className={`${playfair.variable} ${montserrat.variable} antialiased font-montserrat`}
-      >
+      <body className={`${playfair.variable} ${montserrat.variable} antialiased font-montserrat`}>
         <Toaster position="top-center" richColors />
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {isMaintenance && !isAdmin ? (
+            <div className="bg-[#FDFBF7] flex items-center justify-center min-h-screen p-6 text-center w-full">
+              <div className="max-w-md space-y-6">
+                <h1 className="text-4xl font-serif font-black text-[#1A1612]">Sedang Maintenance</h1>
+                <p className="text-[#1A1612]/50 font-bold leading-relaxed">
+                  Halo! Kami sedang melakukan pembaruan sistem untuk memberikan pengalaman yang lebih baik. Kami akan segera kembali!
+                </p>
+                <div className="pt-6 border-t border-slate-200">
+                  <p className="text-[10px] uppercase font-black tracking-widest text-[#B48C5E]">Powering by {settings?.appName || "Nikahin"}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            children
+          )}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -369,6 +369,11 @@ export default function DashboardClient({
                         </button>
                     </div>
 
+                    <div className="hidden xl:flex items-center gap-2 px-4 py-1.5 bg-blue-50 border border-blue-100 rounded-xl">
+                        <Monitor className="w-3.5 h-3.5 text-blue-500" />
+                        <span className="text-[10px] font-black text-blue-700 uppercase tracking-widest">{initialData?.totalViews || 0} Pengunjung</span>
+                    </div>
+
                     <div className="flex items-center gap-3">
                         <Link href={`/${invitationData.slug}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-500 transition-colors hidden sm:block"><ExternalLink className="w-4 h-4" /></Link>
                         <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 bg-[#D4AF37] hover:bg-[#b28f1f] text-white rounded-xl text-xs font-black shadow-sm disabled:opacity-50 transition-all">

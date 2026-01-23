@@ -36,20 +36,32 @@ interface PageProps {
     }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: PageProps): Promise<Metadata> {
     const { slug } = await params;
+    const { to } = await searchParams;
     const result = await getInvitationBySlug(slug);
 
-    if (!result) return { title: "Undangan Tidak Ditemukan" };
+    if (!result) return { title: "Undangan Tidak Ditemukan - Nikahin" };
 
     const { data } = result;
     const bride = data.bride?.name || "Pengantin Wanita";
     const groom = data.groom?.name || "Pengantin Pria";
-    const title = `The Wedding of ${bride} & ${groom} | Nikahin`;
-    const description = `Buka undangan digital pernikahan ${bride} & ${groom}. Bergabunglah dalam kebahagiaan kami.`;
+    const guestName = to ? decodeURIComponent(to) : "";
+
+    // Create personalized title
+    const title = guestName
+        ? `Undangan Spesial untuk ${guestName} | ${bride} & ${groom}`
+        : `The Wedding of ${bride} & ${groom} | Nikahin`;
+
+    const description = `Buka undangan digital pernikahan ${bride} & ${groom}. Merupakan suatu kehormatan bagi kami jika Anda berkenan hadir dan memberikan doa restu.`;
 
     // Priority: Cover Image -> First Gallery Image -> Default System Image
-    const ogImage = data.coverImage || (data.gallery && data.gallery.length > 0 ? data.gallery[0] : "/favicon.png");
+    const ogImage = data.coverImage || (data.gallery && data.gallery.length > 0 ? data.gallery[0] : "/og-image.png");
+
+    // Get system settings for root domain (in production)
+    const { getSystemSettings } = await import("@/app/actions/admin");
+    const settings = await getSystemSettings() as any;
+    const baseUrl = settings?.siteUrl || "https://nikahin.app";
 
     return {
         title,
@@ -58,14 +70,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title,
             description,
             type: "website",
-            url: `https://nikahin.app/${slug}`, // Gantilah dengan domain asli nanti
-            siteName: "Nikahin",
+            url: `${baseUrl}/${slug}`,
+            siteName: settings?.appName || "Nikahin",
             images: [
                 {
                     url: ogImage,
                     width: 1200,
                     height: 630,
-                    alt: title,
+                    alt: `The Wedding of ${bride} & ${groom}`,
                 },
             ],
         },
@@ -93,15 +105,38 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         return notFound();
     }
 
-    const { data, themeId: dbThemeId, invitationId, guests, packageSlug, features } = result;
+    const { data, themeId: dbThemeId, invitationId, guests, packageSlug, features, isOwnerActive } = result;
+
+    // 2.3. PROTECTION: Redirection for Unpaid accounts (Normal accounts only, Demo is always open)
+    const isDemo = packageSlug === "demo";
+    if (!isOwnerActive && !isDemo) {
+        return (
+            <div className="min-h-screen bg-[#FDFBF7] flex items-center justify-center p-6 text-center">
+                <div className="max-w-md space-y-8 animate-in fade-in zoom-in duration-700">
+                    <div className="w-24 h-24 bg-amber-50 rounded-[32px] flex items-center justify-center mx-auto border border-amber-100 shadow-xl shadow-amber-900/5">
+                        <svg className="w-10 h-10 text-[#D4AF37]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m11-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-serif font-black text-slate-900 mb-4 tracking-tight italic">Eksklusivitas Sedang Disiapkan</h1>
+                        <p className="text-slate-500 font-medium leading-relaxed">
+                            Undangan digital ini sedang dalam tahap finalisasi atau menunggu aktivasi pembayaran oleh pemiliknya.
+                        </p>
+                    </div>
+                    <div className="pt-8 border-t border-slate-100">
+                        <p className="text-[10px] uppercase font-black tracking-[0.3em] text-[#B48C5E]">Powering by Nikahin Collective</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     // Allow overriding theme via URL param (e.g. ?theme=custom)
     const themeId = theme || dbThemeId;
 
     // 2.5. Track Analytics (Internal)
     trackVisit(invitationId);
-
-    const isDemo = packageSlug === "demo";
 
     // 2.6. PREPARE DATA FOR PREVIEW
     // For Demo: Merge with DEMO_DATA and Force Platinum Features
