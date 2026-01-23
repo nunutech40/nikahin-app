@@ -278,8 +278,8 @@ export default function DashboardClient({
         setIsCreating(true);
         try {
             const defaultTheme = availableThemes.find(t => t.slug === 'basic-theme') || availableThemes[0];
-            const defaultPackage = availablePackages.find(p => p.slug === 'basic') || availablePackages[0];
-            const result = await createInvitation(defaultTheme.id, defaultPackage.id, newSlug, MOCK_DATA);
+            const defaultPackage = availablePackages.find(p => p.slug === userPackageSlug) || availablePackages[0];
+            const result = await createInvitation(defaultTheme.id, defaultPackage.id, newSlug, userPackageSlug === 'demo' ? DEMO_DATA : MOCK_DATA);
             if (result.success) { toast.success("Selesai!"); window.location.reload(); }
         } finally { setIsCreating(false); }
     };

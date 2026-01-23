@@ -83,6 +83,7 @@ export async function saveInvitation(invitationId: number, content: any) {
             })
             .where(eq(invitations.id, invitationId));
 
+        revalidatePath(`/${invitation.slug}`);
         return { success: true };
     } catch (error) {
         console.error("❌ Save Invitation Error:", error);
