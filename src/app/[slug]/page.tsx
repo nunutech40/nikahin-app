@@ -153,17 +153,55 @@ export default async function InvitationPage({ params, searchParams }: PageProps
         );
     }
 
-    // 5. Render the selected theme
+    // 5. Generate JSON-LD Structured Data for SEO
+    const weddingEvent = previewData.events?.[0];
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        "name": `The Wedding of ${previewData.bride?.name || "Bride"} & ${previewData.groom?.name || "Groom"}`,
+        "description": `Undangan pernikahan digital ${previewData.bride?.name || "Bride"} dan ${previewData.groom?.name || "Groom"}. Bergabunglah dalam kebahagiaan kami.`,
+        "startDate": weddingEvent?.date || previewData.weddingDate,
+        "endDate": weddingEvent?.date || previewData.weddingDate,
+        "eventStatus": "https://schema.org/EventScheduled",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "location": weddingEvent?.location ? {
+            "@type": "Place",
+            "name": weddingEvent.location,
+            "address": weddingEvent.address || weddingEvent.location
+        } : undefined,
+        "image": previewData.coverImage || previewData.gallery?.[0] || "/favicon.png",
+        "organizer": {
+            "@type": "Person",
+            "name": `${previewData.bride?.name || "Bride"} & ${previewData.groom?.name || "Groom"}`
+        },
+        "offers": {
+            "@type": "Offer",
+            "availability": "https://schema.org/InStock",
+            "price": "0",
+            "priceCurrency": "IDR",
+            "url": `https://nikahin.app/${slug}`
+        }
+    };
+
+    // 6. Render the selected theme
     return (
-        <div className="relative min-h-screen">
-            <ThemeComponent
-                data={previewData}
-                dynamicConfig={result.themeConfig}
-                guestName={guestName}
-                invitationId={invitationId}
-                guests={guests}
+        <>
+            {/* JSON-LD Structured Data for SEO */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            {isDemo && <DemoMarker />}
-        </div>
+
+            <div className="relative min-h-screen">
+                <ThemeComponent
+                    data={previewData}
+                    dynamicConfig={result.themeConfig}
+                    guestName={guestName}
+                    invitationId={invitationId}
+                    guests={guests}
+                />
+                {isDemo && <DemoMarker />}
+            </div>
+        </>
     );
 }

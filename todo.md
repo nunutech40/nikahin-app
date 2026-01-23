@@ -555,12 +555,12 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
   - [ ] Save changes to `package_features` table
 
 #### **Phase 7.6: SEO & Marketing**
-- [ ] **T7.6.1** - SEO Infrastructure
-  - [ ] Generate sitemap.xml
-  - [ ] Create robots.txt
-  - [ ] Add Schema.org structured data
-- [ ] **T7.6.2** - Social Sharing
-  - [ ] Dynamic OG tags for invitation pages
+- [x] **T7.6.1** - SEO Infrastructure
+  - [x] Generate sitemap.xml
+  - [x] Create robots.txt
+  - [x] Add Schema.org structured data
+- [x] **T7.6.2** - Social Sharing
+  - [x] Dynamic OG tags for invitation pages
   - [ ] Share to WhatsApp button
 
 #### **Phase 8.1: Guest Management & UX Polish (Refinements)**
