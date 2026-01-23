@@ -91,7 +91,7 @@ export const MOCK_DATA: InvitationData = {
             accountName: "Dakot Johnson",
         },
     ],
-    musicUrl: "/music/wedding-bgm.mp3",
+    musicUrl: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Impact/Kevin_MacLeod_-_01_-_Impact_Andante.mp3",
     giftOptions: [
         {
             bankName: "Bank Central Asia (BCA)",
@@ -120,6 +120,7 @@ export const MOCK_DATA: InvitationData = {
     themeConfig: {
         primaryColor: "#D4AF37", // Gold
         secondaryColor: "#F3E5AB", // Light Gold
+        backgroundColor: "#FFFFFF", // White
         fontHeading: "Playfair Display",
         fontBody: "Inter",
     },

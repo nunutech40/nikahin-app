@@ -16,30 +16,32 @@ export function canUseFeature(data: InvitationData, code: FeatureCode | string):
         'countdown',
         'google_maps',
         'guestbook',
-        'single_event'
+        'single_event',
+        'cover_image'
     ];
 
     if (coreFeatures.includes(code)) return true;
 
     // Special logic for tiered features
     if (code === 'gallery') {
-        return userFeatures.includes('gallery_10') || userFeatures.includes('gallery_unlimited');
+        // Everyone gets at least 10 photos
+        return true;
     }
 
     if (code === 'rsvp') {
         return userFeatures.includes('rsvp_basic') || userFeatures.includes('rsvp_export');
     }
 
-    if (code === 'music') {
-        return userFeatures.includes('background_music');
+    if (code === 'music' || code === 'background_music') {
+        return true;
     }
 
-    if (code === 'multi-event') {
-        return userFeatures.includes('unlimited_events');
+    if (code === 'gallery') {
+        return true;
     }
 
-    if (code === 'quotes') {
-        return userFeatures.includes('quotes');
+    if (code === 'cover_image') {
+        return true;
     }
 
     // Check if feature is explicitly enabled in the invitation's features list

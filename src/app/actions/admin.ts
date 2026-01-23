@@ -576,28 +576,27 @@ export async function seedMusicLibrary() {
     }
 
     const SEED_DATA = [
-        { title: "Eternal Love", artist: "Piano Wedding", category: "Romantic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { title: "Eternal Love (Piano)", artist: "Wedding Collection", category: "Romantic", url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Kevin_MacLeod/Impact/Kevin_MacLeod_-_01_-_Impact_Andante.mp3" },
         { title: "Canon in D", artist: "Pachelbel", category: "Classic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-        { title: "Sweet Moments", artist: "Acoustic Guitar", category: "Acoustic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
-        { title: "Summer Wedding", artist: "Morning Jazz", category: "Jazz", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" },
-        { title: "Perfect Day", artist: "Pop Collection", category: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" },
-        { title: "Beautiful Soul", artist: "String Quartet", category: "Classic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-        { title: "Wedding March", artist: "Organ Solo", category: "Traditional", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
-        { title: "Falling in Love", artist: "Soft Piano", category: "Romantic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
-        { title: "Together Forever", artist: "Ambient Duo", category: "Acoustic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" },
-        { title: "Happy Ending", artist: "Modern Pop", category: "Pop", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
+        { title: "Falling in Love", artist: "Acoustic Solo", category: "Acoustic", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" },
     ];
 
     try {
+        const currentMusic = await db.select().from(musicLibrary);
+
         await db.transaction(async (tx) => {
             for (const track of SEED_DATA) {
-                await tx.insert(musicLibrary).values({
-                    title: track.title,
-                    artist: track.artist,
-                    category: track.category,
-                    url: track.url,
-                    isActive: true
-                });
+                // Hanya tambahkan jika URL belum ada
+                const exists = currentMusic.some(m => m.url === track.url);
+                if (!exists) {
+                    await tx.insert(musicLibrary).values({
+                        title: track.title,
+                        artist: track.artist,
+                        category: track.category,
+                        url: track.url,
+                        isActive: true
+                    });
+                }
             }
         });
 
@@ -605,7 +604,7 @@ export async function seedMusicLibrary() {
         return { success: true };
     } catch (error: any) {
         console.error("Seeding error:", error);
-        return { success: false, error: `Gagal: ${error.message || "Database error"}` };
+        return { success: false, error: `Seeding gagal: ${error.message || "Database error"}` };
     }
 }
 

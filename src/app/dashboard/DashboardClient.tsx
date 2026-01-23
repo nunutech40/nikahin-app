@@ -176,7 +176,7 @@ export default function DashboardClient({
             case 'mempelai':
                 return issues.some(i => i.path[0] === 'groom' || i.path[0] === 'bride');
             case 'acara':
-                return issues.some(i => i.path[0] === 'events' || i.path[0] === 'weddingDate');
+                return issues.some(i => i.path[0] === 'events' || i.path[0] === 'weddingDate' || i.path[0] === 'slug');
             case 'cerita':
                 return issues.some(i => i.path[0] === 'loveStory');
             case 'galeri':

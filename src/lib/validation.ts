@@ -21,7 +21,17 @@ const personSchema = z.object({
         .min(3, "Nama orang tua wajib diisi (minimal 3 karakter)")
         .max(200, "Nama orang tua terlalu panjang"),
     photo: z.string()
-        .url("Mohon masukkan format link foto yang valid (http/https)")
+        .refine((val) => {
+            if (!val) return true;
+            try {
+                new URL(val);
+                return true;
+            } catch (e) {
+                return val.startsWith('/uploads') || val.startsWith('/images');
+            }
+        }, {
+            message: "Mohon masukkan link foto yang valid (internal path atau http/https)"
+        })
         .optional()
         .or(z.literal("")),
 });
@@ -65,11 +75,13 @@ const loveStoryItemSchema = z.object({
 const quotesSchema = z.object({
     verse: z.string()
         .min(10, "Kutipan atau ayat terlalu pendek (minimal 10 karakter)")
-        .max(2000, "Kutipan terlalu panjang"),
+        .max(2000, "Kutipan terlalu panjang")
+        .default(""),
     source: z.string()
         .min(2, "Sebutkan sumber kutipan (contoh: Ar-Rum: 21)")
-        .max(100, "Sumber kutipan terlalu panjang"),
-});
+        .max(100, "Sumber kutipan terlalu panjang")
+        .default(""),
+}).optional().default({ verse: "", source: "" });
 
 // 5. Gift/Transfer Options Schema
 const bankAccountSchema = z.object({
@@ -101,14 +113,19 @@ const shippingAddressSchema = z.object({
 // 7. Theme Config Schema
 const themeConfigSchema = z.object({
     primaryColor: z.string()
-        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid. Gunakan format HEX (contoh: #D4AF37)"),
+        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid")
+        .default("#D4AF37"),
     secondaryColor: z.string()
-        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid. Gunakan format HEX (contoh: #D4AF37)"),
+        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid")
+        .default("#F3E5AB"),
+    backgroundColor: z.string()
+        .regex(/^#([0-9A-F]{3}){1,2}$/i, "Format warna tidak valid")
+        .default("#FFFFFF"),
     fontHeading: z.string()
-        .min(1, "Mohon pilih salah satu font untuk judul"),
+        .default("Playfair Display"),
     fontBody: z.string()
-        .min(1, "Mohon pilih salah satu font untuk teks isi"),
-});
+        .default("Inter"),
+}).optional();
 
 // 8. Main Invitation Schema
 export const invitationSchema = z.object({
@@ -121,20 +138,52 @@ export const invitationSchema = z.object({
     groom: personSchema,
     bride: personSchema,
     events: z.array(eventSchema)
-        .min(1, "Wajib ada minimal 1 acara (misal: Akad Nikah)"),
-    loveStory: z.array(loveStoryItemSchema).optional(),
+        .min(1, "Wajib ada minimal 1 acara (misal: Akad Nikah)")
+        .default([]),
+    loveStory: z.array(loveStoryItemSchema).optional().default([]),
     quotes: quotesSchema,
     musicUrl: z.string()
-        .url("Link musik tidak valid. Gunakan link MP3 atau URL yang didukung")
+        .refine((val) => {
+            if (!val) return true;
+            try {
+                new URL(val);
+                return true;
+            } catch (e) {
+                return val.startsWith('/uploads') || val.startsWith('/music');
+            }
+        }, {
+            message: "Link musik tidak valid. Gunakan link MP3 atau URL (http/https) yang didukung"
+        })
         .optional()
         .or(z.literal("")),
-    giftOptions: z.array(bankAccountSchema).optional(),
+    giftOptions: z.array(bankAccountSchema).optional().default([]),
     shippingAddress: shippingAddressSchema,
-    gallery: z.array(z.string().url("Salah satu link foto galeri tidak valid"))
-        .optional(),
+    gallery: z.array(
+        z.string().refine((val) => {
+            if (!val) return true;
+            try {
+                new URL(val);
+                return true;
+            } catch (e) {
+                return val.startsWith('/uploads') || val.startsWith('/images');
+            }
+        }, {
+            message: "Salah satu link foto galeri tidak valid"
+        })
+    ).optional(),
     themeConfig: themeConfigSchema.optional(),
     coverImage: z.string()
-        .url("Link foto sampul tidak valid")
+        .refine((val) => {
+            if (!val) return true;
+            try {
+                new URL(val);
+                return true;
+            } catch (e) {
+                return val.startsWith('/uploads') || val.startsWith('/images');
+            }
+        }, {
+            message: "Link foto sampul tidak valid"
+        })
         .optional()
         .or(z.literal("")),
 });
