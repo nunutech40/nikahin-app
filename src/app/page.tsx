@@ -1,17 +1,20 @@
 import Link from "next/link";
-import { ArrowRight, Heart, Music, MapPin, Users, Gift, Palette, Sparkles, Star, Check, Play, Zap, ShieldCheck } from "lucide-react";
+import { ArrowRight, Heart, Music, MapPin, Users, Gift, Palette, Sparkles, Star, Check, Play, Zap, ShieldCheck, Instagram, Youtube } from "lucide-react";
 import { PricingCard } from "@/components/PricingCard";
 import { FloatingHearts } from "@/components/FloatingHearts";
 import { ThemeShowcase } from "@/components/ThemeShowcase";
 import { db } from "@/db";
 import { themes } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { getSystemSettings } from "./actions/admin";
 
 export default async function HomePage() {
   // Fetch active themes for showcase
   const availableThemes = await db.query.themes.findMany({
     where: eq(themes.isActive, true),
   });
+
+  const settings = await getSystemSettings() as any;
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#1A1612]">
@@ -20,7 +23,7 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Heart className="w-8 h-8 text-[#B48C5E] fill-current" />
-            <span className="font-serif text-2xl font-black text-[#1A1612] tracking-tighter italic">Nikahin</span>
+            <span className="font-serif text-2xl font-black text-[#1A1612] tracking-tighter italic">{settings?.appName || "Nikahin"}</span>
           </Link>
           <div className="hidden md:flex items-center gap-10">
             <a href="#features" className="text-[11px] uppercase tracking-[0.2em] font-black text-[#1A1612]/60 hover:text-[#B48C5E] transition-colors">Fitur</a>
@@ -56,12 +59,18 @@ export default async function HomePage() {
           </div>
 
           <h1 className="font-serif text-6xl md:text-9xl font-black text-[#1A1612] mb-10 leading-[0.95] tracking-tighter animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-            Abadikan Momen <br />
-            <span className="italic font-normal">dengan</span> <span className="text-[#B48C5E]">Kesempurnaan.</span>
+            {settings?.heroTitle?.includes("dengan") ? (
+              <>
+                {settings.heroTitle.split("dengan")[0]} <br />
+                <span className="italic font-normal">dengan</span> <span className="text-[#B48C5E]">{settings.heroTitle.split("dengan")[1]}</span>
+              </>
+            ) : (
+              settings?.heroTitle || "Abadikan Momen dengan Kesempurnaan"
+            )}
           </h1>
 
           <p className="text-lg md:text-xl text-[#1A1612]/50 mb-14 max-w-2xl mx-auto leading-relaxed font-bold animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-400">
-            Nikmati kebebasan kustomisasi penuh dengan puluhan tema premium, RSVP otomatis, dan gift digital tercanggih.
+            {settings?.heroSubtitle || "Nikmati kebebasan kustomisasi penuh dengan puluhan tema premium, RSVP otomatis, dan gift digital tercanggih."}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-600">
@@ -92,7 +101,7 @@ export default async function HomePage() {
                 </div>
               ))}
             </div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1612]">❤️ 12.400+ Pasangan Bahagia</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#1A1612]">❤️ {settings?.happyCouplesCount?.toLocaleString() || "12.400"}+ Pasangan Bahagia</p>
           </div>
         </div>
       </section>
@@ -382,7 +391,7 @@ export default async function HomePage() {
             >
               Coba Demo Sekarang
             </Link>
-            <a href="https://wa.me/your-number" target="_blank" className="px-12 py-7 bg-white/5 text-white rounded-full border border-white/10 font-black text-xs uppercase tracking-widest backdrop-blur-md hover:bg-white/10 transition-all">
+            <a href={`https://wa.me/${settings?.supportWa || ""}`} target="_blank" className="px-12 py-7 bg-white/5 text-white rounded-full border border-white/10 font-black text-xs uppercase tracking-widest backdrop-blur-md hover:bg-white/10 transition-all">
               Hubungi Sales
             </a>
           </div>
@@ -397,7 +406,7 @@ export default async function HomePage() {
             <div className="col-span-1">
               <Link href="/" className="flex items-center gap-2 mb-8">
                 <Heart className="w-8 h-8 text-[#B48C5E] fill-current" />
-                <span className="font-serif text-2xl font-black text-white tracking-tighter italic">Nikahin</span>
+                <span className="font-serif text-2xl font-black text-white tracking-tighter italic">{settings?.appName || "Nikahin"}</span>
               </Link>
               <p className="text-[11px] leading-relaxed max-w-[200px] font-bold uppercase tracking-wider">Platform undangan digital butik #1 yang mengutamakan estetika & detail eksklusif.</p>
             </div>
@@ -420,18 +429,30 @@ export default async function HomePage() {
             <div>
               <p className="text-white font-black text-[10px] mb-8 uppercase tracking-[0.3em]">Bantuan</p>
               <ul className="space-y-5 text-[10px] font-black uppercase tracking-[0.2em]">
-                <li><a href="#" className="hover:text-[#B48C5E] transition-colors">Syarat & Ketentuan</a></li>
-                <li><a href="#" className="hover:text-[#B48C5E] transition-colors">Kebijakan Privasi</a></li>
-                <li><a href="mailto:support@nikahin.app" className="hover:text-[#B48C5E] transition-colors">Hubungi Kami</a></li>
+                <li><a href={settings?.termsUrl || "#"} className="hover:text-[#B48C5E] transition-colors">Syarat & Ketentuan</a></li>
+                <li><a href={settings?.privacyUrl || "#"} className="hover:text-[#B48C5E] transition-colors">Kebijakan Privasi</a></li>
+                <li><a href={`mailto:${settings?.supportEmail || "support@nikahin.app"}`} className="hover:text-[#B48C5E] transition-colors">Hubungi Kami</a></li>
               </ul>
             </div>
           </div>
           <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8">
-            <p className="text-[9px] uppercase font-black tracking-[0.4em]">© 2026 Nikahin Collective. Art of Wedding.</p>
+            <p className="text-[9px] uppercase font-black tracking-[0.4em]">{settings?.footerCopyright || "© 2026 Nikahin Collective. Art of Wedding."}</p>
             <div className="flex gap-10">
-              <a href="#" className="hover:text-[#B48C5E] transition-all transform hover:scale-110"><Zap className="w-5 h-5" /></a>
-              <a href="#" className="hover:text-[#B48C5E] transition-all transform hover:scale-110"><Heart className="w-5 h-5" /></a>
-              <a href="#" className="hover:text-[#B48C5E] transition-all transform hover:scale-110"><Users className="w-5 h-5" /></a>
+              {settings?.instagramUrl && (
+                <a href={settings.instagramUrl} target="_blank" className="hover:text-[#B48C5E] transition-all transform hover:scale-110">
+                  <Instagram className="w-5 h-5" />
+                </a>
+              )}
+              {settings?.tiktokUrl && (
+                <a href={settings.tiktokUrl} target="_blank" className="hover:text-[#B48C5E] transition-all transform hover:scale-110">
+                  <Zap className="w-5 h-5" />
+                </a>
+              )}
+              {settings?.youtubeUrl && (
+                <a href={settings.youtubeUrl} target="_blank" className="hover:text-[#B48C5E] transition-all transform hover:scale-110">
+                  <Youtube className="w-5 h-5" />
+                </a>
+              )}
             </div>
           </div>
         </div>

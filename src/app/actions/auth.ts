@@ -18,6 +18,14 @@ const registerSchema = z.object({
 
 export async function registerUser(formData: any) {
     try {
+        const { getSystemSettings } = await import("./admin");
+        const settings = await getSystemSettings() as any;
+
+        // 0. Check Global Toggle
+        if (settings && settings.allowRegistration === false) {
+            return { success: false, error: "Pendaftaran member baru sedang dinonaktifkan sementara." };
+        }
+
         const validated = registerSchema.parse(formData);
 
         // 1. Check if user already exists
@@ -43,9 +51,14 @@ export async function registerUser(formData: any) {
             }
         }
 
-        // 4. Find selected package
+        // 4. Find selected package (or default from settings)
+        // settings.defaultPackage might be something like "Bronze (Trial)", we need to extract slug
+        const packageSlug = validated.selectedPackage ||
+            (settings?.defaultPackage?.toLowerCase().includes("bronze") ? "bronze" :
+                settings?.defaultPackage?.toLowerCase().includes("demo") ? "demo" : "bronze");
+
         const selectedPkg = await db.query.packages.findFirst({
-            where: eq(packages.slug, validated.selectedPackage),
+            where: eq(packages.slug, packageSlug),
         });
 
         if (!selectedPkg) {
@@ -75,12 +88,13 @@ export async function registerUser(formData: any) {
         // 7. AUTO-CREATE INITIAL DRAFT
         // This prevents the "Empty Dashboard" friction
         try {
+            const { themes } = await import("@/db/schema");
             const defaultTheme = await db.query.themes.findFirst({
                 where: eq(themes.isActive, true)
             });
 
             if (defaultTheme) {
-                // Generate a base slug from name
+                // ... same slug logic ...
                 const baseSlug = validated.name.toLowerCase()
                     .replace(/[^a-z0-9]/g, '-')
                     .replace(/-+/g, '-')
@@ -89,6 +103,7 @@ export async function registerUser(formData: any) {
                 const uniqueSlug = `${baseSlug}-${Math.random().toString(36).substring(7)}`;
 
                 const { MOCK_DATA } = await import("@/data/mockData");
+                const { invitations } = await import("@/db/schema");
 
                 await db.insert(invitations).values({
                     userId: userId,
@@ -101,7 +116,6 @@ export async function registerUser(formData: any) {
             }
         } catch (draftError) {
             console.error("⚠️ Failed to create auto-draft:", draftError);
-            // Non-blocking, user can still create manual draft later
         }
 
         return { success: true };

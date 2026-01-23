@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { getSystemSettings } from '@/app/actions/admin';
 
 const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
@@ -21,9 +22,15 @@ export async function sendRSVPNotification({
     message,
     invitationSlug
 }: SendRSVPNotificationProps) {
+    const settings = await getSystemSettings() as any;
+    const fromName = settings?.emailFromName || "Nikahin";
+    const fromAddress = settings?.emailFromAddress || "notifications@nikahin.app";
+    const from = `${fromName} <${fromAddress}>`;
+
     if (!resend) {
         console.log("📧 [MOCK EMAIL] RSVP Notification:");
         console.log(`To: ${to}`);
+        console.log(`From: ${from}`);
         console.log(`Subject: Cie! Ada RSVP baru dari ${guestName}`);
         console.log(`Body: Halo ${customerName}, ${guestName} baru saja mengisi konfirmasi kehadiran (${attendance}) untuk undangan ${invitationSlug}.`);
         return { success: true, mocked: true };
@@ -31,7 +38,7 @@ export async function sendRSVPNotification({
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Nikahin <notifications@nikahin.com>',
+            from: from,
             to: [to],
             subject: `💍 RSVP Baru: ${guestName} mengkonfirmasi kehadiran!`,
             html: `
@@ -57,13 +64,13 @@ export async function sendRSVPNotification({
                     
                     <p>Jangan lupa untuk membalas ucapan mereka di dashboard Nikahin ya!</p>
                     
-                    <a href="https://nikahin.com/dashboard/rsvp" style="display: inline-block; background: #D4AF37; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px;">
+                    <a href="https://nikahin.app/dashboard/rsvp" style="display: inline-block; background: #D4AF37; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px;">
                         Lihat Daftar Tamu & Balas Ucapan
                     </a>
                     
                     <hr style="border: 0; border-top: 1px solid #eee; margin: 24px 0;" />
                     <p style="font-size: 12px; color: #999; text-align: center;">
-                        Dikirim secara otomatis oleh Nikahin - Digital Wedding Invitation.
+                        Dikirim secara otomatis oleh ${settings?.appName || "Nikahin"} - Digital Wedding Invitation.
                     </p>
                 </div>
             `,

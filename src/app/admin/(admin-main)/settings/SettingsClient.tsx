@@ -28,18 +28,32 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
         supportEmail: "halo@nikahin.app",
         supportWa: "081234567890",
         footerCopyright: "© 2024 Nikahin. All rights reserved.",
+        instagramUrl: "https://instagram.com/nikahin",
+        tiktokUrl: "https://tiktok.com/@nikahin",
+        youtubeUrl: "",
+        termsUrl: "/terms",
+        privacyUrl: "/privacy",
         metaTitle: "Nikahin - Buat Undangan Pernikahan Digital Elegan",
         metaDesc: "Platform terbaik untuk membuat undangan digital pernikahan dengan tema elegan, fitur lengkap, dan proses instan.",
         gaId: "",
         pixelId: "",
         ogImage: "",
+        heroTitle: "Abadikan Momen dengan Kesempurnaan",
+        heroSubtitle: "Nikmati kebebasan kustomisasi penuh dengan puluhan tema premium, RSVP otomatis, dan gift digital tercanggih.",
+        happyCouplesCount: 12400,
         mayarApiKey: "",
         mayarWebhookSecret: "",
+        mayarSandbox: true,
         waProvider: "Fonnte (Recommended)",
         waToken: "",
+        emailProvider: "SMTP",
+        emailFromName: "Nikahin Notification",
+        emailFromAddress: "notifications@nikahin.app",
         smtpHost: "smtp.gmail.com",
         smtpUser: "",
         smtpPass: "",
+        smtpPort: 587,
+        smtpEncryption: "TLS",
         defaultPackage: "Bronze (Trial)",
         trialDays: 7,
         referralCommission: 10,
@@ -165,6 +179,47 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                                     className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
                                 />
                             </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Instagram URL</label>
+                                <input
+                                    type="text"
+                                    value={settings.instagramUrl}
+                                    onChange={(e) => updateField("instagramUrl", e.target.value)}
+                                    placeholder="https://instagram.com/yourbrand"
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">TikTok URL</label>
+                                <input
+                                    type="text"
+                                    value={settings.tiktokUrl}
+                                    onChange={(e) => updateField("tiktokUrl", e.target.value)}
+                                    placeholder="https://tiktok.com/@yourbrand"
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Terms of Service URL</label>
+                                <input
+                                    type="text"
+                                    value={settings.termsUrl}
+                                    onChange={(e) => updateField("termsUrl", e.target.value)}
+                                    placeholder="/terms"
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Privacy Policy URL</label>
+                                <input
+                                    type="text"
+                                    value={settings.privacyUrl}
+                                    onChange={(e) => updateField("privacyUrl", e.target.value)}
+                                    placeholder="/privacy"
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                />
+                            </div>
                         </div>
                     </RoyalCard>
                 </div>
@@ -181,13 +236,42 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
 
                         <div className="space-y-6">
                             <div className="space-y-2">
-                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Meta Title Default</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hero Title (Landing Page)</label>
                                 <input
                                     type="text"
-                                    value={settings.metaTitle}
-                                    onChange={(e) => updateField("metaTitle", e.target.value)}
+                                    value={settings.heroTitle}
+                                    onChange={(e) => updateField("heroTitle", e.target.value)}
                                     className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
                                 />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Hero Subtitle (Landing Page)</label>
+                                <textarea
+                                    rows={2}
+                                    value={settings.heroSubtitle}
+                                    onChange={(e) => updateField("heroSubtitle", e.target.value)}
+                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700 resize-none"
+                                />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Counter Pasangan Bahagia</label>
+                                    <input
+                                        type="number"
+                                        value={settings.happyCouplesCount}
+                                        onChange={(e) => updateField("happyCouplesCount", parseInt(e.target.value))}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Meta Title Default</label>
+                                    <input
+                                        type="text"
+                                        value={settings.metaTitle}
+                                        onChange={(e) => updateField("metaTitle", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                    />
+                                </div>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Meta Description Default</label>
@@ -249,6 +333,16 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                         </div>
 
                         <div className="space-y-6">
+                            <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 cursor-pointer hover:bg-slate-100 transition-colors" onClick={() => updateField("mayarSandbox", !settings.mayarSandbox)}>
+                                <div>
+                                    <p className="font-bold text-slate-900 text-sm">Mode Sandbox (Testing)</p>
+                                    <p className="text-[10px] text-slate-400 font-medium tracking-wide">Gunakan Mayar Sandbox untuk pengetesan pembayaran.</p>
+                                </div>
+                                <div className={`w-10 h-5 rounded-full relative transition-colors ${settings.mayarSandbox ? 'bg-amber-500' : 'bg-slate-200'}`}>
+                                    <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${settings.mayarSandbox ? 'right-1' : 'left-1'}`} />
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mayar API Key</label>
                                 <input
@@ -259,7 +353,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[10px) font-black text-slate-400 uppercase tracking-widest ml-1">Mayar Webhook Secret</label>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Mayar Webhook Secret</label>
                                 <input
                                     type="password"
                                     value={settings.mayarWebhookSecret}
@@ -281,7 +375,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                             <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">WhatsApp & Email Gateway</h3>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                             <div className="space-y-4">
                                 <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">WhatsApp Config</p>
                                 <div className="space-y-2">
@@ -309,37 +403,97 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                             </div>
 
                             <div className="space-y-4">
-                                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Email SMTP Config</p>
+                                <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Email Gateway Config</p>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">SMTP Host</label>
-                                    <input
-                                        type="text"
-                                        placeholder="smtp.gmail.com"
-                                        value={settings.smtpHost}
-                                        onChange={(e) => updateField("smtpHost", e.target.value)}
-                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
-                                    />
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Provider</label>
+                                    <select
+                                        value={settings.emailProvider}
+                                        onChange={(e) => updateField("emailProvider", e.target.value)}
+                                        className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700 appearance-none"
+                                    >
+                                        <option>SMTP</option>
+                                        <option>Resend</option>
+                                        <option>Mailgun</option>
+                                    </select>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sender Name</label>
                                         <input
                                             type="text"
-                                            value={settings.smtpUser}
-                                            onChange={(e) => updateField("smtpUser", e.target.value)}
+                                            value={settings.emailFromName}
+                                            onChange={(e) => updateField("emailFromName", e.target.value)}
                                             className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Sender Email</label>
                                         <input
-                                            type="password"
-                                            value={settings.smtpPass}
-                                            onChange={(e) => updateField("smtpPass", e.target.value)}
+                                            type="text"
+                                            value={settings.emailFromAddress}
+                                            onChange={(e) => updateField("emailFromAddress", e.target.value)}
                                             className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
                                         />
                                     </div>
                                 </div>
+
+                                {settings.emailProvider === "SMTP" && (
+                                    <div className="pt-4 mt-4 border-t border-slate-50 space-y-4">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">SMTP Host</label>
+                                            <input
+                                                type="text"
+                                                placeholder="smtp.gmail.com"
+                                                value={settings.smtpHost}
+                                                onChange={(e) => updateField("smtpHost", e.target.value)}
+                                                className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Port</label>
+                                                <input
+                                                    type="number"
+                                                    value={settings.smtpPort}
+                                                    onChange={(e) => updateField("smtpPort", parseInt(e.target.value))}
+                                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Encryption</label>
+                                                <select
+                                                    value={settings.smtpEncryption}
+                                                    onChange={(e) => updateField("smtpEncryption", e.target.value)}
+                                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700 appearance-none"
+                                                >
+                                                    <option>TLS</option>
+                                                    <option>SSL</option>
+                                                    <option>None</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Username</label>
+                                                <input
+                                                    type="text"
+                                                    value={settings.smtpUser}
+                                                    onChange={(e) => updateField("smtpUser", e.target.value)}
+                                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Password</label>
+                                                <input
+                                                    type="password"
+                                                    value={settings.smtpPass}
+                                                    onChange={(e) => updateField("smtpPass", e.target.value)}
+                                                    className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </RoyalCard>
