@@ -21,8 +21,8 @@ Sistem menggunakan standardisasi Kode Fitur (Snake Case) untuk sinkronisasi anta
 
 ### 2.1 Standard Feature Codes
 Seluruh fitur direferensikan menggunakan kode unik berikut:
-- `basic_info`, `countdown`, `google_maps`, `guestbook`, `rsvp_basic`, `single_event`, `cover_image` (**Core/Bronze**)
-- `love_story`, `gallery_10`, `background_music`, `quotes`, `unlimited_events` (**Silver**)
+- `basic_info`, `countdown`, `google_maps`, `guestbook`, `rsvp_basic`, `single_event`, `cover_image`, `background_music`, `gallery_10` (**Core/Bronze**)
+- `love_story`, `quotes`, `unlimited_events` (**Silver**)
 - `gift_registry`, `custom_theme`, `gallery_unlimited`, `remove_branding` (**Gold**)
 - `whatsapp_blast`, `custom_domain`, `video_background`, `live_streaming` (**Platinum**)
 
@@ -145,4 +145,4 @@ Agar sistem tetap *maintainable* dan valid:
 ---
 
 **Nikahin App Technical Documentation**
-*Update Terakhir: 18 Januari 2026 - Iterasi 8: Guest Management Suite.*
+*Update Terakhir: 23 Januari 2026 - Iterasi 11/12: Platform Settings & Music Library.*

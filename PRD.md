@@ -76,6 +76,8 @@ Platform akan diluncurkan dengan **3 Tier Paket** sederhana:
 *   **Fitur:**
     *   Info Mempelai & Orang Tua
     *   1 Detail Acara (Akad saja)
+    *   **Musik Latar** & **Galeri (10 Foto)**
+    *   **Foto Sampul (Cover Image)**
     *   Tema Basic (Terbatas 1-2 opsi)
     *   RSVP Basic (Tanpa Export)
     *   Masa Aktif: 3 Hari / Watermarked (TBD)
@@ -97,7 +99,7 @@ Platform akan diluncurkan dengan **3 Tier Paket** sederhana:
 *   **Fitur:**
     *   *Semua fitur Silver*
     *   **Gift Registry** (Amplop Digital)
-    *   **Custom Colors & Fonts** (Theme Config)
+    *   **Custom Colors & Fonts** (Full Theme Personalization)
     *   **Gallery Unlimited** (Max 20/30)
     *   **Remove "Powered By" Branding**
 
