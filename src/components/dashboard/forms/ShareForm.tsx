@@ -27,6 +27,13 @@ export default function ShareForm({ slug, groomName, brideName }: ShareFormProps
 
     const defaultMessage = `Tanpa mengurangi rasa hormat, perkenankan kami mengundang Bapak/Ibu/Saudara/i ${guestName || '[Nama Tamu]'} untuk menghadiri acara pernikahan kami:\n\n${groomName} & ${brideName}\n\nInfo selengkapnya silakan buka link undangan berikut:\n${personalizedUrl}\n\nMerupakan suatu kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu.\n\nTerima kasih.`;
 
+    const [customMessage, setCustomMessage] = useState(defaultMessage);
+
+    const handleResetMessage = () => {
+        setCustomMessage(defaultMessage);
+        toast.success("Pesan dikembalikan ke default.");
+    };
+
     const handleCopy = () => {
         navigator.clipboard.writeText(personalizedUrl);
         setIsCopied(true);
@@ -35,7 +42,7 @@ export default function ShareForm({ slug, groomName, brideName }: ShareFormProps
     };
 
     const handleShareWA = () => {
-        const waUrl = `https://wa.me/?text=${encodeURIComponent(defaultMessage)}`;
+        const waUrl = `https://wa.me/?text=${encodeURIComponent(customMessage)}`;
         window.open(waUrl, "_blank");
     };
 
@@ -84,14 +91,24 @@ export default function ShareForm({ slug, groomName, brideName }: ShareFormProps
                 <div className="h-px bg-slate-100" />
 
                 <div className="space-y-4">
-                    <div className="flex items-center gap-2">
-                        <MessageCircle className="w-4 h-4 text-emerald-500" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Pratinjau Pesan WhatsApp</span>
+                    <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <MessageCircle className="w-4 h-4 text-emerald-500" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Edit Pesan WhatsApp</span>
+                        </div>
+                        <button
+                            onClick={handleResetMessage}
+                            className="text-[10px] font-bold text-[#D4AF37] hover:underline uppercase tracking-widest"
+                        >
+                            Reset ke Default
+                        </button>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-100 p-6 rounded-2xl text-[11px] text-slate-600 leading-relaxed whitespace-pre-wrap font-bold h-48 overflow-y-auto custom-scrollbar">
-                        {defaultMessage}
-                    </div>
+                    <textarea
+                        value={customMessage}
+                        onChange={(e) => setCustomMessage(e.target.value)}
+                        className="w-full p-6 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] text-slate-600 leading-relaxed font-bold h-48 focus:bg-white focus:border-[#D4AF37] outline-none transition-all custom-scrollbar resize-none"
+                    />
 
                     <button
                         onClick={handleShareWA}
