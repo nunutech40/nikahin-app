@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import RoyalCard from "@/components/ui/RoyalCard";
 import RoyalBadge from "@/components/ui/RoyalBadge";
-import BillingClientActions from "@/app/admin/billing/BillingClientActions";
+import BillingClientActions from "./BillingClientActions";
 
 export default async function AdminBillingPage() {
     // Fetch all transactions with relations
