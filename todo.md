@@ -15,9 +15,10 @@
 - [x] **Iterasi 5:** Auth & User Management - ✅ **COMPLETED**
 - [x] **Iterasi 6:** Super Admin Panel - ✅ **COMPLETED**
 - [x] **Iterasi 7:** Package System & Registration - ✅ **COMPLETED**
-- [ ] **Iterasi 8:** Commercial Launch Readiness - 🔄 **IN PROGRESS**
-19: - [ ] **Iterasi 9:** Dynamic Theme Builder (No-Code) - 🆕 **PLANNED**
-20: - [ ] **Iterasi 10:** Automated Payment Gateway
+- [x] **Iterasi 8:** Commercial Launch Readiness - ✅ **COMPLETED**
+- [x] **Iterasi 11:** Platform Settings & Admin Refinement - ✅ **COMPLETED**
+- [ ] **Iterasi 9:** Dynamic Theme Builder (No-Code) - 🆕 **PLANNED**
+- [ ] **Iterasi 10:** Automated Payment Gateway - 🆕 **PLANNED**
 
 ---
 
@@ -594,7 +595,36 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 - [ ] **TDep.5** - Configure SSL certificate
 - [ ] **TDep.6** - Setup monitoring (Sentry)
 
-589: ## 🎨 Iterasi 9: Dynamic Theme Builder (No-Code)
+---
+
+## ✅ Iterasi 11: Platform Settings & Admin Refinement
+
+### 📝 Feature Definition
+Consolidate all hardcoded configurations into a centralized System Settings module. Refine the Admin UI for better user segregation and control.
+
+### 🎯 Acceptance Criteria
+- [x] Database table `system_settings` for key-value storage.
+- [x] Admin Settings UI with smooth scrolling and categorized sections.
+- [x] WhatsApp & Email gateway configuration (SMTP/Fonnte).
+- [x] Centralized SEO (Metadata, Analytics, Pixels).
+- [x] Dynamic Landing Page content (Hero, Counter, Socials).
+- [x] Global Security Toggles (Maintenance Mode, Registration).
+- [x] Refined User Management with Tabs (Customer, Demo, Staff).
+
+### 📦 Tasks Completed
+- [x] **T11.1.1** - Create `system_settings` table and server actions (`get`/`update`).
+- [x] **T11.1.2** - Build `SettingsClient` with categoried UI (Royal Aesthetics).
+- [x] **T11.2.1** - Integrate settings into `HomePage` (Hero/Counters/Socials).
+- [x] **T11.2.2** - Integrate settings into `RootLayout` (SEO/Maintenance Mode).
+- [x] **T11.2.3** - Integrate settings into `mail.ts` (Sender Identity).
+- [x] **T11.2.4** - Integrate settings into `auth.ts` (Reg Toggle & Default Pkg).
+- [x] **T11.3.1** - Refactor `UserTableClient` with 3-tab filtering (Customer, Demo, Admin).
+- [x] **T11.3.2** - Add tab-specific counts and dynamic search placeholders.
+
+### 📊 Status: ✅ **COMPLETED** (100%)
+
+---
+
 590: 
 591: ### 📝 Feature Definition
 592: Implement a modular "Lego Block" theme engine that allows Admins & Sellers to build unique themes by stacking pre-defined component variants.
@@ -674,24 +704,26 @@ Each phase has a **Rollback Point** that explains how to undo changes if issues 
 
 ## 📊 Overall Project Status
 
-**Current Phase:** Phase 8 - Commercial Launch Readiness (SEO, Analytics, Polish)
+**Current Phase:** Phase 11 - Platform Settings & Admin Refinement - **COMPLETED**
 
-**Overall Progress:** ~95% Complete
+**Overall Progress:** ~98% Complete (MVP Ready for Production)
 
 **Status Update:** 
 - ✅ Admin Dashboard & Agency Features: **DONE**
 - ✅ Tiered Package System & Feature Gating: **DONE**
 - ✅ Demo Mode with Platinum Preview: **DONE**
 - ✅ Registration with Package Selection: **DONE**
-- 🔄 Dynamic SEO & OG Sharing: **IN PROGRESS**
-- ❌ Automated Payment Gateway: **PLANNED**
+- ✅ System Settings & Dynamic Configuration: **DONE**
+- ✅ Advanced User Management (3-Tabs): **DONE**
+- 🔄 Dynamic Theme Builder (No-Code): **IN PROGRESS**
+- ❌ Automated Payment Gateway: **PLANNED** (Next Priority)
 
 **Next Milestone:** 
-- **Priority 1**: Mayar.id Integration (Iteration 9)
+- **Priority 1**: Automated Payment Gateway (Mayar.id)
 - **Priority 2**: WhatsApp Blast Integration
 - **Priority 3**: Custom Domain Infrastructure
 
-**Last Updated:** 2026-01-18
+**Last Updated:** 2026-01-23
 
 ## 🆘 Need Help?
 
