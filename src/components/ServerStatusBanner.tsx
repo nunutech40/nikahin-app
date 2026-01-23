@@ -16,18 +16,23 @@ export default function ServerStatusBanner({ error, type = "database" }: ServerS
     const getErrorDetails = () => {
         const errorMessage = error.message || error.toString();
 
+        // Sanitize error message - hide IP addresses and ports
+        const sanitizedMessage = errorMessage
+            .replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d+/g, '[SERVER_ADDRESS]')
+            .replace(/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}/g, '[SERVER_IP]');
+
         // Database connection errors
         if (errorMessage.includes("ETIMEDOUT") || errorMessage.includes("timeout")) {
             return {
                 icon: <WifiOff className="w-6 h-6" />,
                 title: "Database Connection Timeout",
                 message: "Tidak bisa terhubung ke database server",
-                details: errorMessage,
+                details: sanitizedMessage,
                 suggestions: [
                     "Cek apakah server database sudah running",
-                    "Verifikasi IP address dan port di .env.local",
+                    "Verifikasi konfigurasi database di .env.local",
                     "Pastikan tidak ada firewall yang blocking koneksi",
-                    "Cek saldo hosting (IDCloudHost/VPS) masih aktif"
+                    "Cek saldo hosting masih aktif (jika menggunakan cloud hosting)"
                 ],
                 color: "red"
             };
@@ -38,7 +43,7 @@ export default function ServerStatusBanner({ error, type = "database" }: ServerS
                 icon: <Database className="w-6 h-6" />,
                 title: "Database Connection Refused",
                 message: "Database server menolak koneksi",
-                details: errorMessage,
+                details: sanitizedMessage,
                 suggestions: [
                     "Pastikan PostgreSQL service sudah running",
                     "Cek credentials (username/password) di .env.local",
@@ -53,7 +58,7 @@ export default function ServerStatusBanner({ error, type = "database" }: ServerS
                 icon: <Wifi className="w-6 h-6" />,
                 title: "Database Host Not Found",
                 message: "Hostname database tidak ditemukan",
-                details: errorMessage,
+                details: sanitizedMessage,
                 suggestions: [
                     "Cek DB_HOST di .env.local",
                     "Pastikan DNS resolution berfungsi",
@@ -68,7 +73,7 @@ export default function ServerStatusBanner({ error, type = "database" }: ServerS
             icon: <AlertTriangle className="w-6 h-6" />,
             title: "Server Error",
             message: "Terjadi kesalahan pada server",
-            details: errorMessage,
+            details: sanitizedMessage,
             suggestions: [
                 "Cek terminal untuk error log lengkap",
                 "Restart dev server (Ctrl+C, lalu pnpm dev)",
