@@ -15,6 +15,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { signOut } from "next-auth/react";
 import { toast } from "sonner";
+import ServerStatusBanner from "@/components/ServerStatusBanner";
 
 // Feature Gating
 import { canUseFeature } from "@/lib/features";
@@ -57,6 +58,7 @@ interface DashboardClientProps {
     availableThemes: { id: number; slug: string; name: string }[];
     availablePackages: { id: number; slug: string; name: string }[];
     guestMode?: boolean;
+    serverError?: { message: string; name: string; stack?: string } | null;
 }
 
 export default function DashboardClient({
@@ -66,7 +68,8 @@ export default function DashboardClient({
     userPackageSlug,
     availableThemes = [],
     availablePackages = [],
-    guestMode = false
+    guestMode = false,
+    serverError = null
 }: DashboardClientProps) {
     const [debugMode, setDebugMode] = useState(false);
 
@@ -281,33 +284,51 @@ export default function DashboardClient({
 
     if (guestMode || !initialData) {
         return (
-            <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-4">
-                <div className="max-w-md w-full bg-white p-12 rounded-3xl shadow-xl text-center border">
-                    <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                        {guestMode ? <Lock className="w-10 h-10 text-amber-500" /> : <Heart className="w-10 h-10 text-amber-500 opacity-20" />}
+            <>
+                {/* Server Error Banner - Also show in fallback state */}
+                {serverError && (
+                    <ServerStatusBanner
+                        error={new Error(serverError.message)}
+                        type="database"
+                    />
+                )}
+
+                <div className="min-h-screen bg-[#faf8f5] flex items-center justify-center p-4">
+                    <div className="max-w-md w-full bg-white p-12 rounded-3xl shadow-xl text-center border">
+                        <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                            {guestMode ? <Lock className="w-10 h-10 text-amber-500" /> : <Heart className="w-10 h-10 text-amber-500 opacity-20" />}
+                        </div>
+                        {guestMode ? (
+                            <>
+                                <h2 className="text-2xl font-serif font-bold mb-4">Mode Demo - Guest</h2>
+                                <Link href="/register" className="block w-full bg-[#D4AF37] text-white py-4 rounded-2xl font-semibold">Daftar Sekarang</Link>
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="text-2xl font-serif font-bold mb-2">Siap Buat Undangan?</h2>
+                                <p className="text-slate-400 text-sm mb-8">Tentukan nama link undangan Anda (slug)</p>
+                                <input type="text" value={newSlug} onChange={(e) => setNewSlug(e.target.value.toLowerCase().replace(/ /g, '-'))} className="w-full px-6 py-4 rounded-2xl border bg-slate-50 mb-4 focus:bg-white outline-none transition-all" placeholder="misal: adi-sinta-wedding" />
+                                <button onClick={handleCreateFirstInvitation} disabled={isCreating} className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-bold shadow-lg shadow-amber-100 transition-all">
+                                    {isCreating ? "Sedang Proses..." : "Buat Undangan Sekarang"}
+                                </button>
+                            </>
+                        )}
                     </div>
-                    {guestMode ? (
-                        <>
-                            <h2 className="text-2xl font-serif font-bold mb-4">Mode Demo - Guest</h2>
-                            <Link href="/register" className="block w-full bg-[#D4AF37] text-white py-4 rounded-2xl font-semibold">Daftar Sekarang</Link>
-                        </>
-                    ) : (
-                        <>
-                            <h2 className="text-2xl font-serif font-bold mb-2">Siap Buat Undangan?</h2>
-                            <p className="text-slate-400 text-sm mb-8">Tentukan nama link undangan Anda (slug)</p>
-                            <input type="text" value={newSlug} onChange={(e) => setNewSlug(e.target.value.toLowerCase().replace(/ /g, '-'))} className="w-full px-6 py-4 rounded-2xl border bg-slate-50 mb-4 focus:bg-white outline-none transition-all" placeholder="misal: adi-sinta-wedding" />
-                            <button onClick={handleCreateFirstInvitation} disabled={isCreating} className="w-full bg-[#D4AF37] hover:bg-[#b28f1f] text-white py-4 rounded-2xl font-bold shadow-lg shadow-amber-100 transition-all">
-                                {isCreating ? "Sedang Proses..." : "Buat Undangan Sekarang"}
-                            </button>
-                        </>
-                    )}
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
         <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
+            {/* Server Error Banner */}
+            {serverError && (
+                <ServerStatusBanner
+                    error={new Error(serverError.message)}
+                    type="database"
+                />
+            )}
+
             {/* Header */}
             <header className="bg-white border-b border-slate-200 z-50">
                 <div className="px-4 py-3 flex items-center justify-between">

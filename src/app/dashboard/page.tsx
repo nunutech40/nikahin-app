@@ -11,6 +11,9 @@ import { DEMO_DATA } from "@/data/demoData";
 
 export default async function DashboardPage() {
     console.log("[Dashboard] Server Component Start");
+
+    let dbError: Error | null = null;
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
@@ -38,6 +41,7 @@ export default async function DashboardPage() {
         }
     } catch (e) {
         console.error("[Dashboard] Error fetching user package:", e);
+        dbError = e as Error;
     }
 
     // 2. Fetch User Features
@@ -46,6 +50,7 @@ export default async function DashboardPage() {
         userFeatures = await getUserFeatures(userId);
     } catch (error) {
         console.error("❌ Dashboard getUserFeatures Error:", error);
+        if (!dbError) dbError = error as Error;
     }
 
     // 3. Fetch Invitations
@@ -54,6 +59,7 @@ export default async function DashboardPage() {
         userInvitations = await getUserInvitations(userId);
     } catch (e) {
         console.error("[Dashboard] Error fetching invitations:", e);
+        if (!dbError) dbError = e as Error;
     }
 
     // 4. Global Data for Forms
@@ -69,6 +75,7 @@ export default async function DashboardPage() {
         });
     } catch (e) {
         console.error("[Dashboard] Error fetching global data:", e);
+        if (!dbError) dbError = e as Error;
     }
 
     // Determine initial data
@@ -95,7 +102,7 @@ export default async function DashboardPage() {
     }
 
     // Debug Logs
-    console.log(`[Dashboard] Final state: Package=${userPackageSlug}, Features=${userFeatures.length}, InitialData=${!!initialData}`);
+    console.log(`[Dashboard] Final state: Package=${userPackageSlug}, Features=${userFeatures.length}, InitialData=${!!initialData}, HasError=${!!dbError}`);
 
     return (
         <DashboardClient
@@ -106,6 +113,11 @@ export default async function DashboardPage() {
             availableThemes={availableThemes as any}
             availablePackages={availablePackages as any}
             guestMode={false}
+            serverError={dbError ? {
+                message: dbError.message,
+                name: dbError.name,
+                stack: dbError.stack
+            } : null}
         />
     );
 }
