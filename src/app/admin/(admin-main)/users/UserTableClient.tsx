@@ -24,11 +24,14 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
             (user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
         const isStaff = user.role === 'admin' || user.role === 'agency';
-        const isCustomer = user.role === 'customer' || user.package?.slug === 'demo';
 
         if (activeTab === "staff") return matchesSearch && isStaff;
-        return matchesSearch && isCustomer;
+        return matchesSearch && !isStaff;
     });
+
+    // Pre-calculate counts for tabs
+    const staffCount = initialUsers.filter(u => u.role === 'admin' || u.role === 'agency').length;
+    const customerCount = initialUsers.length - staffCount;
 
     const handleToggleStatus = async (userId: number, currentStatus: boolean) => {
         setLoadingId(userId);
@@ -93,29 +96,29 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
                     <button
                         onClick={() => setActiveTab("customers")}
                         className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === "customers"
-                                ? "bg-white text-slate-900 shadow-sm"
-                                : "text-slate-400 hover:text-slate-600"
+                            ? "bg-white text-slate-900 shadow-sm"
+                            : "text-slate-400 hover:text-slate-600"
                             }`}
                     >
                         <User className="w-4 h-4" />
                         CUSTOMER & DEMO
                         <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] ${activeTab === "customers" ? "bg-amber-100 text-amber-600" : "bg-slate-200 text-slate-400"
                             }`}>
-                            {initialUsers.filter(u => u.role === 'customer' || u.package?.slug === 'demo').length}
+                            {customerCount}
                         </span>
                     </button>
                     <button
                         onClick={() => setActiveTab("staff")}
                         className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === "staff"
-                                ? "bg-[#D4AF37] text-white shadow-lg shadow-amber-500/20"
-                                : "text-slate-400 hover:text-slate-600"
+                            ? "bg-[#D4AF37] text-white shadow-lg shadow-amber-500/20"
+                            : "text-slate-400 hover:text-slate-600"
                             }`}
                     >
                         <Shield className="w-4 h-4" />
                         ADMIN & SELLER
                         <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] ${activeTab === "staff" ? "bg-white/20 text-white" : "bg-slate-200 text-slate-400"
                             }`}>
-                            {initialUsers.filter(u => u.role === 'admin' || u.role === 'agency').length}
+                            {staffCount}
                         </span>
                     </button>
                 </div>
