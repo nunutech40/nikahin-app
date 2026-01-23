@@ -41,7 +41,7 @@ Klik "Publish" → BLOCKED!
     ↓
 Modal: "Bayar Rp 150k untuk publish"
     ↓
-Payment Page → Upload bukti/Midtrans
+Payment Page → Upload bukti/Mayar.id
     ↓
 Admin Approve → isActive = true
     ↓
@@ -77,7 +77,7 @@ Publish Button UNLOCKED ✅
 - 📝 Create: Payment page/modal
 - 📝 Add: Upload payment proof
 - 📝 Admin: Payment verification UI
-- 🔮 Future: Midtrans integration
+- 🔮 Future: Mayar.id integration
 
 ---
 
@@ -166,7 +166,7 @@ Publish Button UNLOCKED ✅
 4. **Payment verification** bisa manual dulu (Admin approve)
 
 ### Future Enhancements
-- Midtrans auto-activation
+- Mayar.id auto-activation
 - Email reminder untuk unpaid users
 - Limited time offer (Bayar dalam 24 jam dapat diskon)
 - Referral program

@@ -537,15 +537,15 @@ Build an admin dashboard for system owner to manage users, activate accounts aft
 #### **Phase 7.4: Payment & Activation Flow**
 - [ ] **T7.4.1** - Create Payment Page/Modal
   - [ ] Show package details & price
-  - [ ] Payment method selection (Transfer/Midtrans)
+  - [ ] Payment method selection (Transfer/Mayar.id)
   - [ ] Upload payment proof (for manual verification)
 - [ ] **T7.4.2** - Admin Payment Verification
   - [ ] Add "Pending Payments" section in Admin
   - [ ] Show payment proof images
   - [ ] One-click "Approve" button -> set `isActive = true`
-- [ ] **T7.4.3** - Midtrans Integration (Optional/Future)
-  - [ ] Setup Midtrans Snap
-  - [ ] Webhook handler for auto-activation
+- [ ] **T7.4.3** - Mayar.id Integration (Optional/Future)
+  - [ ] Setup Mayar.id Payment Link
+  - [ ] Webhook handler for auto-activation (Mayar.id)
   - [ ] Transaction logging
 
 #### **Phase 7.5: Admin Feature Matrix UI**
@@ -687,7 +687,7 @@ Each phase has a **Rollback Point** that explains how to undo changes if issues 
 - ❌ Automated Payment Gateway: **PLANNED**
 
 **Next Milestone:** 
-- **Priority 1**: Midtrans / Xendit Integration (Iteration 9)
+- **Priority 1**: Mayar.id Integration (Iteration 9)
 - **Priority 2**: WhatsApp Blast Integration
 - **Priority 3**: Custom Domain Infrastructure
 

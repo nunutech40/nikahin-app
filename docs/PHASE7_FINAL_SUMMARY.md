@@ -34,7 +34,7 @@ Platform Nikahin kini telah mencapai titik stabil untuk rilis komersial. Seluruh
 
 Platform saat ini berada pada tahap **Launch Readiness**. Fokus selanjutnya adalah:
 1. **SEO Optimization**: Integrasi meta tag dinamis dan sitemap generator.
-2. **Payment Automation**: Integrasi API Midtrans/Xendit untuk aktivasi akun otomatis.
+2. **Payment Automation**: Integrasi API Mayar.id untuk aktivasi akun otomatis.
 3. **Marketing Analytics**: Tracking konversi dari Demo ke Paid user.
 
 ---

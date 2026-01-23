@@ -222,7 +222,7 @@
 │  ⭐ NICE TO HAVE (Week 3+)                                     │
 │  ├─ Phase 7.5: Feature Matrix UI                               │
 │  ├─ Phase 7.6: SEO Infrastructure                              │
-│  └─ Midtrans Integration                                       │
+│  └─ Mayar.id Integration                                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

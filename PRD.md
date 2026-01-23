@@ -54,9 +54,9 @@ Target: Masuk pencarian Google untuk keyword "undangan digital", "undangan nikah
 
 ### 3.3. Payment & Order Integration
 Berahlih dari verifikasi manual Admin ke Otomatisasi.
-1.  **Payment Gateway:** Integrasi **Midtrans Snap** (QRIS, VA, E-Wallet).
+1.  **Payment Gateway:** Integrasi **Mayar.id** (QRIS, VA, E-Wallet).
 2.  **Order Flow:** 
-    *   User pilih Paket di Dashboard -> Checkout -> Muncul Popup Payment -> Bayar -> Webhook Midtrans -> Auto Active.
+    *   User pilih Paket di Dashboard -> Checkout -> Muncul Popup Payment -> Bayar -> Webhook Mayar.id -> Auto Active.
 
 ### 3.4. Super Admin: Feature Matrix Configuration
 Admin membutuhkan kontrol penuh untuk menentukan "Mana Fitur Gratis, Mana Fitur Berbayar" tanpa koding ulang.
@@ -150,8 +150,8 @@ Untuk meningkatkan konversi dan mengurangi friction, platform menggunakan strate
     *   User bisa **edit, preview, dan test** semua fungsi.
     *   **TIDAK BISA PUBLISH** -> Tombol "Publish" disabled dengan pesan "Bayar dulu untuk publish".
 6.  **Payment & Activation**:
-    *   Klik tombol "Bayar Sekarang" -> Pilih metode pembayaran -> Upload bukti/Midtrans.
-    *   Setelah Admin approve (atau webhook Midtrans) -> `isActive = true`.
+    *   Klik tombol "Bayar Sekarang" -> Pilih metode pembayaran -> Upload bukti/Mayar.id.
+    *   Setelah Admin approve (atau webhook Mayar.id) -> `isActive = true`.
     *   Tombol "Publish" terbuka -> User bisa publish undangan.
 7.  **Upgrade Flow (Optional)**: User dengan Bronze bisa upgrade ke Silver/Gold kapan saja.
 
