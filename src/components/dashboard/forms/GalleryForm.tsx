@@ -1,10 +1,9 @@
 'use client';
 
-import { Image as ImageIcon, Plus, X, Link as LinkIcon } from 'lucide-react';
+import { Image as ImageIcon, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { z } from 'zod';
-import { getZodErrorByPath } from '@/lib/validation';
-import FormInput from '../FormInput';
+import ImageUpload from '../ImageUpload';
 
 interface GalleryFormProps {
     gallery: string[];
@@ -76,43 +75,13 @@ export default function GalleryForm({ gallery, onChange, errorSource }: GalleryF
 
             <div className="grid gap-6">
                 {gallery.map((url, index) => (
-                    <div key={index} className="space-y-3 p-4 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 duration-300">
-                        <div className="flex items-start gap-4">
-                            <div className="w-24 aspect-square rounded-xl bg-slate-100 overflow-hidden relative shrink-0 border border-slate-100">
-                                {url ? (
-                                    <Image
-                                        src={url}
-                                        alt={`Gallery ${index + 1}`}
-                                        fill
-                                        className="object-cover"
-                                        unoptimized
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-slate-300">
-                                        <ImageIcon className="w-6 h-6" />
-                                    </div>
-                                )}
-                            </div>
-                            <div className="flex-1">
-                                <FormInput
-                                    label={`Link Foto ${index + 1}`}
-                                    value={url}
-                                    onChange={(e) => handleChange(index, e.target.value)}
-                                    placeholder="https://images.unsplash.com/your-photo"
-                                    error={getZodErrorByPath(errorSource, `gallery.${index}`)}
-                                    icon={<LinkIcon className="w-3.5 h-3.5" />}
-                                />
-                                <div className="mt-2 flex justify-end">
-                                    <button
-                                        onClick={() => handleRemove(index)}
-                                        className="text-[10px] font-black uppercase tracking-widest text-rose-500 hover:text-rose-600 flex items-center gap-1.5 transition-colors"
-                                    >
-                                        <X className="w-3 h-3" />
-                                        Hapus Foto
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div key={index} className="p-4 rounded-2xl border border-slate-100 bg-white shadow-sm hover:shadow-md transition-all animate-in fade-in slide-in-from-bottom-2 duration-300">
+                        <ImageUpload
+                            label={`Foto Galeri ${index + 1}`}
+                            currentImageUrl={url}
+                            onUploadSuccess={(newUrl) => handleChange(index, newUrl)}
+                            onRemove={() => handleRemove(index)}
+                        />
                     </div>
                 ))}
             </div>

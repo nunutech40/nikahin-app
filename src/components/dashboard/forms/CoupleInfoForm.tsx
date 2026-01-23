@@ -5,6 +5,7 @@ import { User, Heart, Camera } from 'lucide-react';
 import { z } from 'zod';
 import { getZodErrorByPath } from '@/lib/validation';
 import FormInput from '../FormInput';
+import ImageUpload from '../ImageUpload';
 
 interface CoupleInfoFormProps {
     groom: Person;
@@ -59,14 +60,11 @@ export default function CoupleInfoForm({ groom, bride, onChange, errorSource }: 
                         required
                     />
 
-                    <FormInput
-                        label="Foto Profile (URL)"
-                        value={groom.photo}
-                        onChange={(e) => onChange('groom', 'photo', e.target.value)}
-                        placeholder="https://example.com/photo.jpg"
-                        error={getZodErrorByPath(errorSource, 'groom.photo')}
-                        icon={<Camera className="w-3.5 h-3.5" />}
-                        helperText="Gunakan URL gambar publik (Imgur, Cloudinary, dll)"
+                    <ImageUpload
+                        label="Foto Mempelai Pria"
+                        currentImageUrl={groom.photo}
+                        onUploadSuccess={(url) => onChange('groom', 'photo', url)}
+                        onRemove={() => onChange('groom', 'photo', '')}
                     />
                 </div>
             </div>
@@ -114,14 +112,11 @@ export default function CoupleInfoForm({ groom, bride, onChange, errorSource }: 
                         required
                     />
 
-                    <FormInput
-                        label="Foto Profile (URL)"
-                        value={bride.photo}
-                        onChange={(e) => onChange('bride', 'photo', e.target.value)}
-                        placeholder="https://example.com/photo.jpg"
-                        error={getZodErrorByPath(errorSource, 'bride.photo')}
-                        icon={<Camera className="w-3.5 h-3.5" />}
-                        helperText="Gunakan URL gambar publik (Imgur, Cloudinary, dll)"
+                    <ImageUpload
+                        label="Foto Mempelai Wanita"
+                        currentImageUrl={bride.photo}
+                        onUploadSuccess={(url) => onChange('bride', 'photo', url)}
+                        onRemove={() => onChange('bride', 'photo', '')}
                     />
                 </div>
             </div>

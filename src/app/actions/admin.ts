@@ -455,3 +455,51 @@ export async function updatePackageDetails(packageId: number, data: { name: stri
         return { success: false, error: "Failed to update package details." };
     }
 }
+
+/**
+ * Get Storage Statistics for uploaded photos
+ */
+export async function getStorageStats() {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const { stat, readdir } = await import("fs/promises");
+        const { join } = await import("path");
+        const uploadRoot = join(process.cwd(), "public", "uploads");
+
+        let totalSize = 0;
+        let totalFiles = 0;
+
+        async function scanDir(dir: string) {
+            if (!existsSync(dir)) return;
+            const entries = await readdir(dir, { withFileTypes: true });
+
+            for (const entry of entries) {
+                const fullPath = join(dir, entry.name);
+                if (entry.isDirectory()) {
+                    await scanDir(fullPath);
+                } else if (entry.isFile() && entry.name !== ".gitignore") {
+                    const stats = await stat(fullPath);
+                    totalSize += stats.size;
+                    totalFiles += 1;
+                }
+            }
+        }
+
+        const { existsSync } = await import("fs");
+        await scanDir(uploadRoot);
+
+        return {
+            success: true,
+            totalSize, // in bytes
+            totalFiles,
+            formattedSize: (totalSize / (1024 * 1024)).toFixed(2) + " MB"
+        };
+    } catch (error) {
+        console.error("Error calculating storage stats:", error);
+        return { success: false, error: "Failed to calculate storage stats" };
+    }
+}

@@ -10,11 +10,14 @@ import {
     Save,
     Layout,
     Package,
-    RefreshCcw
+    RefreshCcw,
+    HardDrive,
+    Database
 } from "lucide-react";
 import RoyalBadge from "@/components/ui/RoyalBadge";
-import { updateSystemSettings } from "@/app/actions/admin";
+import { updateSystemSettings, getStorageStats } from "@/app/actions/admin";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 interface SettingsClientProps {
     initialSettings: any;
@@ -25,6 +28,8 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
     const [isSaving, setIsSaving] = useState(false);
     const [packagesList, setPackagesList] = useState(initialPackages);
     const [packageLoadingId, setPackageLoadingId] = useState<number | null>(null);
+    const [storageStats, setStorageStats] = useState<any>(null);
+    const [isRefreshingStorage, setIsRefreshingStorage] = useState(false);
     const [settings, setSettings] = useState(initialSettings || {
         appName: "Nikahin",
         logoUrl: "",
@@ -88,6 +93,20 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
         setSettings((prev: any) => ({ ...prev, [field]: value }));
     };
 
+    const fetchStorageStats = async () => {
+        setIsRefreshingStorage(true);
+        try {
+            const result = await getStorageStats();
+            if (result.success) setStorageStats(result);
+        } finally {
+            setIsRefreshingStorage(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchStorageStats();
+    }, []);
+
     const handlePackageUpdate = async (pkg: any) => {
         setPackageLoadingId(pkg.id);
         try {
@@ -120,6 +139,7 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
                         { id: 'gateway', label: 'WA & Email', icon: Smartphone },
                         { id: 'bisnis', label: 'Bisnis & Trial', icon: Package },
                         { id: 'keamanan', label: 'Keamanan', icon: ShieldCheck },
+                        { id: 'storage', label: 'Storage', icon: HardDrive },
                     ].map((item) => (
                         <button
                             key={item.id}
@@ -748,6 +768,54 @@ export default function SettingsClient({ initialSettings, initialPackages }: Set
                                     <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${settings.showWatermark ? 'right-1' : 'left-1'}`} />
                                 </div>
                             </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Storage Management Section */}
+                <div id="storage">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-slate-50 rounded-xl text-slate-500">
+                                    <HardDrive className="w-5 h-5" />
+                                </div>
+                                <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Storage Management</h3>
+                            </div>
+                            <button
+                                onClick={fetchStorageStats}
+                                disabled={isRefreshingStorage}
+                                className="p-2 hover:bg-slate-50 rounded-full transition-colors text-slate-400 hover:text-[#D4AF37]"
+                            >
+                                <RefreshCcw className={`w-4 h-4 ${isRefreshingStorage ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center gap-5">
+                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-blue-500 shadow-sm">
+                                    <Database className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total File Upload</p>
+                                    <p className="text-2xl font-black text-slate-900">{storageStats?.totalFiles || 0} <span className="text-xs font-medium text-slate-400">File</span></p>
+                                </div>
+                            </div>
+                            <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 flex items-center gap-5">
+                                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-500 shadow-sm">
+                                    <HardDrive className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Disk Usage (Uploads)</p>
+                                    <p className="text-2xl font-black text-slate-900">{storageStats?.formattedSize || '0 MB'}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                            <p className="text-[10px] text-amber-700 font-medium leading-relaxed">
+                                <strong>Tips Maintenance:</strong> Foto yang diupload melalui dashboard otomatis dikompresi di sisi client untuk menjaga efisiensi penyimpanan. Saat ini sistem menyimpan foto di direktori <code>public/uploads/users/[userId]</code>.
+                            </p>
                         </div>
                     </RoyalCard>
                 </div>

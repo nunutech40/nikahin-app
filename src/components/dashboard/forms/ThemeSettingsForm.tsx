@@ -5,7 +5,7 @@ import { Palette, Type, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { z } from 'zod';
 import { getZodErrorByPath } from '@/lib/validation';
 import FormInput from '../FormInput';
-
+import ImageUpload from '../ImageUpload';
 import FeatureGate from '../FeatureGate';
 
 interface ThemeSettingsFormProps {
@@ -170,14 +170,11 @@ export default function ThemeSettingsForm({
                     </div>
 
                     <div className="space-y-6">
-                        <FormInput
-                            label="Source URL Foto Sampul"
-                            value={coverImage}
-                            onChange={(e) => onCoverChange(e.target.value)}
-                            placeholder="https://example.com/cover-photo.jpg"
-                            error={getZodErrorByPath(errorSource, 'coverImage')}
-                            icon={<Sparkles className="w-3.5 h-3.5" />}
-                            helperText="Akan tampil di halaman paling depan (Opening)"
+                        <ImageUpload
+                            label="Foto Sampul (Opening)"
+                            currentImageUrl={coverImage}
+                            onUploadSuccess={(url) => onCoverChange(url)}
+                            onRemove={() => onCoverChange('')}
                         />
 
                         {coverImage && (
@@ -190,7 +187,7 @@ export default function ThemeSettingsForm({
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                                 <div className="absolute bottom-4 left-4 text-white">
-                                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80">Live Preview Sampul</p>
+                                    <p className="text-[10px] uppercase tracking-widest font-bold opacity-80">Live Preview Sampul aktif</p>
                                 </div>
                             </div>
                         )}
