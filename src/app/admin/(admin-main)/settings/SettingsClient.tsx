@@ -18,10 +18,13 @@ import { toast } from "sonner";
 
 interface SettingsClientProps {
     initialSettings: any;
+    initialPackages: any[];
 }
 
-export default function SettingsClient({ initialSettings }: SettingsClientProps) {
+export default function SettingsClient({ initialSettings, initialPackages }: SettingsClientProps) {
     const [isSaving, setIsSaving] = useState(false);
+    const [packagesList, setPackagesList] = useState(initialPackages);
+    const [packageLoadingId, setPackageLoadingId] = useState<number | null>(null);
     const [settings, setSettings] = useState(initialSettings || {
         appName: "Nikahin",
         logoUrl: "",
@@ -82,6 +85,25 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
         setSettings((prev: any) => ({ ...prev, [field]: value }));
     };
 
+    const handlePackageUpdate = async (pkg: any) => {
+        setPackageLoadingId(pkg.id);
+        try {
+            const { updatePackageDetails } = await import("@/app/actions/admin");
+            const result = await updatePackageDetails(pkg.id, {
+                name: pkg.name,
+                description: pkg.description,
+                price: parseInt(pkg.price),
+                originalPrice: parseInt(pkg.originalPrice)
+            });
+            if (result.success) toast.success(`Paket ${pkg.name} berhasil diperbarui!`);
+            else toast.error(result.error || "Gagal memperbarui paket.");
+        } catch (error) {
+            toast.error("Terjadi kesalahan sistem saat update paket.");
+        } finally {
+            setPackageLoadingId(null);
+        }
+    };
+
     return (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Navigation Links (Quick Scroll) */}
@@ -91,6 +113,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                         { id: 'umum', label: 'Informasi Umum', icon: Layout },
                         { id: 'seo', label: 'SEO & Marketing', icon: Globe },
                         { id: 'pembayaran', label: 'Pembayaran', icon: CreditCard },
+                        { id: 'paket', label: 'Manajemen Paket', icon: Package },
                         { id: 'gateway', label: 'WA & Email', icon: Smartphone },
                         { id: 'bisnis', label: 'Bisnis & Trial', icon: Package },
                         { id: 'keamanan', label: 'Keamanan', icon: ShieldCheck },
@@ -361,6 +384,99 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
                                     className="w-full px-5 py-3 rounded-xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-[#D4AF37] outline-none transition-all font-bold text-slate-700"
                                 />
                             </div>
+                        </div>
+                    </RoyalCard>
+                </div>
+
+                {/* Packages Section */}
+                <div id="paket">
+                    <RoyalCard className="space-y-6">
+                        <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-amber-50 rounded-xl text-[#D4AF37]">
+                                <Package className="w-5 h-5" />
+                            </div>
+                            <h3 className="font-black text-slate-900 uppercase tracking-widest text-xs">Manajemen Paket & Harga</h3>
+                        </div>
+
+                        <div className="space-y-10">
+                            {packagesList.map((pkg: any, idx: number) => (
+                                <div key={pkg.id} className={`p-8 rounded-[32px] border ${pkg.slug === 'platinum' ? 'bg-slate-900 border-slate-800 text-white' : 'bg-white border-slate-100'}`}>
+                                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 pb-6 border-b border-slate-50/10">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black ${pkg.slug === 'platinum' ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                                {idx + 1}
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40">Package ID: {pkg.slug}</p>
+                                                <h4 className="text-xl font-black font-serif tracking-tight italic">{pkg.name}</h4>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handlePackageUpdate(pkg)}
+                                            disabled={packageLoadingId === pkg.id}
+                                            className={`px-6 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-2 ${pkg.slug === 'platinum' ? 'bg-indigo-600 hover:bg-indigo-500' : 'bg-slate-900 hover:bg-black text-white'}`}
+                                        >
+                                            {packageLoadingId === pkg.id ? <RefreshCcw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                            {packageLoadingId === pkg.id ? 'Saving...' : `Update ${pkg.name}`}
+                                        </button>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest opacity-50 ml-1">Nama Tampilan</label>
+                                            <input
+                                                type="text"
+                                                value={pkg.name}
+                                                onChange={(e) => {
+                                                    const newList = [...packagesList];
+                                                    newList[idx].name = e.target.value;
+                                                    setPackagesList(newList);
+                                                }}
+                                                className={`w-full px-5 py-3 rounded-xl border focus:border-[#D4AF37] outline-none transition-all font-bold ${pkg.slug === 'platinum' ? 'bg-white/5 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-700'}`}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest opacity-50 ml-1">Harga Jual (Rp)</label>
+                                            <input
+                                                type="number"
+                                                value={pkg.price}
+                                                onChange={(e) => {
+                                                    const newList = [...packagesList];
+                                                    newList[idx].price = e.target.value;
+                                                    setPackagesList(newList);
+                                                }}
+                                                className={`w-full px-5 py-3 rounded-xl border focus:border-[#D4AF37] outline-none transition-all font-bold ${pkg.slug === 'platinum' ? 'bg-white/5 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-700'}`}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest opacity-50 ml-1">Harga Diskon/Coret (Rp)</label>
+                                            <input
+                                                type="number"
+                                                value={pkg.originalPrice}
+                                                onChange={(e) => {
+                                                    const newList = [...packagesList];
+                                                    newList[idx].originalPrice = e.target.value;
+                                                    setPackagesList(newList);
+                                                }}
+                                                className={`w-full px-5 py-3 rounded-xl border focus:border-[#D4AF37] outline-none transition-all font-bold ${pkg.slug === 'platinum' ? 'bg-white/5 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-700'}`}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest opacity-50 ml-1">Keterangan Singkat</label>
+                                            <input
+                                                type="text"
+                                                value={pkg.description}
+                                                onChange={(e) => {
+                                                    const newList = [...packagesList];
+                                                    newList[idx].description = e.target.value;
+                                                    setPackagesList(newList);
+                                                }}
+                                                className={`w-full px-5 py-3 rounded-xl border focus:border-[#D4AF37] outline-none transition-all font-bold ${pkg.slug === 'platinum' ? 'bg-white/5 border-white/10 text-white' : 'bg-slate-50 border-slate-100 text-slate-700'}`}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </RoyalCard>
                 </div>

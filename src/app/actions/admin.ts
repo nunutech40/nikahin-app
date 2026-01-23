@@ -421,3 +421,37 @@ export async function getPaginatedInvitations({
         return { success: false, error: "Failed to fetch invitations" };
     }
 }
+
+/**
+ * Update Package Details (Super Admin only)
+ */
+export async function updatePackageDetails(packageId: number, data: { name: string, description: string, price: number, originalPrice: number }) {
+    const session = await getServerSession(authOptions);
+
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized. Admin access required." };
+    }
+
+    try {
+        const { packages } = await import("@/db/schema");
+        await db
+            .update(packages)
+            .set({
+                name: data.name,
+                description: data.description,
+                price: data.price,
+                originalPrice: data.originalPrice,
+                updatedAt: new Date()
+            })
+            .where(eq(packages.id, packageId));
+
+        revalidatePath("/admin/settings");
+        revalidatePath("/");
+        revalidatePath("/dashboard/billing");
+
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating package details:", error);
+        return { success: false, error: "Failed to update package details." };
+    }
+}

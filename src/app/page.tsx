@@ -4,7 +4,7 @@ import { PricingCard } from "@/components/PricingCard";
 import { FloatingHearts } from "@/components/FloatingHearts";
 import { ThemeShowcase } from "@/components/ThemeShowcase";
 import { db } from "@/db";
-import { themes } from "@/db/schema";
+import { themes, packages } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getSystemSettings } from "./actions/admin";
 
@@ -15,6 +15,17 @@ export default async function HomePage() {
   });
 
   const settings = await getSystemSettings() as any;
+
+  // Fetch packages for pricing
+  const availablePackages = await db.query.packages.findMany({
+    where: eq(packages.isActive, true),
+    orderBy: [packages.id]
+  });
+
+  const getPackageBySlug = (slug: string) => availablePackages.find(p => p.slug === slug);
+  const silverPkg = getPackageBySlug("silver");
+  const goldPkg = getPackageBySlug("gold");
+  const platinumPkg = getPackageBySlug("platinum");
 
   return (
     <div className="min-h-screen bg-[#FDFBF7] text-[#1A1612]">
@@ -283,71 +294,77 @@ export default async function HomePage() {
           </div>
 
           <div className="grid lg:grid-cols-3 gap-10 max-w-6xl mx-auto px-4">
-            <PricingCard
-              name="Essential"
-              price={99000}
-              originalPrice={199000}
-              description="Esensial & Elegan untuk budget minimalis"
-              features={[
-                { name: "Input Mempelai & 2 Acara", checked: true },
-                { name: "Pilihan Tema Standard", checked: true },
-                { name: "Tema Premium (Eksklusif)", checked: false },
-                { name: "Max. 10 Galeri Foto", checked: true },
-                { name: "RSVP & Ucapan Dasar", checked: true },
-                { name: "Love Story & Musik", checked: true },
-                { name: "Digital Envelope (QR Angpao)", checked: false },
-                { name: "Tanpa Label Nikahin", checked: false },
-                { name: "Masa Aktif 1 Tahun", checked: true },
-                { name: "WhatsApp Blast Sender", checked: false },
-                { name: "QR Check-in Tamu", checked: false },
-              ]}
-              packageSlug="silver"
-              popular={false}
-            />
+            {silverPkg && (
+              <PricingCard
+                name={silverPkg.name}
+                packageSlug="silver"
+                price={silverPkg.price}
+                originalPrice={silverPkg.originalPrice || undefined}
+                description={silverPkg.description || "Esensial & Elegan untuk budget minimalis"}
+                features={[
+                  { name: "Input Mempelai & 2 Acara", checked: true },
+                  { name: "Pilihan Tema Standard", checked: true },
+                  { name: "Tema Premium (Eksklusif)", checked: false },
+                  { name: "Max. 10 Galeri Foto", checked: true },
+                  { name: "RSVP & Ucapan Dasar", checked: true },
+                  { name: "Love Story & Musik", checked: true },
+                  { name: "Digital Envelope (QR Angpao)", checked: false },
+                  { name: "Tanpa Label Nikahin", checked: false },
+                  { name: "Masa Aktif 1 Tahun", checked: true },
+                  { name: "WhatsApp Blast Sender", checked: false },
+                  { name: "QR Check-in Tamu", checked: false },
+                ]}
+                popular={false}
+              />
+            )}
 
-            <PricingCard
-              name="Premium"
-              price={149000}
-              originalPrice={349000}
-              description="Favorit 90% Pasangan Happily Ever After"
-              features={[
-                { name: "Input Mempelai & 2 Acara", checked: true },
-                { name: "Pilihan Tema Standard", checked: true },
-                { name: "SEMUA Tema Premium", checked: true },
-                { name: "Unlimited Photo Gallery", checked: true },
-                { name: "RSVP & Ucapan Dasar", checked: true },
-                { name: "Love Story & Musik", checked: true },
-                { name: "Digital Envelope (QR Angpao)", checked: true },
-                { name: "TANPA Watermark Nikahin", checked: true },
-                { name: "Masa Aktif SELAMANYA", checked: true },
-                { name: "WhatsApp Blast Sender", checked: false },
-                { name: "QR Check-in Tamu", checked: false },
-              ]}
-              packageSlug="gold"
-              popular={true}
-            />
+            {goldPkg && (
+              <PricingCard
+                name={goldPkg.name}
+                packageSlug="gold"
+                price={goldPkg.price}
+                originalPrice={goldPkg.originalPrice || undefined}
+                description={goldPkg.description || "Favorit 90% Pasangan Happily Ever After"}
+                features={[
+                  { name: "Input Mempelai & 2 Acara", checked: true },
+                  { name: "Pilihan Tema Standard", checked: true },
+                  { name: "SEMUA Tema Premium", checked: true },
+                  { name: "Unlimited Photo Gallery", checked: true },
+                  { name: "RSVP & Ucapan Dasar", checked: true },
+                  { name: "Love Story & Musik", checked: true },
+                  { name: "Digital Envelope (QR Angpao)", checked: true },
+                  { name: "TANPA Watermark Nikahin", checked: true },
+                  { name: "Masa Aktif SELAMANYA", checked: true },
+                  { name: "WhatsApp Blast Sender", checked: false },
+                  { name: "QR Check-in Tamu", checked: false },
+                ]}
+                popular={true}
+              />
+            )}
 
-            <PricingCard
-              name="Royal"
-              price={299000}
-              originalPrice={699000}
-              description="Teknologi Resepsionis Digital Tercanggih"
-              features={[
-                { name: "Input Mempelai & 2 Acara", checked: true },
-                { name: "Pilihan Tema Standard", checked: true },
-                { name: "SEMUA Tema Premium", checked: true },
-                { name: "Unlimited Photo Gallery", checked: true },
-                { name: "RSVP & Ucapan Dasar", checked: true },
-                { name: "Full Love Story & Musik", checked: true },
-                { name: "Digital Envelope (QR Angpao)", checked: true },
-                { name: "TANPA Watermark Nikahin", checked: true },
-                { name: "Masa Aktif SELAMANYA", checked: true },
-                { name: "WhatsApp Blast Automator", checked: true },
-                { name: "QR Check-in Tamu Hari-H", checked: true },
-              ]}
-              packageSlug="platinum"
-              popular={false}
-            />
+            {platinumPkg && (
+              <PricingCard
+                name={platinumPkg.name}
+                packageSlug="platinum"
+                price={platinumPkg.price}
+                originalPrice={platinumPkg.originalPrice || undefined}
+                description={platinumPkg.description || "Teknologi Resepsionis Digital Tercanggih"}
+                features={[
+                  { name: "Input Mempelai & 2 Acara", checked: true },
+                  { name: "Pilihan Tema Standard", checked: true },
+                  { name: "SEMUA Tema Premium", checked: true },
+                  { name: "Unlimited Photo Gallery", checked: true },
+                  { name: "RSVP & Ucapan Dasar", checked: true },
+                  { name: "Full Love Story & Musik", checked: true },
+                  { name: "Digital Envelope (QR Angpao)", checked: true },
+                  { name: "TANPA Watermark Nikahin", checked: true },
+                  { name: "Masa Aktif SELAMANYA", checked: true },
+                  { name: "WhatsApp Blast Automator", checked: true },
+                  { name: "QR Check-in Tamu Hari-H", checked: true },
+                ]}
+                popular={false}
+              />
+            )}
           </div>
         </div>
       </section>

@@ -104,8 +104,8 @@ export default async function BillingPage() {
                         <div
                             key={pkg.id}
                             className={`relative bg-white rounded-[40px] p-10 border-2 transition-all group ${currentPkg?.id === pkg.id
-                                    ? 'border-[#D4AF37] shadow-xl shadow-amber-900/5 ring-4 ring-[#D4AF37]/5'
-                                    : 'border-slate-100 hover:border-slate-200'
+                                ? 'border-[#D4AF37] shadow-xl shadow-amber-900/5 ring-4 ring-[#D4AF37]/5'
+                                : 'border-slate-100 hover:border-slate-200'
                                 }`}
                         >
                             {currentPkg?.id === pkg.id && (
@@ -120,6 +120,11 @@ export default async function BillingPage() {
                             </div>
 
                             <div className="mb-10">
+                                {pkg.originalPrice && pkg.originalPrice > pkg.price && (
+                                    <div className="text-sm line-through text-slate-400 font-bold mb-1">
+                                        Rp {(pkg.originalPrice / 1000)}k
+                                    </div>
+                                )}
                                 <span className="text-4xl font-black text-slate-900">
                                     {pkg.price === 0 ? 'Gratis' : `Rp ${(pkg.price / 1000)}k`}
                                 </span>
@@ -157,8 +162,8 @@ export default async function BillingPage() {
                             <button
                                 disabled={currentPkg?.id === pkg.id && isPaid}
                                 className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest text-sm transition-all flex items-center justify-center gap-3 ${currentPkg?.id === pkg.id && isPaid
-                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                        : 'bg-slate-900 text-white hover:bg-black shadow-xl shadow-slate-200 active:scale-[0.98]'
+                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                    : 'bg-slate-900 text-white hover:bg-black shadow-xl shadow-slate-200 active:scale-[0.98]'
                                     }`}
                             >
                                 {currentPkg?.id === pkg.id && !isPaid ? 'Bayar Sekarang' :

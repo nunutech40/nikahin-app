@@ -62,6 +62,7 @@ export const packages = pgTable("packages", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   price: integer("price").notNull(), // in cents/rupiah
+  originalPrice: integer("original_price"), // for discount display
   isActive: boolean("is_active").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

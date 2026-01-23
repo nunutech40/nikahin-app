@@ -34,6 +34,10 @@ async function seed() {
             { code: "custom_theme", name: "Custom Colors & Fonts", description: "Kustomisasi tema", isCore: false },
             { code: "gallery_unlimited", name: "Gallery Unlimited", description: "Upload hingga 30 foto", isCore: false },
             { code: "remove_branding", name: "Remove Branding", description: "Hapus 'Powered by Nikahin'", isCore: false },
+
+            // Platinum+ Features
+            { code: "wa_blast", name: "WhatsApp Blast Sender", description: "Kirim undangan massal otomatis", isCore: false },
+            { code: "qr_checkin", name: "QR Check-in Tamu", description: "Sistem tamu hari-H dengan QR", isCore: false },
         ];
 
         for (const f of featureList) {
@@ -43,19 +47,25 @@ async function seed() {
             });
         }
 
-        // 2. Seed Packages (Updated Pricing)
+        // 2. Seed Packages (Updated Pricing to match Landing Page)
         console.log("  - Seeding packages...");
         const packageList = [
-            { slug: "demo", name: "Demo", description: "Try all features - No save, no publish", price: 0 },
-            { slug: "bronze", name: "Bronze", description: "Paket Free Trial - Coba dulu sebelum bayar", price: 0 },
-            { slug: "silver", name: "Silver", description: "Paket Best Value - Paling populer", price: 150000 },
-            { slug: "gold", name: "Gold", description: "Paket Premium - Fitur lengkap eksklusif", price: 300000 },
+            { slug: "demo", name: "Demo", description: "Coba fitur Platinum secara gratis dengan data demo.", price: 0, originalPrice: 0 },
+            { slug: "bronze", name: "Bronze", description: "Paket Dasar - Coba dulu sebelum bayar", price: 0, originalPrice: 0 },
+            { slug: "silver", name: "Silver", description: "Esensial & Elegan untuk budget minimalis", price: 99000, originalPrice: 199000 },
+            { slug: "gold", name: "Gold", description: "Favorit 90% Pasangan Happily Ever After", price: 149000, originalPrice: 349000 },
+            { slug: "platinum", name: "Platinum", description: "Teknologi Resepsionis Digital Tercanggih", price: 299000, originalPrice: 699000 },
         ];
 
         for (const p of packageList) {
             await db.insert(schema.packages).values(p).onConflictDoUpdate({
                 target: schema.packages.slug,
-                set: { name: p.name, description: p.description, price: p.price }
+                set: {
+                    name: p.name,
+                    description: p.description,
+                    price: p.price,
+                    originalPrice: p.originalPrice
+                }
             });
         }
 
@@ -67,6 +77,7 @@ async function seed() {
         const bronzePkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "bronze") });
         const silverPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "silver") });
         const goldPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "gold") });
+        const platinumPkg = await db.query.packages.findFirst({ where: eq(schema.packages.slug, "platinum") });
 
         // Get all features
         const allFeatures = await db.query.features.findMany();
@@ -77,7 +88,8 @@ async function seed() {
             const demoFeatures = [
                 "rsvp_basic", "single_event", // Bronze
                 "rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", // Silver
-                "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding" // Gold
+                "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding", // Gold
+                "wa_blast", "qr_checkin" // Platinum
             ];
             for (const code of demoFeatures) {
                 const featureId = featureMap.get(code);
@@ -133,6 +145,25 @@ async function seed() {
                 if (featureId) {
                     await db.insert(schema.packageFeatures).values({
                         packageId: goldPkg.id,
+                        featureId: featureId
+                    }).onConflictDoNothing();
+                }
+            }
+        }
+
+        // Platinum Package Features (ALL features)
+        if (platinumPkg) {
+            const platinumFeatures = [
+                "rsvp_basic", "single_event", // Bronze
+                "rsvp_export", "unlimited_events", "gallery_10", "background_music", "quotes", // Silver
+                "love_story", "gift_registry", "custom_theme", "gallery_unlimited", "remove_branding", // Gold
+                "wa_blast", "qr_checkin" // Platinum
+            ];
+            for (const code of platinumFeatures) {
+                const featureId = featureMap.get(code);
+                if (featureId) {
+                    await db.insert(schema.packageFeatures).values({
+                        packageId: platinumPkg.id,
                         featureId: featureId
                     }).onConflictDoNothing();
                 }
