@@ -167,6 +167,31 @@ export default function DashboardClient({
         return false;
     };
 
+    // Helper to check if a tab has errors
+    const hasTabErrors = (tabId: string) => {
+        if (!zodError) return false;
+        const issues = zodError.issues;
+
+        switch (tabId) {
+            case 'mempelai':
+                return issues.some(i => i.path[0] === 'groom' || i.path[0] === 'bride');
+            case 'acara':
+                return issues.some(i => i.path[0] === 'events' || i.path[0] === 'weddingDate');
+            case 'cerita':
+                return issues.some(i => i.path[0] === 'loveStory');
+            case 'galeri':
+                return issues.some(i => i.path[0] === 'gallery');
+            case 'hadiah':
+                return issues.some(i => i.path[0] === 'giftOptions' || i.path[0] === 'shippingAddress');
+            case 'tampilan':
+                return issues.some(i => i.path[0] === 'themeConfig' || i.path[0] === 'coverImage');
+            case 'lainnya':
+                return issues.some(i => i.path[0] === 'quotes' || i.path[0] === 'musicUrl');
+            default:
+                return false;
+        }
+    };
+
     // --- HANDLERS ---
     const handleSave = async () => {
         if (isDemo && !canSaveInvitation(userPackageSlug)) {
@@ -177,7 +202,18 @@ export default function DashboardClient({
         const result = invitationSchema.safeParse(invitationData);
         if (!result.success) {
             setZodError(result.error);
-            toast.error("Ada data yang belum valid.");
+
+            // Get human-readable tab names with errors
+            const errorTabs = tabs
+                .filter(t => hasTabErrors(t.id))
+                .map(t => t.label);
+
+            const firstMessage = result.error.issues[0].message;
+
+            toast.error("Data belum lengkap!", {
+                description: `Perbaiki bagian: ${errorTabs.join(', ')}. (${firstMessage})`,
+                duration: 5000,
+            });
         } else {
             setZodError(null);
             if (invitationId === null) return;
@@ -393,6 +429,7 @@ export default function DashboardClient({
                                 <tab.icon className="w-4 h-4 mb-1.5" />
                                 <span className="text-[9px] font-black uppercase tracking-wider">{tab.label}</span>
                                 {isTabLocked(tab.id) && <Lock className="absolute top-2 right-2 w-2 h-2 text-slate-300" />}
+                                {hasTabErrors(tab.id) && <div className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-pulse" />}
                             </button>
                         ))}
                     </div>
