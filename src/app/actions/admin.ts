@@ -2,7 +2,7 @@
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
@@ -276,5 +276,148 @@ export async function getSystemSettings() {
     } catch (error) {
         console.error("Error getting system settings:", error);
         return null;
+    }
+}
+
+/**
+ * Get paginated users for Admin Panel
+ */
+export async function getPaginatedUsers({
+    page = 1,
+    limit = 10,
+    search = "",
+    tab = "customers"
+}: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    tab?: "staff" | "customers" | "demo";
+}) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const { users, packages } = await import("@/db/schema");
+        const { sql, or, ilike, and, eq, ne } = await import("drizzle-orm");
+
+        const offset = (page - 1) * limit;
+
+        // Build conditions based on tab and search
+        let conditions: any[] = [];
+
+        if (tab === "staff") {
+            conditions.push(or(eq(users.role, "admin"), eq(users.role, "agency")));
+        } else if (tab === "demo") {
+            // Demo users are customers with package 'demo'
+            const demoPkg = await db.query.packages.findFirst({ where: eq(packages.slug, "demo") });
+            conditions.push(and(
+                eq(users.role, "customer"),
+                demoPkg ? eq(users.packageId, demoPkg.id) : undefined
+            ));
+        } else {
+            // Regular customers (not staff, not demo)
+            const demoPkg = await db.query.packages.findFirst({ where: eq(packages.slug, "demo") });
+            conditions.push(and(
+                eq(users.role, "customer"),
+                demoPkg ? ne(users.packageId, demoPkg.id) : undefined
+            ));
+        }
+
+        if (search) {
+            conditions.push(or(
+                ilike(users.email, `%${search}%`),
+                ilike(users.name, `%${search}%`)
+            ));
+        }
+
+        const whereClause = conditions.length > 1 ? and(...conditions) : conditions[0];
+
+        const data = await db.query.users.findMany({
+            where: whereClause,
+            limit,
+            offset,
+            with: {
+                package: true,
+            },
+            orderBy: [desc(users.createdAt)],
+        });
+
+        // Get total count for this specific filter
+        const totalResult = await db.select({ count: sql<number>`count(*)` })
+            .from(users)
+            .where(whereClause);
+
+        const total = totalResult[0].count;
+
+        return {
+            success: true,
+            data,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page
+        };
+    } catch (error) {
+        console.error("Error fetching paginated users:", error);
+        return { success: false, error: "Failed to fetch users" };
+    }
+}
+
+/**
+ * Get paginated invitations for Admin Panel
+ */
+export async function getPaginatedInvitations({
+    page = 1,
+    limit = 10,
+    search = ""
+}: {
+    page?: number;
+    limit?: number;
+    search?: string;
+}) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "admin") {
+        return { success: false, error: "Unauthorized" };
+    }
+
+    try {
+        const { invitations, users } = await import("@/db/schema");
+        const { sql, ilike, desc, or } = await import("drizzle-orm");
+
+        const offset = (page - 1) * limit;
+
+        let whereClause = undefined;
+        if (search) {
+            whereClause = ilike(invitations.slug, `%${search}%`);
+        }
+
+        const data = await db.query.invitations.findMany({
+            where: whereClause,
+            limit,
+            offset,
+            with: {
+                user: true,
+                theme: true,
+            },
+            orderBy: [desc(invitations.createdAt)],
+        });
+
+        const totalResult = await db.select({ count: sql<number>`count(*)` })
+            .from(invitations)
+            .where(whereClause);
+
+        const total = totalResult[0].count;
+
+        return {
+            success: true,
+            data,
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page
+        };
+    } catch (error) {
+        console.error("Error fetching paginated invitations:", error);
+        return { success: false, error: "Failed to fetch invitations" };
     }
 }
