@@ -17,10 +17,18 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
     const [loadingId, setLoadingId] = useState<number | null>(null);
     const [roleLoadingId, setRoleLoadingId] = useState<number | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
+    const [activeTab, setActiveTab] = useState<"staff" | "customers">("customers");
 
-    const filteredUsers = initialUsers.filter(user =>
-        user.email.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredUsers = initialUsers.filter(user => {
+        const matchesSearch = user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (user.name && user.name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+        const isStaff = user.role === 'admin' || user.role === 'agency';
+        const isCustomer = user.role === 'customer' || user.package?.slug === 'demo';
+
+        if (activeTab === "staff") return matchesSearch && isStaff;
+        return matchesSearch && isCustomer;
+    });
 
     const handleToggleStatus = async (userId: number, currentStatus: boolean) => {
         setLoadingId(userId);
@@ -79,13 +87,44 @@ export default function UserTableClient({ initialUsers }: UserTableClientProps) 
 
     return (
         <div className="space-y-4">
-            {/* Search Bar */}
-            <div className="p-6 pb-2">
+            {/* Tabs & Search */}
+            <div className="p-6 pb-2 space-y-6">
+                <div className="flex p-1.5 bg-slate-100 rounded-2xl w-fit">
+                    <button
+                        onClick={() => setActiveTab("customers")}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === "customers"
+                                ? "bg-white text-slate-900 shadow-sm"
+                                : "text-slate-400 hover:text-slate-600"
+                            }`}
+                    >
+                        <User className="w-4 h-4" />
+                        CUSTOMER & DEMO
+                        <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] ${activeTab === "customers" ? "bg-amber-100 text-amber-600" : "bg-slate-200 text-slate-400"
+                            }`}>
+                            {initialUsers.filter(u => u.role === 'customer' || u.package?.slug === 'demo').length}
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab("staff")}
+                        className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black transition-all ${activeTab === "staff"
+                                ? "bg-[#D4AF37] text-white shadow-lg shadow-amber-500/20"
+                                : "text-slate-400 hover:text-slate-600"
+                            }`}
+                    >
+                        <Shield className="w-4 h-4" />
+                        ADMIN & SELLER
+                        <span className={`ml-1 px-2 py-0.5 rounded-full text-[10px] ${activeTab === "staff" ? "bg-white/20 text-white" : "bg-slate-200 text-slate-400"
+                            }`}>
+                            {initialUsers.filter(u => u.role === 'admin' || u.role === 'agency').length}
+                        </span>
+                    </button>
+                </div>
+
                 <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300" />
                     <input
                         type="text"
-                        placeholder="Cari user berdasarkan email..."
+                        placeholder={`Cari ${activeTab === "staff" ? "admin/seller" : "customer"} berdasarkan nama atau email...`}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-100 focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 outline-none transition-all placeholder:text-slate-300 text-sm font-medium"
